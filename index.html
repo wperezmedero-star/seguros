@@ -2125,9 +2125,16 @@ SHOW.forEach(o => track.appendChild(makeCard(o, true)));   // copia para el bucl
 let x = 0, half = 0, paused = false, dragging = false, startX = 0, startPos = 0, moved = 0, last = 0;
 const SPEED = 34;   // píxeles por segundo
 
-function measure(){ half = track.scrollWidth / 2; }
+function measure(){
+  // El punto exacto de repetición es donde empieza la primera tarjeta duplicada.
+  // Usar scrollWidth/2 dejaría fuera medio hueco de separación y provocaría un salto.
+  const first = track.children[SHOW.length];
+  half = first ? first.offsetLeft : track.scrollWidth / 2;
+}
 measure();
 addEventListener('resize', measure, { passive:true });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+addEventListener('load', measure);
 
 function frame(now){
   if (!last) last = now;
