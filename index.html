@@ -1890,12 +1890,19 @@ function scrollTo(sel){
   return true;
 }
 document.addEventListener('click', e => {
-  const a = e.target.closest('a[href^="#"]');
+  const a = e.target.closest && e.target.closest('a[href^="#"]');
   if (!a) return;
   const href = a.getAttribute('href');
   if (href === '#' || a.hasAttribute('data-legal')) return;   // los legales tienen su propio manejador
   e.preventDefault();
-  scrollTo(href);
+  // Con el menú abierto el desplazamiento de la página está bloqueado.
+  // Hay que cerrarlo y esperar a que termine la transición antes de desplazarse.
+  if (document.body.classList.contains('is-locked')) {
+    setMenu(false);
+    setTimeout(() => scrollTo(href), slow ? 0 : 340);
+  } else {
+    scrollTo(href);
+  }
 });
 
 /* Respaldo si el navegador o el iframe no permiten <dialog>.showModal() */
