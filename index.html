@@ -386,10 +386,19 @@ dialog::backdrop{background:rgba(4,10,20,.78)}
   z-index:3;pointer-events:none}
 .show__view::before{left:0;background:linear-gradient(90deg,#0A192F,transparent)}
 .show__view::after{right:0;background:linear-gradient(270deg,#0A192F,transparent)}
-.show__track{display:flex;gap:1.25rem;will-change:transform;width:max-content}
-.scard{position:relative;flex:none;width:clamp(255px,74vw,320px);border-radius:20px;padding:1.75rem;
-  background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+.show__track{will-change:transform;transform:translate3d(0,0,0)}
+/* La pista interior contiene exactamente DOS juegos de tarjetas.
+   Desplazarla un -50% de su propio ancho la deja en una posición
+   visualmente idéntica al inicio. No hay medida que pueda fallar. */
+.show__marq{display:flex;width:max-content;
+  animation:marq 40s linear infinite;
+  will-change:transform;backface-visibility:hidden}
+@keyframes marq{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+.show__view:hover .show__marq,
+.show__view:focus-within .show__marq,
+.show__view.is-drag .show__marq{animation-play-state:paused}
+.scard{position:relative;flex:none;width:clamp(255px,74vw,320px);margin-right:1.25rem;border-radius:20px;padding:1.75rem;
+  background:#142a49;border:1px solid rgba(255,255,255,.12);
   display:flex;flex-direction:column;text-align:left;overflow:hidden;isolation:isolate;
   transition:transform .45s cubic-bezier(.22,1,.36,1),border-color .45s,background .45s;
   box-shadow:0 18px 40px -26px rgba(0,0,0,.8)}
@@ -400,7 +409,7 @@ dialog::backdrop{background:rgba(4,10,20,.78)}
   transition:opacity .4s;pointer-events:none;
   background:radial-gradient(180px circle at var(--mx,50%) var(--my,50%),var(--c),transparent 62%)}
 .scard:hover,.scard:focus-visible{transform:translate3d(0,-6px,0) scale(1.03);
-  border-color:transparent;background:rgba(255,255,255,.085)}
+  border-color:transparent;background:#1a3358}
 .scard:hover::after,.scard:focus-visible::after{opacity:.55}
 .scard__ico{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;
   background:var(--g);border:1px solid var(--c);color:var(--c);margin-bottom:1.1rem}
@@ -414,7 +423,7 @@ dialog::backdrop{background:rgba(4,10,20,.78)}
 .scard__cta svg{transition:transform .35s cubic-bezier(.22,1,.36,1)}
 .scard:hover .scard__cta svg{transform:translateX(5px)}
 @media(prefers-reduced-motion:reduce){
-  .show__track{width:auto;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:1rem}
+  .show__marq{animation:none;width:auto;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:1rem}
   .scard{scroll-snap-align:center}
   .show__view{cursor:default}
 }
@@ -422,9 +431,11 @@ dialog::backdrop{background:rgba(4,10,20,.78)}
 /* ═══ SOBRE MÍ ═══ */
 .about{display:grid;gap:3rem;align-items:start;margin-top:3rem}
 @media(min-width:960px){.about{grid-template-columns:.85fr 1.15fr;gap:4rem}}
-.about__media{position:sticky;top:100px}
+.about__media{position:static}
+@media(min-width:960px){.about__media{position:sticky;top:100px}}
 .portrait{aspect-ratio:4/5;border-radius:26px;overflow:hidden;background:#122643;
-  border:1px solid rgba(212,175,55,.28);display:grid;place-items:center;text-align:center;padding:2rem}
+  border:1px solid rgba(212,175,55,.28);display:grid;place-items:center;text-align:center}
+.portrait__ph{padding:2rem}
 .portrait img{width:100%;height:100%;object-fit:cover}
 .portrait__ph{color:#7E93AE;font-family:"IBM Plex Mono",monospace;font-size:.72rem;
   letter-spacing:.12em;text-transform:uppercase;line-height:1.8}
@@ -441,7 +452,7 @@ dialog::backdrop{background:rgba(4,10,20,.78)}
   font-family:"Fraunces",Georgia,serif;font-size:1.2rem;line-height:1.5;color:#F8F9FA;font-style:italic}
 .pullquote small{display:block;font-family:"IBM Plex Mono",monospace;font-size:.64rem;
   letter-spacing:.14em;text-transform:uppercase;color:#D4AF37;font-style:normal;margin-top:.9rem}
-.refs{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.4rem}
+.refs{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.4rem;position:relative;z-index:2}
 .refs a{font-size:.83rem;padding:.55rem 1rem;border-radius:100px;border:1px solid rgba(255,255,255,.18);
   color:#9DB0CC;transition:all .3s}
 .refs a:hover{border-color:#D4AF37;color:#D4AF37}
@@ -961,7 +972,9 @@ dialog.legal p{color:#9DB0CC;font-size:.92rem;margin-bottom:1rem}
     <p class="show__hint">Arrastra o usa las flechas del teclado</p>
   </div>
   <div class="show__view" id="showView">
-    <div class="show__track" id="showTrack" role="list"></div>
+    <div class="show__track" id="showTrack">
+      <div class="show__marq" id="showMarq" role="list"></div>
+    </div>
   </div>
   <p class="sr-only" id="showLive" role="status" aria-live="polite"></p>
 </section>
@@ -2096,12 +2109,12 @@ const SHOW = [
     i:'<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>' }
 ];
 
-const track = $('#showTrack'), view = $('#showView');
+const track = $('#showTrack'), marq = $('#showMarq'), view = $('#showView');
 function makeCard(o, dup){
   const a = document.createElement('a');
   a.className = 'scard'; a.href = o.a; a.setAttribute('role','listitem');
   a.style.setProperty('--c', o.c); a.style.setProperty('--g', o.g);
-  if (dup) a.setAttribute('aria-hidden','true'), a.tabIndex = -1;
+  if (dup) { a.setAttribute('aria-hidden','true'); a.tabIndex = -1; }
   a.innerHTML =
     '<span class="scard__ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' + o.i + '</svg></span>' +
     '<span class="scard__tag">' + o.t + '</span><h3>' + o.h + '</h3><p>' + o.d + '</p>' +
@@ -2119,65 +2132,55 @@ function makeCard(o, dup){
   });
   return a;
 }
-SHOW.forEach(o => track.appendChild(makeCard(o, false)));
-SHOW.forEach(o => track.appendChild(makeCard(o, true)));   // copia para el bucle
+SHOW.forEach(o => marq.appendChild(makeCard(o, false)));
+SHOW.forEach(o => marq.appendChild(makeCard(o, true)));   // segundo juego: el -50% cae aquí
 
-let x = 0, half = 0, paused = false, dragging = false, startX = 0, startPos = 0, moved = 0, last = 0;
+/* La duración se ajusta al ancho real para mantener una velocidad constante.
+   Si la medida fuera imprecisa, solo variaría un poco la velocidad:
+   el bucle sigue siendo exacto porque el -50% lo define el propio CSS. */
 const SPEED = 34;   // píxeles por segundo
-
-function measure(){
-  // El punto exacto de repetición es donde empieza la primera tarjeta duplicada.
-  // Usar scrollWidth/2 dejaría fuera medio hueco de separación y provocaría un salto.
-  const first = track.children[SHOW.length];
-  half = first ? first.offsetLeft : track.scrollWidth / 2;
+function setSpeed(){
+  const d = marq.scrollWidth / 2;
+  if (d > 0) marq.style.animationDuration = (d / SPEED).toFixed(2) + 's';
 }
-measure();
-addEventListener('resize', measure, { passive:true });
-if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
-addEventListener('load', measure);
+setSpeed();
+addEventListener('resize', setSpeed, { passive:true });
+addEventListener('load', setSpeed);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(setSpeed);
 
-function frame(now){
-  if (!last) last = now;
-  const dt = Math.min((now - last) / 1000, 0.05);
-  last = now;
-  if (!paused && !dragging && half) x -= SPEED * dt;
-  if (half) { if (x <= -half) x += half; if (x > 0) x -= half; }
-  track.style.transform = 'translate3d(' + x.toFixed(2) + 'px,0,0)';
-  requestAnimationFrame(frame);
-}
-if (!slow) requestAnimationFrame(frame);
-
-view.addEventListener('pointerenter', () => paused = true);
-view.addEventListener('pointerleave', () => paused = false);
-view.addEventListener('focusin', () => paused = true);
-view.addEventListener('focusout', () => paused = false);
-
+/* Arrastre: desplaza la pista exterior; la animación interior queda en pausa */
+let dragging = false, startX = 0, startPos = 0, pos = 0, moved = 0;
 view.addEventListener('pointerdown', e => {
   if (slow) return;
-  dragging = true; moved = 0; startX = e.clientX; startPos = x;
-  view.classList.add('is-drag'); view.setPointerCapture(e.pointerId);
+  dragging = true; moved = 0; startX = e.clientX; startPos = pos;
+  view.classList.add('is-drag');
+  try { view.setPointerCapture(e.pointerId); } catch (_) {}
 });
 view.addEventListener('pointermove', e => {
   if (!dragging) return;
   const d = e.clientX - startX;
   moved = Math.abs(d);
-  x = startPos + d;
-  if (half) { if (x <= -half) x += half; if (x > 0) x -= half; }
+  pos = startPos + d;
+  const lim = marq.scrollWidth / 2;
+  if (lim > 0) { while (pos <= -lim) pos += lim; while (pos > 0) pos -= lim; }
+  track.style.transform = 'translate3d(' + pos.toFixed(2) + 'px,0,0)';
 });
 function endDrag(){ dragging = false; view.classList.remove('is-drag'); }
 view.addEventListener('pointerup', endDrag);
 view.addEventListener('pointercancel', endDrag);
-// evitar que un arrastre dispare el enlace
-track.addEventListener('click', e => { if (moved > 8) { e.preventDefault(); e.stopPropagation(); } }, true);
+marq.addEventListener('click', e => { if (moved > 8) { e.preventDefault(); e.stopPropagation(); } }, true);
 
 view.setAttribute('tabindex','0');
 view.setAttribute('aria-label','Carrusel de herramientas. Usa las flechas izquierda y derecha para desplazarte.');
 view.addEventListener('keydown', e => {
   const step = 340;
-  if (e.key === 'ArrowRight') { x -= step; e.preventDefault(); }
-  else if (e.key === 'ArrowLeft') { x += step; e.preventDefault(); }
+  if (e.key === 'ArrowRight') pos -= step;
+  else if (e.key === 'ArrowLeft') pos += step;
   else return;
-  if (half) { if (x <= -half) x += half; if (x > 0) x -= half; }
+  e.preventDefault();
+  const lim = marq.scrollWidth / 2;
+  if (lim > 0) { while (pos <= -lim) pos += lim; while (pos > 0) pos -= lim; }
+  track.style.transform = 'translate3d(' + pos.toFixed(2) + 'px,0,0)';
   $('#showLive').textContent = 'Carrusel desplazado.';
 });
 
