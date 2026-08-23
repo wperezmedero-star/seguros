@@ -313,6 +313,7 @@ dialog::backdrop{background:rgba(4,10,20,.78)}
 .case{background:#fff;border:1px solid rgba(10,25,47,.13);border-radius:18px;padding:1.6rem;display:flex;flex-direction:column}
 .case__label{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
   color:#8A6A15;background:rgba(138,106,21,.1);border-radius:6px;padding:.45rem .6rem;margin-bottom:1rem;line-height:1.5}
+.caso-icono{width:32px;height:32px;color:#D4AF37;display:block;margin:0 0 12px;opacity:.9}
 .case h4{font-family:"Fraunces",Georgia,serif;font-size:1.15rem;font-weight:600;margin-bottom:.7rem}
 .case dl{margin:0;font-size:.89rem;color:#4A5B75}
 .case dt{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:#0A192F;margin-top:.8rem}
@@ -663,6 +664,13 @@ dialog.legal p{color:#9DB0CC;font-size:.92rem;margin-bottom:1rem}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
   html{scroll-behavior:auto} .reveal{opacity:1;transform:none}
+}
+
+@media(max-width:480px){
+  .case{padding-right:3.5rem}
+  .fab{width:48px;height:48px}
+  .fab--wa::before,.fab--wa::after{display:none}
+  .fabs{bottom:calc(1.25rem + env(safe-area-inset-bottom,0px))}
 }
 </style>
 </head>
@@ -1128,7 +1136,10 @@ dialog.legal p{color:#9DB0CC;font-size:.92rem;margin-bottom:1rem}
     <p class="lead" style="margin-top:.9rem">Estas historias no son testimonios. Son ejemplos construidos para explicar cómo se toma una decisión.</p>
     <div class="cases">
       <div class="case">
-        <p class="case__label">Caso ilustrativo; no corresponde a un cliente real. Imagen de representación.</p>
+        <p class="case__label">Caso ilustrativo. No corresponde a un cliente real ni a una cotización.</p>
+        <svg class="caso-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 2.5 4 5.5v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10v-6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>
+        </svg>
         <h4>Vida</h4>
         <dl>
           <dt>Antes</dt><dd>Una madre de 45 años depende del ingreso de su esposo para hipoteca y educación de dos hijos. La única cobertura familiar es un beneficio básico del trabajo.</dd>
@@ -1138,7 +1149,10 @@ dialog.legal p{color:#9DB0CC;font-size:.92rem;margin-bottom:1rem}
         <p class="case__cta">Calcula qué responsabilidades necesitarían protección en tu hogar.</p>
       </div>
       <div class="case">
-        <p class="case__label">Caso ilustrativo; no corresponde a un cliente real. Imagen de representación.</p>
+        <p class="case__label">Caso ilustrativo. No corresponde a un cliente real ni a una cotización.</p>
+        <svg class="caso-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2 12h4l2.5-6 4 13 3-7 1.5 3H22"/>
+        </svg>
         <h4>Salud</h4>
         <dl>
           <dt>Antes</dt><dd>Un hombre de 55 años elige planes mirando solo la prima. No verifica hospital, cardiólogo, deducible, coaseguro ni máximo de bolsillo.</dd>
@@ -1148,7 +1162,11 @@ dialog.legal p{color:#9DB0CC;font-size:.92rem;margin-bottom:1rem}
         <p class="case__cta">Compara el costo anual, no solo la prima.</p>
       </div>
       <div class="case">
-        <p class="case__label">Caso ilustrativo; no corresponde a un cliente real. Imagen de representación.</p>
+        <p class="case__label">Caso ilustrativo. No corresponde a un cliente real ni a una cotización.</p>
+        <svg class="caso-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 20V4"/><path d="M3 20h18"/>
+          <path d="M5 17c3-8 7-10 10-10.5s5 .5 6 1"/>
+        </svg>
         <h4>Retiro</h4>
         <dl>
           <dt>Antes</dt><dd>Una pareja de 62 años desea complementar el Seguro Social, pero no ha medido gastos, liquidez ni duración prevista del retiro.</dd>
