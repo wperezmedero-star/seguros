@@ -25,9 +25,9 @@ jobs:
           start=next(i for i,line in enumerate(src) if "python3 - <<'PY'" in line)+1
           end=next(i for i in range(start,len(src)) if src[i].strip()=='PY')
           block=src[start:end]
-          nonempty=[len(x)-len(x.lstrip()) for x in block if x.strip()]
-          indent=min(nonempty) if nonempty else 0
-          code='\n'.join(x[indent:] for x in block)+'\n'
+          # Python statements in the YAML block carry 10 leading spaces;
+          # raw CSS/JS inside triple-quoted strings intentionally do not.
+          code='\n'.join(line[10:] if line.startswith('          ') else line for line in block)+'\n'
           Path('/tmp/apply_ultra.py').write_text(code,encoding='utf-8')
           PY
           python3 /tmp/apply_ultra.py
