@@ -1,0 +1,49 @@
+name: Run Ultra Calculators
+
+on:
+  push:
+    paths:
+      - '.github/ultra-calculators.trigger'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply calculator layer from migration source
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          src=Path('.github/workflows/apply-ultra-calculators.yml').read_text(encoding='utf-8').splitlines()
+          start=next(i for i,line in enumerate(src) if "python3 - <<'PY'" in line)+1
+          end=next(i for i in range(start,len(src)) if src[i].strip()=='PY')
+          block=src[start:end]
+          nonempty=[len(x)-len(x.lstrip()) for x in block if x.strip()]
+          indent=min(nonempty) if nonempty else 0
+          code='\n'.join(x[indent:] for x in block)+'\n'
+          Path('/tmp/apply_ultra.py').write_text(code,encoding='utf-8')
+          PY
+          python3 /tmp/apply_ultra.py
+
+      - name: Verify and commit
+        shell: bash
+        run: |
+          grep -q 'id="ultra-calc-v1"' index.html
+          grep -q 'id="ultra-calc-v1-js"' index.html
+          grep -q 'window.InsuranceCalculators' index.html
+          if git diff --quiet -- index.html; then
+            echo 'No calculator changes required.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'feat: add ultra-modern calculator visual intelligence'
+          git push origin HEAD:main
