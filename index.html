@@ -3056,6 +3056,27 @@ $('#pinGo').onclick = () => {
 $('#pin').addEventListener('keydown', e => { if (e.key === 'Enter') $('#pinGo').click(); });
 $('#exitPanel').onclick = () => { location.hash = 'top'; };
 
+/* ═══════════ ACCESO DISCRETO AL PANEL ═══════════
+   Tres toques seguidos en el logo del encabezado abren el panel interno.
+   No hay enlace visible: un visitante no descubre la puerta por accidente
+   y el sitio público no anuncia que existe un espacio privado. */
+(function accesoPanel(){
+  const logo = document.querySelector('.header .brand');
+  if (!logo) return;
+  let toques = 0, reloj = null;
+  logo.addEventListener('click', e => {
+    toques++;
+    if (toques === 1) { reloj = setTimeout(() => { toques = 0; }, 1200); }
+    if (toques >= 3) {
+      e.preventDefault();
+      clearTimeout(reloj); toques = 0;
+      const url = new URL(location.href);
+      url.searchParams.set('panel', '1');
+      location.href = url.toString();
+    }
+  });
+})();
+
 /* ═══════════ CITA EN CURSO ═══════════
    Guía de conversación para usar frente al cliente. Cada pregunta está
    escrita como se dice en voz alta, no como una etiqueta de formulario.
