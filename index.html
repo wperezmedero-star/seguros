@@ -770,8 +770,10 @@ dialog.legal p{color:#9DB0CC;font-size:.92rem;margin-bottom:1rem}
 
 /* Modo cliente: se oculta lo que es solo para el agente */
 body.cliente-mode .cita__main,
-body.cliente-mode .office-tabs,
-body.cliente-mode .panel__bar{display:none}
+body.cliente-mode .office-tabs{display:none}
+body.cliente-mode .panel__bar h2,
+body.cliente-mode .panel__bar p{display:none}
+body.cliente-mode .panel__bar{justify-content:flex-end}
 body.cliente-mode .cita{grid-template-columns:1fr}
 body.cliente-mode .cita__lado{padding:2.6rem}
 
@@ -3054,7 +3056,14 @@ $('#pinGo').onclick = () => {
   else { $('#pin').value = ''; $('#pin').placeholder = 'Clave incorrecta'; }
 };
 $('#pin').addEventListener('keydown', e => { if (e.key === 'Enter') $('#pinGo').click(); });
-$('#exitPanel').onclick = () => { location.hash = 'top'; };
+/* Salir del panel: hay que limpiar tanto el hash (#panel-agente) como el
+   parámetro (?panel=1), porque cualquiera de los dos vuelve a abrirlo. */
+$('#exitPanel').onclick = () => {
+  const url = new URL(location.href);
+  url.searchParams.delete('panel');
+  url.hash = 'top';
+  location.href = url.toString();
+};
 
 /* ═══════════ ACCESO DISCRETO AL PANEL ═══════════
    Tres toques seguidos en el logo del encabezado abren el panel interno.
