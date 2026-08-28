@@ -726,6 +726,65 @@ dialog.legal p{color:#9DB0CC;font-size:.92rem;margin-bottom:1rem}
   .case{transform:none!important}
 }
 </style>
+<style id="cita-agente-v1">
+/* ═══ CITA EN CURSO — guía de conversación del agente ═══ */
+.office-tabs{display:flex;gap:.5rem;margin:0 0 1.6rem;padding:.35rem;border-radius:14px;background:rgba(255,255,255,.04);width:fit-content}
+.office-tabs button{min-height:44px;padding:.6rem 1.3rem;border:0;border-radius:10px;background:transparent;color:#9DB0CC;font:inherit;font-size:.86rem;font-weight:700;cursor:pointer;transition:background .2s,color .2s}
+.office-tabs button.is-on{background:rgba(212,175,55,.14);color:#EFD9A0}
+
+.cita{display:grid;grid-template-columns:1fr;gap:1.4rem;align-items:start}
+.cita__head{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:1.4rem}
+.cita__head h3{margin:.3rem 0 0;font-size:1.5rem;color:#F8F9FA;letter-spacing:-.02em}
+.cita__head .eyebrow{margin:0;font-size:.7rem;letter-spacing:.14em;color:#D4AF37}
+
+/* Elección de tema */
+.cita__temas{display:grid;grid-template-columns:1fr;gap:.8rem}
+.tema{display:block;width:100%;min-height:44px;padding:1.3rem;border:1px solid rgba(255,255,255,.09);border-radius:16px;background:rgba(255,255,255,.03);color:inherit;text-align:left;cursor:pointer;transition:border-color .2s,background .2s,transform .2s}
+.tema:hover{border-color:rgba(212,175,55,.4);background:rgba(212,175,55,.06);transform:translateY(-2px)}
+.tema b{display:block;font-size:1.02rem;color:#F8F9FA}
+.tema span{display:block;margin-top:.25rem;font-size:.84rem;color:#8FA3BF}
+
+/* Preguntas: se leen en voz alta, no son etiquetas de formulario */
+.preg{display:flex;gap:.9rem;padding:1rem 0;border-top:1px solid rgba(255,255,255,.06)}
+.preg:first-child{border-top:0}
+.preg__n{flex:0 0 auto;width:26px;height:26px;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.06);color:#7E93B0;font-size:.72rem;font-weight:800;transition:background .2s,color .2s}
+.preg.is-ok .preg__n{background:rgba(212,175,55,.18);color:#EFD9A0}
+.preg__c{flex:1;min-width:0}
+.preg__c label{display:block;font-size:1rem;color:#E8EFF7;line-height:1.4}
+.preg__c small{display:block;margin-top:.2rem;font-size:.78rem;color:#7E93B0}
+.preg__c input{width:100%;margin-top:.55rem;min-height:46px;padding:0 .9rem;border:1px solid rgba(255,255,255,.1);border-radius:11px;background:rgba(255,255,255,.04);color:#F8F9FA;font:inherit;font-size:1.05rem;font-weight:700;outline:0;transition:border-color .2s,box-shadow .2s}
+.preg__c input:focus{border-color:rgba(212,175,55,.6);box-shadow:0 0 0 3px rgba(212,175,55,.1)}
+
+/* Resultado en vivo */
+.cita__lado{padding:1.5rem;border:1px solid rgba(212,175,55,.16);border-radius:18px;background:linear-gradient(155deg,rgba(212,175,55,.07),rgba(255,255,255,.02))}
+.cita__ladohead{display:flex;justify-content:space-between;align-items:center;gap:.8rem;margin-bottom:1.2rem}
+#citaEstado{font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+#citaEstado.is-pend{color:#E5B769}
+#citaEstado.is-ok{color:#6FD3A8}
+.cifra small{display:block;font-size:.74rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#9DB0CC}
+.cifra strong{display:block;margin-top:.4rem;font-size:2.5rem;line-height:1.05;color:#EFD9A0;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.cifra.is-big strong{font-size:3.4rem}
+.cifra__frase{margin:1rem 0 0;font-size:.92rem;line-height:1.6;color:#C7D6E6}
+.cifra__falta{margin:.9rem 0 0;padding:.7rem .85rem;border-radius:10px;background:rgba(229,183,105,.1);font-size:.78rem;color:#E5B769}
+.cita__nota{margin:1.2rem 0 0;padding-top:1rem;border-top:1px solid rgba(255,255,255,.07);font-size:.72rem;line-height:1.55;color:#7E93B0}
+
+/* Modo cliente: se oculta lo que es solo para el agente */
+body.cliente-mode .cita__main,
+body.cliente-mode .office-tabs,
+body.cliente-mode .panel__bar{display:none}
+body.cliente-mode .cita{grid-template-columns:1fr}
+body.cliente-mode .cita__lado{padding:2.6rem}
+
+@media(min-width:900px){
+  .cita{grid-template-columns:1fr 340px}
+  .cita__temas{grid-template-columns:repeat(3,1fr)}
+  .cita__lado{position:sticky;top:5.5rem}
+}
+@media(prefers-reduced-motion:reduce){
+  .tema,.office-tabs button,.preg__n,.preg__c input{transition:none}
+}
+</style>
+
 <style id="ultra-calc-v1">
 /* Ultra Calculators v1 — native SVG, same calculation engine, no heavy chart library */
 #calculadoras .tabs{padding:.45rem;border:1px solid rgba(10,25,47,.09);border-radius:999px;background:rgba(255,255,255,.72);box-shadow:0 12px 32px -26px rgba(10,25,47,.55);width:max-content;max-width:100%;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
@@ -1446,24 +1505,68 @@ dialog.legal p{color:#9DB0CC;font-size:.92rem;margin-bottom:1rem}
 
     <div id="board" hidden>
       <div class="panel__bar">
-        <div><h2>Solicitudes en proceso</h2><p>Etapas por área de revisión. Datos de demostración.</p></div>
+        <div><h2>Mi oficina</h2><p>Espacio privado del agente.</p></div>
         <button class="btn btn--ghost btn--sm" id="exitPanel">Salir del panel</button>
       </div>
-      <div class="board">
-        <div class="col col--vida">
-          <div class="col__head"><div><b>Vida</b><span class="col__sub">En revisión de suscripción</span></div><span id="n-vida">0</span></div>
-          <div id="c-vida"></div>
-        </div>
-        <div class="col col--salud">
-          <div class="col__head"><div><b>Salud</b><span class="col__sub">Comparando opciones</span></div><span id="n-salud">0</span></div>
-          <div id="c-salud"></div>
-        </div>
-        <div class="col col--anual">
-          <div class="col__head"><div><b>Retiro</b><span class="col__sub">Revisión de objetivos y liquidez</span></div><span id="n-anual">0</span></div>
-          <div id="c-anual"></div>
+
+      <div class="office-tabs" role="tablist" aria-label="Secciones del panel">
+        <button role="tab" class="is-on" id="tab-cita" aria-selected="true" aria-controls="pane-cita">Cita en curso</button>
+        <button role="tab" id="tab-solicitudes" aria-selected="false" aria-controls="pane-solicitudes">Solicitudes</button>
+      </div>
+
+      <!-- ══ CITA EN CURSO: guía de conversación ══ -->
+      <div id="pane-cita" role="tabpanel" aria-labelledby="tab-cita">
+        <div class="cita">
+          <div class="cita__main">
+            <div class="cita__head">
+              <div>
+                <p class="eyebrow">Guía de conversación</p>
+                <h3 id="citaTitulo">¿De qué van a hablar hoy?</h3>
+              </div>
+              <button class="btn btn--ghost btn--sm" id="citaReset" hidden>Empezar de nuevo</button>
+            </div>
+
+            <!-- Selección de tema -->
+            <div class="cita__temas" id="citaTemas">
+              <button class="tema" data-tema="vida"><b>Proteger a la familia</b><span>Si algo me pasa, ¿cómo quedan?</span></button>
+              <button class="tema" data-tema="salud"><b>Cobertura médica</b><span>Cuánto costaría un plan al año</span></button>
+              <button class="tema" data-tema="retiro"><b>Retiro</b><span>Si alcanza lo que está ahorrando</span></button>
+            </div>
+
+            <!-- Preguntas -->
+            <div class="cita__preguntas" id="citaPreguntas" hidden></div>
+          </div>
+
+          <!-- Panel de resultado -->
+          <aside class="cita__lado" id="citaLado" hidden>
+            <div class="cita__ladohead">
+              <span id="citaEstado">Faltan datos</span>
+              <button class="btn btn--ghost btn--sm" id="citaModo" aria-pressed="false">Mostrar al cliente</button>
+            </div>
+            <div id="citaResultado"></div>
+            <p class="cita__nota" id="citaNota">Cálculo educativo con lo que la persona declaró. No es una cotización ni una aprobación de cobertura.</p>
+          </aside>
         </div>
       </div>
-      <p class="panel__note">Las solicitudes recibidas aparecen aquí durante la sesión. Para que persistan, conecta el panel a tu CRM: <code>webhook.php</code> guarda cada registro en <code>leads.csv</code> y puede leerse desde un endpoint protegido del servidor. No almacenes ni muestres información médica de personas en una página pública, y define un período de retención con eliminación de registros inactivos.</p>
+
+      <!-- ══ SOLICITUDES ══ -->
+      <div id="pane-solicitudes" role="tabpanel" aria-labelledby="tab-solicitudes" hidden>
+        <div class="board">
+          <div class="col col--vida">
+            <div class="col__head"><div><b>Vida</b><span class="col__sub">En revisión de suscripción</span></div><span id="n-vida">0</span></div>
+            <div id="c-vida"></div>
+          </div>
+          <div class="col col--salud">
+            <div class="col__head"><div><b>Salud</b><span class="col__sub">Comparando opciones</span></div><span id="n-salud">0</span></div>
+            <div id="c-salud"></div>
+          </div>
+          <div class="col col--anual">
+            <div class="col__head"><div><b>Retiro</b><span class="col__sub">Revisión de objetivos y liquidez</span></div><span id="n-anual">0</span></div>
+            <div id="c-anual"></div>
+          </div>
+        </div>
+        <p class="panel__note">Las solicitudes recibidas aparecen aquí durante la sesión. Para que persistan, conecta el panel a tu CRM: <code>webhook.php</code> guarda cada registro en <code>leads.csv</code> y puede leerse desde un endpoint protegido del servidor. No almacenes ni muestres información médica de personas en una página pública, y define un período de retención con eliminación de registros inactivos.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -2952,6 +3055,187 @@ $('#pinGo').onclick = () => {
 };
 $('#pin').addEventListener('keydown', e => { if (e.key === 'Enter') $('#pinGo').click(); });
 $('#exitPanel').onclick = () => { location.hash = 'top'; };
+
+/* ═══════════ CITA EN CURSO ═══════════
+   Guía de conversación para usar frente al cliente. Cada pregunta está
+   escrita como se dice en voz alta, no como una etiqueta de formulario.
+   Nada se guarda: vive solo mientras dura la cita. */
+(function citaEnCurso(){
+  const CE = window.InsuranceCalculators;
+  if (!CE) return;
+
+  const GUIAS = {
+    vida: {
+      titulo: 'Proteger a la familia',
+      preguntas: [
+        { k:'annualIncome',     di:'¿Cuánto gana al año, más o menos?',            ayuda:'Un aproximado basta.', v:60000 },
+        { k:'replacementYears', di:'¿Por cuántos años querría que su familia siga recibiendo ese ingreso?', ayuda:'Hasta que los hijos terminen estudios suele ser el punto de partida.', v:10 },
+        { k:'mortgageBalance',  di:'¿Cuánto debe todavía de la casa?',             ayuda:'Si renta, déjelo en cero.', v:0 },
+        { k:'otherDebts',       di:'¿Tiene otras deudas? Carro, tarjetas…',        ayuda:'', v:0 },
+        { k:'educationGoal',    di:'¿Quisiera dejar algo para los estudios de sus hijos?', ayuda:'', v:0 },
+        { k:'finalExpenses',    di:'¿Y para los gastos finales?',                   ayuda:'Un funeral en Florida ronda los $10,000–$15,000.', v:15000 },
+        { k:'existingCoverage', di:'¿Tiene ya algún seguro de vida?',               ayuda:'Cuente también el del trabajo.', v:0 },
+        { k:'liquidAssets',     di:'¿Cuánto tiene ahorrado que podría usarse?',     ayuda:'', v:0 },
+        { k:'otherGoals',       di:'¿Alguna otra meta que quiera cubrir?',          ayuda:'', v:0 }
+      ],
+      fn:'lifeInsuranceNeed',
+      leer: r => ({
+        cifra: r.estimatedNeed,
+        rotulo: 'Protección que faltaría',
+        frase: r.estimatedNeed > 0
+          ? 'Con lo que me contó, faltarían alrededor de esta cantidad para que su familia mantenga su nivel de vida.'
+          : 'Con lo que me contó, sus recursos actuales ya cubrirían lo que conversamos.'
+      })
+    },
+    salud: {
+      titulo: 'Cobertura médica',
+      preguntas: [
+        { k:'monthlyPremium',          di:'¿Cuánto paga al mes por su plan?', ayuda:'Si no tiene, pruebe con un estimado.', v:180 },
+        { k:'expectedAllowedCharges',  di:'¿Cuánto cree que usaría de médico en el año?', ayuda:'Consultas, exámenes, terapias.', v:6000 },
+        { k:'deductible',              di:'¿Cuál es su deducible?', ayuda:'Lo que paga antes de que el plan empiece a cubrir.', v:3000 },
+        { k:'coinsuranceRate',         di:'¿Qué porcentaje le toca después del deducible?', ayuda:'Normalmente 20% o 30%.', v:20 },
+        { k:'annualCopays',            di:'¿Cuánto suma en copagos al año?', ayuda:'', v:400 },
+        { k:'outOfPocketMaximum',      di:'¿Cuál es su máximo de bolsillo?', ayuda:'El tope que puede llegar a pagar en el año.', v:9200 },
+        { k:'nonCoveredCosts',         di:'¿Gastos que el plan no cubre?', ayuda:'', v:0 },
+        { k:'outOfNetworkCosts',       di:'¿Gastos con médicos fuera de la red?', ayuda:'', v:0 }
+      ],
+      fn:'annualHealthCost',
+      leer: r => ({
+        cifra: r.results.estimatedTotalAnnualCost,
+        rotulo: 'Costo anual estimado',
+        frase: 'Sumando lo que paga de prima y lo que pondría de su bolsillo, el año le costaría cerca de esto.'
+      })
+    },
+    retiro: {
+      titulo: 'Retiro',
+      preguntas: [
+        { k:'currentAge',           di:'¿Qué edad tiene?', ayuda:'', v:45 },
+        { k:'retirementAge',        di:'¿A qué edad le gustaría retirarse?', ayuda:'', v:65 },
+        { k:'currentSavings',       di:'¿Cuánto tiene ahorrado para el retiro?', ayuda:'Cuente 401k, IRA, ahorros.', v:0 },
+        { k:'monthlyContribution',  di:'¿Cuánto puede apartar al mes?', ayuda:'', v:400 },
+        { k:'annualReturn',         di:'¿Qué rendimiento anual suponemos?', ayuda:'5% es un punto de partida conservador.', v:5 },
+        { k:'annualInflation',      di:'¿Y qué inflación?', ayuda:'2.5% es lo habitual.', v:2.5 },
+        { k:'withdrawalRate',       di:'¿Qué porcentaje retiraría cada año?', ayuda:'La regla del 4% es una hipótesis, no una garantía.', v:4 },
+        { k:'planningAge',          di:'¿Hasta qué edad planificamos?', ayuda:'90 años es lo prudente.', v:90 }
+      ],
+      fn:'retirementProjection',
+      leer: r => ({
+        cifra: r.results.monthlyPlanningIncome,
+        rotulo: 'Ingreso mensual al retirarse',
+        frase: 'Si sigue así, al retirarse podría contar con este ingreso mensual aproximado.'
+      })
+    }
+  };
+
+  let guia = null, datos = {}, tocados = new Set(), modoCliente = false;
+
+  // El motor espera los porcentajes como decimales (20% → 0.20), igual que
+  // hacen las calculadoras públicas del sitio.
+  const PCT = { retiro:['annualReturn','annualInflation','withdrawalRate'], salud:['coinsuranceRate'], vida:[] };
+
+  const num = v => { const n = Number(String(v).replace(/[^0-9.\-]/g,'')); return Number.isFinite(n) ? n : 0; };
+
+  function paraMotor(){
+    const pcts = PCT[guia.tema] || [];
+    const out = {};
+    for (const k in datos) out[k] = pcts.includes(k) ? datos[k]/100 : datos[k];
+    return out;
+  }
+
+  function pintarPreguntas(){
+    $('#citaPreguntas').innerHTML = guia.preguntas.map((p,i) => `
+      <div class="preg${tocados.has(p.k)?' is-ok':''}" data-k="${p.k}">
+        <div class="preg__n">${i+1}</div>
+        <div class="preg__c">
+          <label for="q-${p.k}">${p.di}</label>
+          ${p.ayuda ? `<small>${p.ayuda}</small>` : ''}
+          <input id="q-${p.k}" type="text" inputmode="decimal" value="${datos[p.k] ?? p.v}">
+        </div>
+      </div>`).join('');
+
+    $$('#citaPreguntas input').forEach(inp => {
+      inp.addEventListener('input', () => {
+        const k = inp.closest('.preg').dataset.k;
+        datos[k] = num(inp.value);
+        tocados.add(k);
+        inp.closest('.preg').classList.add('is-ok');
+        calcular();
+      });
+    });
+  }
+
+  function calcular(){
+    let r;
+    try {
+      r = CE[guia.fn](paraMotor());
+    } catch(err) {
+      // El motor valida rangos (p. ej. edad entre 18 y 100). Mientras el
+      // agente escribe puede quedar un valor fuera de rango un instante;
+      // se avisa en lugar de dejar una cifra congelada sin explicación.
+      $('#citaEstado').textContent = 'Revisa un dato';
+      $('#citaEstado').className = 'is-pend';
+      $('#citaResultado').innerHTML =
+        `<p class="cifra__falta">${(err && err.message) || 'Hay un dato fuera del rango esperado.'}</p>`;
+      return;
+    }
+    const { cifra, rotulo, frase } = guia.leer(r);
+    const faltan = guia.preguntas.length - tocados.size;
+
+    $('#citaEstado').textContent = faltan > 0
+      ? `Faltan ${faltan} por confirmar`
+      : 'Todo confirmado';
+    $('#citaEstado').className = faltan > 0 ? 'is-pend' : 'is-ok';
+
+    $('#citaResultado').innerHTML = `
+      <div class="cifra${modoCliente?' is-big':''}">
+        <small>${rotulo}</small>
+        <strong>${USD.format(Math.max(0, cifra))}</strong>
+      </div>
+      <p class="cifra__frase">${frase}</p>
+      ${!modoCliente && faltan > 0 ? `<p class="cifra__falta">Aún no ha confirmado ${faltan} dato(s). La cifra cambiará.</p>` : ''}`;
+  }
+
+  $$('#citaTemas .tema').forEach(b => b.onclick = () => {
+    guia = GUIAS[b.dataset.tema];
+    guia.tema = b.dataset.tema;
+    datos = {}; tocados = new Set();
+    guia.preguntas.forEach(p => datos[p.k] = p.v);
+    $('#citaTitulo').textContent = guia.titulo;
+    $('#citaTemas').hidden = true;
+    $('#citaPreguntas').hidden = false;
+    $('#citaLado').hidden = false;
+    $('#citaReset').hidden = false;
+    pintarPreguntas();
+    calcular();
+  });
+
+  $('#citaReset').onclick = () => {
+    guia = null; datos = {}; tocados = new Set(); modoCliente = false;
+    $('#citaTitulo').textContent = '¿De qué van a hablar hoy?';
+    $('#citaTemas').hidden = false;
+    $('#citaPreguntas').hidden = true;
+    $('#citaLado').hidden = true;
+    $('#citaReset').hidden = true;
+    document.body.classList.remove('cliente-mode');
+  };
+
+  $('#citaModo').onclick = () => {
+    modoCliente = !modoCliente;
+    $('#citaModo').setAttribute('aria-pressed', String(modoCliente));
+    $('#citaModo').textContent = modoCliente ? 'Volver a mi vista' : 'Mostrar al cliente';
+    document.body.classList.toggle('cliente-mode', modoCliente);
+    if (guia) calcular();
+  };
+
+  // Pestañas del panel
+  $$('.office-tabs button').forEach(t => t.onclick = () => {
+    $$('.office-tabs button').forEach(o => { o.classList.remove('is-on'); o.setAttribute('aria-selected','false'); });
+    t.classList.add('is-on'); t.setAttribute('aria-selected','true');
+    const cita = t.id === 'tab-cita';
+    $('#pane-cita').hidden = !cita;
+    $('#pane-solicitudes').hidden = cita;
+  });
+})();
 addEventListener('hashchange', checkPanel);
 checkPanel();
 
