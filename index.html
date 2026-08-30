@@ -598,12 +598,12 @@ input:focus-visible,select:focus-visible,.pillar:focus-visible,.scard:focus-visi
 .bot__head small{color:#9DB0CC;font-size:.72rem}
 .bot__av{width:36px;height:36px;border-radius:50%;background:#0A192F;display:grid;place-items:center;flex:none;overflow:hidden;border:1px solid rgba(212,175,55,.35)}
 .bot__av img{width:100%;height:100%;object-fit:contain;display:block}
-/* Al abrir el asistente, el emblema del encabezado entra girando y se
-   asienta: marca el momento en que "alguien llega a atender". */
-.bot.is-open .bot__av img{animation:av-llega .82s cubic-bezier(.22,.78,.2,1) both}
+/* Al abrir el asistente, el emblema aparece asentándose desde el fondo.
+   Sin giro: el mismo criterio que en el botón flotante — el movimiento
+   acompaña, no llama la atención sobre sí mismo. */
+.bot.is-open .bot__av img{animation:av-llega .5s cubic-bezier(.22,.78,.2,1) both}
 @keyframes av-llega{
-  0%{opacity:0;transform:rotate(-160deg) scale(.4)}
-  60%{opacity:1;transform:rotate(8deg) scale(1.07)}
+  0%{opacity:0;transform:scale(.72)}
   100%{opacity:1;transform:none}
 }
 /* Mientras el asistente escribe, el emblema recibe un halo dorado que
@@ -615,12 +615,24 @@ input:focus-visible,select:focus-visible,.pillar:focus-visible,.scard:focus-visi
 }
 .fab--bot{background:#0A192F;box-shadow:0 14px 34px -10px rgba(212,175,55,.7);border:1px solid rgba(212,175,55,.4)}
 .fab__logo{width:40px;height:40px;object-fit:contain;display:block;filter:drop-shadow(0 3px 8px rgba(0,0,0,.45))}
-/* El emblema gira muy lentamente en el botón flotante: casi imperceptible
-   de reojo, pero le da vida al escudo sin convertirse en un reclamo.
-   40 segundos por vuelta — se nota si lo miras, no distrae si no. */
-.fab--bot .fab__logo{animation:logo-orbita 40s linear infinite}
-@keyframes logo-orbita{to{transform:rotate(360deg)}}
-.fab--bot:hover .fab__logo{animation-duration:8s}
+/* Nada de giro permanente: un logo que se mueve sin parar cansa la vista.
+   En su lugar, un destello de luz cruza el escudo cada 9 segundos, como
+   el reflejo en metal pulido. Presencia sin insistencia. */
+.fab--bot{position:relative;overflow:hidden}
+.fab--bot::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.42) 50%,transparent 62%);
+  transform:translateX(-130%);
+  animation:logo-brillo 9s ease-in-out infinite;
+}
+@keyframes logo-brillo{
+  0%,82%{transform:translateX(-130%)}
+  92%,100%{transform:translateX(130%)}
+}
+/* Al pasar el cursor, el escudo se acerca ligeramente: responde al gesto
+   sin girar ni saltar. */
+.fab--bot:hover .fab__logo{transform:scale(1.08)}
+.fab__logo{transition:transform .28s cubic-bezier(.22,.78,.2,1)}
 
 /* El botón del asistente respira suavemente hasta que alguien lo usa por
    primera vez: señala que existe sin llegar a ser un reclamo molesto.
@@ -638,9 +650,10 @@ input:focus-visible,select:focus-visible,.pillar:focus-visible,.scard:focus-visi
 @media(prefers-reduced-motion:reduce){
   .fab--bot:not(.is-known){animation:none}
   .msg{animation:none}
-  .fab--bot .fab__logo,
+  .fab--bot::after,
   .bot.is-open .bot__av img,
   .bot.is-thinking .bot__av{animation:none}
+  .fab--bot:hover .fab__logo{transform:none}
 }
 .bot__x{margin-left:auto;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(255,255,255,.2);font-size:1.1rem;line-height:1}
 .bot__log{flex:1;overflow-y:auto;padding:1.15rem;display:flex;flex-direction:column;gap:.7rem}
