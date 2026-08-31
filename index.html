@@ -786,139 +786,164 @@ dialog.legal p{color:#9DB0CC;font-size:.92rem;margin-bottom:1rem}
 </style>
 <style id="arquitectura-v1">
 /* ═══ ARQUITECTURA DE LA PROTECCIÓN FINANCIERA ═══
-   Todo con prefijo .arq para no colisionar con estilos existentes.
-   Animaciones solo con transform/opacity (GPU), disparadas por la clase
-   .is-in que añade el IntersectionObserver. */
-.arq{position:relative;overflow:hidden;isolation:isolate}
+   Réplica de la infografía oficial: fondo claro, pirámide de trapecios y
+   casa dorada. Prefijo .arq para no colisionar con el resto del sitio.
+   Las animaciones se disparan con .is-in (IntersectionObserver) y solo
+   usan transform/opacity/stroke-dashoffset. */
+.arq{position:relative;overflow:hidden;isolation:isolate;
+  background:linear-gradient(170deg,#FBFCFD 0%,#F2F5F8 100%);color:#0A192F}
 .arq__fondo{position:absolute;inset:0;z-index:-1;pointer-events:none;
-  background:
-    radial-gradient(60% 45% at 78% 8%,rgba(212,175,55,.07),transparent 70%),
-    radial-gradient(50% 40% at 12% 88%,rgba(32,212,176,.05),transparent 70%);
-}
-.arq__fondo::before{content:"";position:absolute;inset:0;opacity:.035;
-  background-image:linear-gradient(rgba(255,255,255,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.6) 1px,transparent 1px);
-  background-size:64px 64px}
+  background:radial-gradient(58% 44% at 82% 10%,rgba(212,175,55,.07),transparent 70%),
+             radial-gradient(48% 38% at 10% 92%,rgba(30,140,140,.05),transparent 70%)}
+.arq__fondo::before{content:"";position:absolute;inset:0;opacity:.05;
+  background-image:linear-gradient(rgba(10,25,47,.5) 1px,transparent 1px),linear-gradient(90deg,rgba(10,25,47,.5) 1px,transparent 1px);
+  background-size:62px 62px}
 
-.arq__head{max-width:66ch;margin-bottom:3rem}
-.arq__linea{display:block;height:2px;width:0;margin:1.1rem 0 1.3rem;border-radius:2px;
-  background:linear-gradient(90deg,#D4AF37,rgba(212,175,55,0));
-  transition:width .9s cubic-bezier(.22,1,.36,1) .18s}
-.arq.is-in .arq__linea{width:180px}
-.arq__sub{margin:0 0 1rem;color:#D4AF37;font-size:1.02rem;font-weight:700;letter-spacing:.01em}
-.arq__h3{margin:3.6rem 0 1.5rem;font-family:"Fraunces",Georgia,serif;font-size:1.32rem;font-weight:600;color:#F8F9FA;letter-spacing:-.01em}
+.arq__top{display:grid;grid-template-columns:1fr;gap:2.6rem;align-items:start}
 
-/* ── Pirámide ── */
-.arq__piramide{position:relative;display:grid;gap:.7rem;justify-items:center;padding:2.2rem 0 1rem}
-.arq__casa{position:absolute;inset:0;width:100%;height:100%;color:rgba(212,175,55,.3);pointer-events:none;
-  stroke-dasharray:1400;stroke-dashoffset:1400}
-.arq.is-in .arq__casa{animation:arq-casa 1.1s ease-out .95s forwards}
+/* ── Encabezado ── */
+.arq__eyebrow{margin:0 0 .5rem;color:#B08D2A;font-size:.78rem;font-weight:800;letter-spacing:.22em;text-transform:uppercase}
+.arq__head h2{margin:0;font-family:"Fraunces",Georgia,serif;font-size:clamp(2rem,5.4vw,2.9rem);line-height:1.05;
+  font-weight:700;color:#0A192F;letter-spacing:-.025em;text-transform:uppercase}
+.arq__sub{margin:1.1rem 0 0;padding-top:1.1rem;border-top:2px solid rgba(212,175,55,.34);
+  color:#1E8C8C;font-size:.98rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;line-height:1.5}
+.arq__intro{margin:1.1rem 0 0;font-size:1rem;line-height:1.7;color:#3C4E63}
+.arq__cita{display:flex;gap:.8rem;align-items:flex-start;margin:1.5rem 0 0;padding:1.1rem 1.2rem;
+  border:1px solid rgba(10,25,47,.09);border-radius:14px;background:#fff;
+  box-shadow:0 8px 22px -14px rgba(10,25,47,.3);font-size:.94rem;line-height:1.6;color:#3C4E63}
+.arq__cita span{color:#1E8C8C;font-size:1.2rem;line-height:1}
+.arq__cita b{color:#0A192F}
+
+/* ── Pirámide dentro de la casa ── */
+.arq__piramide{position:relative;display:grid;justify-items:center;gap:.5rem;padding:3.4rem .5rem 1.6rem}
+.arq__casa{position:absolute;inset:0;width:100%;height:100%;color:#D4AF37;pointer-events:none;
+  stroke-dasharray:1700;stroke-dashoffset:1700;opacity:.55}
+.arq.is-in .arq__casa{animation:arq-casa 1.15s ease-out .9s forwards}
 @keyframes arq-casa{to{stroke-dashoffset:0}}
+.arq__techo{margin:0 0 1.4rem;text-align:center;font-size:.76rem;font-weight:800;letter-spacing:.14em;
+  text-transform:uppercase;color:#0A192F;line-height:1.5;
+  opacity:0;transform:translateY(-8px);transition:opacity .6s ease 1.5s,transform .6s ease 1.5s}
+.arq.is-in .arq__techo{opacity:1;transform:none}
 
-.arq-capa{position:relative;display:flex;align-items:center;gap:1rem;width:100%;padding:1.15rem 1.4rem;
-  border:1px solid rgba(255,255,255,.1);border-radius:14px;text-align:left;
-  box-shadow:0 6px 18px -8px rgba(0,0,0,.5);
-  opacity:0;transform:translateY(24px) scale(.97);
-  transition:opacity .52s cubic-bezier(.22,1,.36,1),transform .52s cubic-bezier(.22,1,.36,1),box-shadow .2s ease,border-color .2s ease}
+/* Trapecios: cada capa se recorta en ángulo para formar la pirámide.
+   El padding lateral generoso evita que el recorte toque el texto. */
+.arq-capa{position:relative;display:flex;align-items:center;gap:.9rem;width:100%;
+  padding:1.15rem 2.6rem;text-align:left;color:#fff;
+  opacity:0;transform:translateY(26px) scale(.97);
+  transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1),filter .22s ease}
 .arq.is-in .arq-capa{opacity:1;transform:none;transition-delay:var(--d,0s)}
-.arq-capa--1{background:linear-gradient(160deg,#12304F,#0A192F);border-color:rgba(74,144,226,.3)}
-.arq-capa--2{background:linear-gradient(160deg,#16436B,#0E2C46);border-color:rgba(74,144,226,.34);width:92%}
-.arq-capa--3{background:linear-gradient(160deg,#12463C,#0C2C28);border-color:rgba(47,191,135,.34);width:80%}
-.arq-capa--4{background:linear-gradient(160deg,#3D3316,#241D0C);border-color:rgba(212,175,55,.38);width:66%}
-.arq-capa__n{flex:none;width:38px;height:38px;display:grid;place-items:center;border-radius:11px;
-  background:rgba(255,255,255,.09);font-family:"Fraunces",Georgia,serif;font-size:1.15rem;color:#F8F9FA;
-  transition:transform .22s ease}
-.arq-capa h3{margin:0;font-size:1.02rem;color:#F8F9FA;letter-spacing:.01em}
-.arq-capa p{margin:.25rem 0 0;font-size:.86rem;line-height:1.55;color:#B9CADC}
+.arq-capa--4{clip-path:polygon(11% 0,89% 0,95% 100%,5% 100%);background:linear-gradient(150deg,#E8C55B,#C9A227)}
+.arq-capa--3{clip-path:polygon(9% 0,91% 0,95% 100%,5% 100%);background:linear-gradient(150deg,#7FB98A,#4E9068)}
+.arq-capa--2{clip-path:polygon(8% 0,92% 0,96% 100%,4% 100%);background:linear-gradient(150deg,#4E9FB5,#2A6E8E)}
+.arq-capa--1{clip-path:polygon(6% 0,94% 0,97% 100%,3% 100%);background:linear-gradient(150deg,#173F68,#0A192F)}
+.arq-capa--4 h3,.arq-capa--4 p{color:#3A2E08}
+.arq-capa--4 .arq-capa__n{background:rgba(58,46,8,.16);color:#3A2E08;border-color:rgba(58,46,8,.3)}
+.arq-capa__n{flex:none;width:40px;height:40px;display:grid;place-items:center;border-radius:50%;
+  border:2px solid rgba(255,255,255,.55);background:rgba(255,255,255,.14);
+  font-family:"Fraunces",Georgia,serif;font-size:1.2rem;font-weight:700;transition:transform .22s ease}
+.arq-capa h3{margin:0;font-size:1rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.arq-capa p{margin:.22rem 0 0;font-size:.83rem;line-height:1.5;opacity:.94}
+.arq__base{display:block;width:100%;height:12px;margin-top:.2rem;border-radius:4px;
+  background:linear-gradient(#E6EAEF,#CFD7E0);
+  opacity:0;transition:opacity .5s ease .05s}
+.arq.is-in .arq__base{opacity:1}
 @media(hover:hover){
-  .arq-capa:hover{transform:translateY(-4px) scale(1.012);box-shadow:0 14px 30px -10px rgba(0,0,0,.6);border-color:rgba(212,175,55,.45)}
-  .arq-capa:hover .arq-capa__n{transform:scale(1.06)}
+  .arq-capa:hover{filter:brightness(1.06)}
+  .arq-capa:hover .arq-capa__n{transform:scale(1.07)}
 }
 
 /* ── Datos ── */
-.arq__datos{display:grid;grid-template-columns:1fr;gap:1rem}
-.arq-dato{padding:1.5rem;border:1px solid rgba(255,255,255,.09);border-radius:16px;
-  background:rgba(255,255,255,.03);
-  opacity:0;transform:translateY(20px);
-  transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1)}
-.arq.is-in .arq-dato{opacity:1;transform:none}
-.arq.is-in .arq-dato:nth-child(2){transition-delay:.1s}
-.arq.is-in .arq-dato:nth-child(3){transition-delay:.2s}
-.arq.is-in .arq-dato:nth-child(4){transition-delay:.3s}
-.arq-anillo{width:84px;height:84px;transform:rotate(-90deg);margin-bottom:.5rem}
-.arq-anillo__v{transition:stroke-dashoffset 1.1s cubic-bezier(.22,1,.36,1) .25s}
-.arq.is-in .arq-anillo__v{stroke-dashoffset:calc(226 - (226 * var(--pct)) / 100)}
-.arq-dato__ico{display:grid;place-items:center;width:54px;height:54px;margin-bottom:.7rem;border-radius:50%;
-  background:rgba(212,175,55,.12);color:#D4AF37;font-size:1.35rem}
-.arq-dato__n{display:block;font-family:"Fraunces",Georgia,serif;font-size:2.1rem;line-height:1.1;color:#D4AF37;font-variant-numeric:tabular-nums}
-.arq-dato__n i{font-style:normal;font-size:.92rem;color:#B9CADC;letter-spacing:.04em}
-.arq-dato p{margin:.6rem 0 .7rem;font-size:.92rem;line-height:1.6;color:#D5E1EC}
-.arq-dato small{display:block;padding-top:.7rem;border-top:1px solid rgba(255,255,255,.08);font-size:.72rem;color:#8FA3BF}
-
-/* ── Flujo ── */
-.arq__flujo{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr;gap:1.4rem;counter-reset:paso}
-.arq__flujo li{position:relative;text-align:center;
+.arq__h3{margin:0 0 1.3rem;font-size:.92rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#0A192F}
+.arq__h3--c{text-align:center}
+.arq__datos{display:grid;gap:0}
+.arq-dato{display:flex;gap:1.1rem;align-items:flex-start;padding:1.3rem 0;border-top:1px solid rgba(10,25,47,.09);
   opacity:0;transform:translateY(18px);
   transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1)}
-.arq.is-in .arq__flujo li{opacity:1;transform:none;transition-delay:var(--d,0s)}
-.arq__flujo li::after{content:"↓";position:absolute;left:50%;bottom:-1.05rem;transform:translateX(-50%);color:rgba(212,175,55,.55);font-size:1rem}
-.arq__flujo li:last-child::after{display:none}
-.arq-paso__ico{display:grid;place-items:center;width:56px;height:56px;margin:0 auto .7rem;border-radius:50%;
-  border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);font-size:1.25rem}
-.arq-paso__ico--1{color:#4A90E2;border-color:rgba(74,144,226,.35)}
-.arq-paso__ico--2{color:#20D4B0;border-color:rgba(32,212,176,.35)}
-.arq-paso__ico--3{color:#2FBF87;border-color:rgba(47,191,135,.35)}
-.arq-paso__ico--4{color:#D4AF37;border-color:rgba(212,175,55,.4)}
-.arq__flujo b{display:block;font-size:.95rem;color:#F8F9FA;letter-spacing:.05em;text-transform:uppercase}
-.arq__flujo span:last-child{display:block;margin-top:.3rem;font-size:.85rem;line-height:1.55;color:#9DB0CC}
+.arq__datos .arq-dato:first-of-type{border-top:0}
+.arq.is-in .arq-dato{opacity:1;transform:none}
+.arq.is-in .arq-dato:nth-of-type(2){transition-delay:.1s}
+.arq.is-in .arq-dato:nth-of-type(3){transition-delay:.2s}
+.arq.is-in .arq-dato:nth-of-type(4){transition-delay:.3s}
+.arq-anillo{flex:none;width:74px;height:74px;transform:rotate(-90deg)}
+.arq-anillo__v{transition:stroke-dashoffset 1.15s cubic-bezier(.22,1,.36,1) .3s}
+.arq.is-in .arq-anillo__v{stroke-dashoffset:calc(220 - (220 * var(--pct)) / 100)}
+.arq-dato__ico{flex:none;display:grid;place-items:center;width:62px;height:62px;border-radius:50%;color:#fff;font-size:1.5rem}
+.arq-dato__ico--verde{background:#2E7D4F}
+.arq-dato__ico--azul{background:#1B5E9E}
+.arq-dato b{display:block;font-family:"Fraunces",Georgia,serif;font-size:1.7rem;line-height:1.15;
+  color:#0A192F;font-variant-numeric:tabular-nums}
+.arq-dato b i{font-style:normal;font-size:.92rem;font-family:inherit;color:#3C4E63;letter-spacing:.02em}
+.arq-dato p{margin:.35rem 0 .3rem;font-size:.92rem;line-height:1.6;color:#3C4E63}
+.arq-dato small{font-size:.74rem;color:#7A8CA3}
 
-/* ── Si falta una capa ── */
-.arq__faltas{display:grid;grid-template-columns:1fr;gap:1rem}
-.arq-falta{padding:1.4rem;border:1px solid rgba(255,255,255,.09);border-radius:15px;background:rgba(255,255,255,.03);
-  opacity:0;transform:translateY(20px);
-  transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1),border-color .2s ease,box-shadow .2s ease}
+/* ── Franja inferior ── */
+.arq__bajo{display:grid;grid-template-columns:1fr;gap:2.6rem;margin-top:3.2rem;padding-top:2.4rem;border-top:1px solid rgba(10,25,47,.1)}
+
+.arq__flujo{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,1fr);gap:1.6rem .8rem}
+.arq__flujo li{position:relative;text-align:center;
+  opacity:0;transform:translateY(16px);
+  transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1)}
+.arq.is-in .arq__flujo li{opacity:1;transform:none;transition-delay:var(--d,0s)}
+.arq-paso__ico{display:grid;place-items:center;width:58px;height:58px;margin:0 auto .65rem;border-radius:50%;
+  border:2px solid currentColor;background:#fff;font-size:1.3rem;
+  box-shadow:0 8px 20px -12px rgba(10,25,47,.4)}
+.arq-paso__ico--1{color:#173F68}.arq-paso__ico--2{color:#2A6E8E}
+.arq-paso__ico--3{color:#4E9068}.arq-paso__ico--4{color:#C9A227}
+.arq__flujo b{display:block;font-size:.85rem;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:#0A192F}
+.arq__flujo span:last-child{display:block;margin-top:.28rem;font-size:.8rem;line-height:1.5;color:#5B6E85}
+
+.arq__faltas{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem}
+.arq-falta{position:relative;padding:1.3rem 1rem;border:1px solid rgba(10,25,47,.09);border-radius:13px;text-align:center;
+  opacity:0;transform:translateY(18px);
+  transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1),box-shadow .2s ease,border-color .2s ease}
 .arq.is-in .arq-falta{opacity:1;transform:none;transition-delay:var(--d,0s)}
-.arq-falta > span{display:grid;place-items:center;width:34px;height:34px;margin-bottom:.7rem;border-radius:9px;
-  background:rgba(233,110,110,.13);color:#E96E6E;font-size:.9rem;font-weight:800;transition:transform .2s ease}
-.arq-falta b{display:block;font-size:.95rem;color:#F8F9FA;letter-spacing:.04em;text-transform:uppercase}
-.arq-falta p{margin:.45rem 0 0;font-size:.88rem;line-height:1.6;color:#B9CADC}
+.arq-falta--1{background:#F4F7FA}.arq-falta--2{background:#F1F7F8}
+.arq-falta--3{background:#F3F8F4}.arq-falta--4{background:#FBF8F0}
+.arq-falta__x{position:absolute;top:.6rem;right:.6rem;display:grid;place-items:center;width:20px;height:20px;
+  border-radius:50%;background:rgba(10,25,47,.16);color:#fff;font-size:.6rem;font-weight:800}
+.arq-falta__ico{display:block;margin:.2rem 0 .55rem;font-size:1.6rem;font-style:normal;transition:transform .2s ease}
+.arq-falta--1 .arq-falta__ico{color:#173F68}.arq-falta--2 .arq-falta__ico{color:#2A6E8E}
+.arq-falta--3 .arq-falta__ico{color:#4E9068}.arq-falta--4 .arq-falta__ico{color:#C9A227}
+.arq-falta b{display:block;font-size:.84rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#0A192F}
+.arq-falta p{margin:.4rem 0 0;font-size:.8rem;line-height:1.55;color:#5B6E85}
 @media(hover:hover){
-  .arq-falta:hover{transform:translateY(-5px);border-color:rgba(212,175,55,.35);box-shadow:0 14px 30px -12px rgba(0,0,0,.55)}
-  .arq-falta:hover > span{transform:scale(1.05)}
+  .arq-falta:hover{transform:translateY(-5px);border-color:rgba(212,175,55,.4);box-shadow:0 16px 32px -16px rgba(10,25,47,.35)}
+  .arq-falta:hover .arq-falta__ico{transform:scale(1.06)}
 }
 
 /* ── CTA ── */
-.arq__cta{margin-top:3.4rem;padding:2.4rem 1.6rem;border:1px solid rgba(212,175,55,.2);border-radius:20px;text-align:center;
-  background:linear-gradient(150deg,rgba(212,175,55,.08),rgba(255,255,255,.02))}
-.arq__cta h3{margin:0 0 .7rem;font-family:"Fraunces",Georgia,serif;font-size:1.45rem;color:#F8F9FA}
-.arq__cta p{max-width:56ch;margin:0 auto 1.5rem;font-size:.96rem;line-height:1.65;color:#C7D6E6}
+.arq__cta{display:grid;gap:1.4rem;margin-top:3rem;padding:2.2rem 1.6rem;border-radius:18px;
+  background:linear-gradient(140deg,#0A192F,#123152);color:#fff;text-align:center}
+.arq__cta h3{margin:0 0 .6rem;font-family:"Fraunces",Georgia,serif;font-size:1.4rem;color:#fff;letter-spacing:-.01em}
+.arq__cta p{margin:0;max-width:58ch;font-size:.95rem;line-height:1.65;color:#C3D2E2}
 .arq__cta-btns{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center}
 .arq__cta-btns .btn{min-height:44px}
 .arq__cta-btns i{display:inline-block;font-style:normal;transition:transform .2s ease}
 .arq__cta-btns .btn:hover i{transform:translateX(3px)}
-.arq__legal{margin:1.8rem 0 0;font-size:.75rem;line-height:1.65;color:#7E93B0}
+.arq__legal{margin:1.6rem 0 0;font-size:.74rem;line-height:1.65;color:#7A8CA3}
 
 /* ── Adaptación ── */
 @media(min-width:768px){
-  .arq__datos{grid-template-columns:repeat(2,1fr)}
-  .arq__faltas{grid-template-columns:repeat(2,1fr)}
-  .arq__flujo{grid-template-columns:repeat(4,1fr);gap:1rem}
-  .arq__flujo li::after{content:"→";left:auto;right:-.6rem;bottom:auto;top:28px;transform:none}
-  .arq-capa{padding:1.3rem 1.7rem}
+  .arq__flujo{grid-template-columns:repeat(4,1fr);gap:.8rem}
+  .arq__flujo li::after{content:"→";position:absolute;top:26px;right:-.5rem;color:rgba(10,25,47,.28);font-size:1.05rem}
+  .arq__flujo li:last-child::after{display:none}
+  .arq__faltas{grid-template-columns:repeat(4,1fr)}
+  .arq__bajo{grid-template-columns:1fr 1.35fr;gap:2rem}
+  .arq__bajo .arq__col:first-child{padding-right:2rem;border-right:1px solid rgba(10,25,47,.1)}
+  .arq-capa{padding:1.3rem 3rem}
 }
 @media(min-width:1200px){
-  .arq__datos{grid-template-columns:repeat(4,1fr)}
-  .arq__faltas{grid-template-columns:repeat(4,1fr)}
-  .arq__piramide{padding:3rem 0 1.6rem}
-  .arq-capa h3{font-size:1.1rem}
+  .arq__top{grid-template-columns:.92fr 1.25fr .92fr;gap:2rem;align-items:center}
+  .arq__head h2{font-size:2.7rem}
+  .arq__piramide{padding:3.8rem .5rem 1.6rem}
 }
 
 /* ── Movimiento reducido: estado final inmediato ── */
 @media(prefers-reduced-motion:reduce){
-  .arq__linea{width:180px;transition:none}
-  .arq-capa,.arq-dato,.arq__flujo li,.arq-falta{opacity:1;transform:none;transition:none}
+  .arq-capa,.arq-dato,.arq__flujo li,.arq-falta,.arq__techo,.arq__base{opacity:1;transform:none;transition:none}
   .arq__casa{stroke-dashoffset:0;animation:none}
-  .arq-anillo__v{transition:none;stroke-dashoffset:calc(226 - (226 * var(--pct)) / 100)}
-  .arq-capa:hover,.arq-falta:hover{transform:none}
+  .arq-anillo__v{transition:none;stroke-dashoffset:calc(220 - (220 * var(--pct)) / 100)}
+  .arq-falta:hover,.arq-capa:hover{transform:none;filter:none}
   .arq__cta-btns .btn:hover i{transform:none}
 }
 </style>
@@ -1198,120 +1223,116 @@ body.cliente-mode .cita__lado{padding:2.6rem}
   <div class="arq__fondo" aria-hidden="true"></div>
   <div class="wrap">
 
-    <header class="arq__head">
-      <p class="eyebrow">La arquitectura de</p>
-      <h2 class="title" id="arq-titulo">La protección financiera familiar</h2>
-      <span class="arq__linea" aria-hidden="true"></span>
-      <p class="arq__sub">4 capas. 1 propósito: proteger su presente, su futuro y a quienes más ama.</p>
-      <p class="lead">La vida es impredecible, pero tu familia no tiene por qué enfrentarla sin un plan. Estas cuatro capas trabajan juntas para ayudarte a construir mayor estabilidad financiera.</p>
-    </header>
+    <div class="arq__top">
+      <header class="arq__head">
+        <p class="arq__eyebrow">La arquitectura de</p>
+        <h2 id="arq-titulo">La protección<br>financiera familiar</h2>
+        <p class="arq__sub">4 capas. 1 propósito:<br>proteger su presente, su futuro y a quienes más ama.</p>
+        <p class="arq__intro">La vida es impredecible, pero tu familia no tiene por qué enfrentarla sin un plan. Estas cuatro capas trabajan juntas para ayudarte a construir mayor estabilidad financiera y tranquilidad siempre.</p>
+        <p class="arq__cita"><span aria-hidden="true">◆</span> No se trata de cuánto ganas, sino de <b>qué tan bien está protegido</b> lo que construyes.</p>
+      </header>
 
-    <!-- Pirámide: en el DOM va de arriba hacia abajo; la animación entra
-         desde la base (Salud) hacia la cima (Retiro) con delays propios. -->
-    <div class="arq__piramide">
-      <svg class="arq__casa" viewBox="0 0 400 300" aria-hidden="true" focusable="false">
-        <path d="M200 14 L386 118 L386 288 L14 288 L14 118 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-      </svg>
+      <!-- Pirámide dentro de la casa -->
+      <div class="arq__piramide">
+        <svg class="arq__casa" viewBox="0 0 460 400" aria-hidden="true" focusable="false" preserveAspectRatio="none">
+          <path d="M230 8 L448 150 L448 392 L12 392 L12 150 Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+        </svg>
+        <p class="arq__techo">Tranquilidad financiera<br>para tu familia</p>
 
-      <article class="arq-capa arq-capa--4" style="--d:.62s">
-        <span class="arq-capa__n" aria-hidden="true">4</span>
-        <div>
-          <h3>Retiro</h3>
-          <p>Construye recursos para mantener independencia y calidad de vida durante tus años de retiro.</p>
-        </div>
-      </article>
+        <article class="arq-capa arq-capa--4" style="--d:.66s">
+          <span class="arq-capa__n" aria-hidden="true">4</span>
+          <div><h3>Retiro</h3><p>Construye recursos para mantener independencia y calidad de vida durante tus años de retiro.</p></div>
+        </article>
+        <article class="arq-capa arq-capa--3" style="--d:.48s">
+          <span class="arq-capa__n" aria-hidden="true">3</span>
+          <div><h3>Seguro de vida</h3><p>Ayuda a proteger económicamente a quienes dependen de ti si llegara a faltar tu ingreso.</p></div>
+        </article>
+        <article class="arq-capa arq-capa--2" style="--d:.3s">
+          <span class="arq-capa__n" aria-hidden="true">2</span>
+          <div><h3>Fondo de emergencia</h3><p>Tu colchón financiero para gastos inesperados y períodos temporales de dificultad.</p></div>
+        </article>
+        <article class="arq-capa arq-capa--1" style="--d:.12s">
+          <span class="arq-capa__n" aria-hidden="true">1</span>
+          <div><h3>Seguro de salud</h3><p>Protege tu bienestar y ayuda a reducir el impacto financiero de enfermedades o accidentes.</p></div>
+        </article>
+        <span class="arq__base" aria-hidden="true"></span>
+      </div>
 
-      <article class="arq-capa arq-capa--3" style="--d:.46s">
-        <span class="arq-capa__n" aria-hidden="true">3</span>
-        <div>
-          <h3>Seguro de vida</h3>
-          <p>Ayuda a proteger económicamente a quienes dependen de ti si llegara a faltar tu ingreso.</p>
-        </div>
-      </article>
+      <!-- Datos -->
+      <div class="arq__datos">
+        <h3 class="arq__h3">Datos que importan</h3>
 
-      <article class="arq-capa arq-capa--2" style="--d:.3s">
-        <span class="arq-capa__n" aria-hidden="true">2</span>
-        <div>
-          <h3>Fondo de emergencia</h3>
-          <p>Tu colchón financiero para gastos inesperados y períodos temporales de dificultad.</p>
-        </div>
-      </article>
+        <article class="arq-dato">
+          <svg class="arq-anillo" viewBox="0 0 84 84" aria-hidden="true" focusable="false">
+            <circle cx="42" cy="42" r="35" fill="none" stroke="rgba(10,25,47,.08)" stroke-width="6"/>
+            <circle class="arq-anillo__v" cx="42" cy="42" r="35" fill="none" stroke="#1E8C8C" stroke-width="6"
+                    stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="220" style="--pct:37"/>
+          </svg>
+          <div><b><span data-cuenta="37">0</span>%</b>
+          <p>de los adultos no cubriría completamente un gasto inesperado de $400 utilizando efectivo o su equivalente.</p>
+          <small>Fuente: Reserva Federal (2025)</small></div>
+        </article>
 
-      <article class="arq-capa arq-capa--1" style="--d:.14s">
-        <span class="arq-capa__n" aria-hidden="true">1</span>
-        <div>
-          <h3>Seguro de salud</h3>
-          <p>Protege tu bienestar y ayuda a reducir el impacto financiero de enfermedades o accidentes.</p>
-        </div>
-      </article>
+        <article class="arq-dato">
+          <span class="arq-dato__ico arq-dato__ico--verde" aria-hidden="true">✚</span>
+          <div><b><span data-cuenta="4">0</span> <i>de cada</i> 10</b>
+          <p>adultos reportan algún tipo de deuda relacionada con atención médica.</p>
+          <small>Fuente: KFF (2023)</small></div>
+        </article>
+
+        <article class="arq-dato">
+          <span class="arq-dato__ico arq-dato__ico--azul" aria-hidden="true">$</span>
+          <div><b>$<span data-cuenta="220">0</span> <i>mil millones</i></b>
+          <p>es la estimación de deuda médica total en Estados Unidos.</p>
+          <small>Fuente: KFF (2023)</small></div>
+        </article>
+
+        <article class="arq-dato">
+          <svg class="arq-anillo" viewBox="0 0 84 84" aria-hidden="true" focusable="false">
+            <circle cx="42" cy="42" r="35" fill="none" stroke="rgba(10,25,47,.08)" stroke-width="6"/>
+            <circle class="arq-anillo__v" cx="42" cy="42" r="35" fill="none" stroke="#D4AF37" stroke-width="6"
+                    stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="220" style="--pct:35"/>
+          </svg>
+          <div><b><span data-cuenta="35">0</span>%</b>
+          <p>de los adultos no jubilados cree que su ahorro para el retiro va por buen camino.</p>
+          <small>Fuente: Reserva Federal (2025)</small></div>
+        </article>
+      </div>
     </div>
 
-    <!-- Datos verificados -->
-    <h3 class="arq__h3">Datos que importan</h3>
-    <div class="arq__datos">
-      <article class="arq-dato">
-        <svg class="arq-anillo" viewBox="0 0 84 84" aria-hidden="true" focusable="false">
-          <circle cx="42" cy="42" r="36" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="7"/>
-          <circle class="arq-anillo__v" cx="42" cy="42" r="36" fill="none" stroke="#4A90E2" stroke-width="7"
-                  stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="226" style="--pct:37"/>
-        </svg>
-        <b class="arq-dato__n"><span data-cuenta="37">0</span>%</b>
-        <p>de los adultos no cubriría completamente un gasto inesperado de $400 utilizando efectivo o su equivalente.</p>
-        <small>Reserva Federal — Economic Well-Being of U.S. Households</small>
-      </article>
+    <!-- Franja inferior -->
+    <div class="arq__bajo">
+      <div class="arq__col">
+        <h3 class="arq__h3 arq__h3--c">Cómo trabajan juntas las 4 capas</h3>
+        <ol class="arq__flujo">
+          <li style="--d:0s"><span class="arq-paso__ico arq-paso__ico--1" aria-hidden="true">✚</span><b>Salud</b><span>Te protege frente al impacto de eventos médicos.</span></li>
+          <li style="--d:.13s"><span class="arq-paso__ico arq-paso__ico--2" aria-hidden="true">◆</span><b>Emergencia</b><span>Absorbe gastos inesperados sin depender inmediatamente de deuda.</span></li>
+          <li style="--d:.26s"><span class="arq-paso__ico arq-paso__ico--3" aria-hidden="true">♥</span><b>Vida</b><span>Ayuda a proteger financieramente a tu familia.</span></li>
+          <li style="--d:.39s"><span class="arq-paso__ico arq-paso__ico--4" aria-hidden="true">◎</span><b>Retiro</b><span>Transforma años de ahorro y planificación en recursos para el futuro.</span></li>
+        </ol>
+      </div>
 
-      <article class="arq-dato">
-        <span class="arq-dato__ico" aria-hidden="true">✚</span>
-        <b class="arq-dato__n"><span data-cuenta="4">0</span> de cada 10</b>
-        <p>adultos reportan algún tipo de deuda relacionada con atención médica.</p>
-        <small>KFF — Health Care Debt in the United States</small>
-      </article>
-
-      <article class="arq-dato">
-        <span class="arq-dato__ico" aria-hidden="true">$</span>
-        <b class="arq-dato__n">$<span data-cuenta="220">0</span> <i>mil millones</i></b>
-        <p>es la estimación de deuda médica total en Estados Unidos.</p>
-        <small>KFF — Health Care Debt in the United States</small>
-      </article>
-
-      <article class="arq-dato">
-        <svg class="arq-anillo" viewBox="0 0 84 84" aria-hidden="true" focusable="false">
-          <circle cx="42" cy="42" r="36" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="7"/>
-          <circle class="arq-anillo__v" cx="42" cy="42" r="36" fill="none" stroke="#D4AF37" stroke-width="7"
-                  stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="226" style="--pct:35"/>
-        </svg>
-        <b class="arq-dato__n"><span data-cuenta="35">0</span>%</b>
-        <p>de los adultos no jubilados considera que su ahorro para el retiro va por buen camino.</p>
-        <small>Reserva Federal — Economic Well-Being of U.S. Households</small>
-      </article>
-    </div>
-
-    <!-- Cómo trabajan juntas -->
-    <h3 class="arq__h3">Cómo trabajan juntas las 4 capas</h3>
-    <ol class="arq__flujo">
-      <li style="--d:0s"><span class="arq-paso__ico arq-paso__ico--1" aria-hidden="true">✚</span><b>Salud</b><span>Te protege frente al impacto de eventos médicos.</span></li>
-      <li style="--d:.13s"><span class="arq-paso__ico arq-paso__ico--2" aria-hidden="true">◆</span><b>Emergencia</b><span>Absorbe gastos inesperados sin depender inmediatamente de deuda.</span></li>
-      <li style="--d:.26s"><span class="arq-paso__ico arq-paso__ico--3" aria-hidden="true">♥</span><b>Vida</b><span>Ayuda a proteger financieramente a tu familia.</span></li>
-      <li style="--d:.39s"><span class="arq-paso__ico arq-paso__ico--4" aria-hidden="true">◎</span><b>Retiro</b><span>Transforma años de ahorro y planificación en recursos para el futuro.</span></li>
-    </ol>
-
-    <!-- Si falta una capa -->
-    <h3 class="arq__h3">¿Qué pasa si falta una capa?</h3>
-    <div class="arq__faltas">
-      <article class="arq-falta" style="--d:0s"><span aria-hidden="true">✕</span><b>Sin salud</b><p>Un accidente o enfermedad puede transformarse en una carga financiera importante.</p></article>
-      <article class="arq-falta" style="--d:.1s"><span aria-hidden="true">✕</span><b>Sin emergencia</b><p>Un gasto inesperado puede obligar a utilizar tarjetas o préstamos.</p></article>
-      <article class="arq-falta" style="--d:.2s"><span aria-hidden="true">✕</span><b>Sin vida</b><p>Una familia puede enfrentar pérdida de ingresos y mayor presión económica.</p></article>
-      <article class="arq-falta" style="--d:.3s"><span aria-hidden="true">✕</span><b>Sin retiro</b><p>El futuro puede depender excesivamente del trabajo, familiares u otras fuentes.</p></article>
+      <div class="arq__col">
+        <h3 class="arq__h3 arq__h3--c">¿Qué pasa si falta una capa?</h3>
+        <div class="arq__faltas">
+          <article class="arq-falta arq-falta--1" style="--d:0s"><span class="arq-falta__x" aria-hidden="true">✕</span><i class="arq-falta__ico" aria-hidden="true">✚</i><b>Sin salud</b><p>Un accidente o enfermedad puede transformarse en una carga financiera importante.</p></article>
+          <article class="arq-falta arq-falta--2" style="--d:.1s"><span class="arq-falta__x" aria-hidden="true">✕</span><i class="arq-falta__ico" aria-hidden="true">◆</i><b>Sin emergencia</b><p>Un gasto inesperado puede obligar a utilizar tarjetas de crédito o préstamos.</p></article>
+          <article class="arq-falta arq-falta--3" style="--d:.2s"><span class="arq-falta__x" aria-hidden="true">✕</span><i class="arq-falta__ico" aria-hidden="true">♥</i><b>Sin vida</b><p>Una familia puede enfrentar pérdida de ingresos y mayor presión económica.</p></article>
+          <article class="arq-falta arq-falta--4" style="--d:.3s"><span class="arq-falta__x" aria-hidden="true">✕</span><i class="arq-falta__ico" aria-hidden="true">◎</i><b>Sin retiro</b><p>El futuro puede depender excesivamente del trabajo, familiares u otras fuentes.</p></article>
+        </div>
+      </div>
     </div>
 
     <!-- CTA -->
     <div class="arq__cta">
-      <h3>Descubre qué protección necesita tu familia</h3>
-      <p>Cada familia tiene necesidades diferentes. Podemos ayudarte a identificar cuáles opciones pueden ajustarse mejor a tu situación.</p>
+      <div>
+        <h3>Descubre qué protección necesita tu familia</h3>
+        <p>Cada familia tiene necesidades diferentes. Podemos ayudarte a identificar cuáles opciones pueden ajustarse mejor a tu situación.</p>
+      </div>
       <div class="arq__cta-btns">
         <a class="btn btn--gold solo-autorizado" href="#cotizar">Solicitar orientación <i aria-hidden="true">→</i></a>
         <a class="btn btn--gold solo-educativo" href="#calculadoras">Calcular mi necesidad <i aria-hidden="true">→</i></a>
-        <a class="btn btn--ghost" href="#pilares">Conocer mis opciones</a>
+        <a class="btn btn--ghost" href="#pilares">Conocer mis opciones <i aria-hidden="true">→</i></a>
       </div>
     </div>
 
