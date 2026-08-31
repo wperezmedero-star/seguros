@@ -784,6 +784,145 @@ dialog.legal p{color:#9DB0CC;font-size:.92rem;margin-bottom:1rem}
   .case{transform:none!important}
 }
 </style>
+<style id="arquitectura-v1">
+/* ═══ ARQUITECTURA DE LA PROTECCIÓN FINANCIERA ═══
+   Todo con prefijo .arq para no colisionar con estilos existentes.
+   Animaciones solo con transform/opacity (GPU), disparadas por la clase
+   .is-in que añade el IntersectionObserver. */
+.arq{position:relative;overflow:hidden;isolation:isolate}
+.arq__fondo{position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(60% 45% at 78% 8%,rgba(212,175,55,.07),transparent 70%),
+    radial-gradient(50% 40% at 12% 88%,rgba(32,212,176,.05),transparent 70%);
+}
+.arq__fondo::before{content:"";position:absolute;inset:0;opacity:.035;
+  background-image:linear-gradient(rgba(255,255,255,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.6) 1px,transparent 1px);
+  background-size:64px 64px}
+
+.arq__head{max-width:66ch;margin-bottom:3rem}
+.arq__linea{display:block;height:2px;width:0;margin:1.1rem 0 1.3rem;border-radius:2px;
+  background:linear-gradient(90deg,#D4AF37,rgba(212,175,55,0));
+  transition:width .9s cubic-bezier(.22,1,.36,1) .18s}
+.arq.is-in .arq__linea{width:180px}
+.arq__sub{margin:0 0 1rem;color:#D4AF37;font-size:1.02rem;font-weight:700;letter-spacing:.01em}
+.arq__h3{margin:3.6rem 0 1.5rem;font-family:"Fraunces",Georgia,serif;font-size:1.32rem;font-weight:600;color:#F8F9FA;letter-spacing:-.01em}
+
+/* ── Pirámide ── */
+.arq__piramide{position:relative;display:grid;gap:.7rem;justify-items:center;padding:2.2rem 0 1rem}
+.arq__casa{position:absolute;inset:0;width:100%;height:100%;color:rgba(212,175,55,.3);pointer-events:none;
+  stroke-dasharray:1400;stroke-dashoffset:1400}
+.arq.is-in .arq__casa{animation:arq-casa 1.1s ease-out .95s forwards}
+@keyframes arq-casa{to{stroke-dashoffset:0}}
+
+.arq-capa{position:relative;display:flex;align-items:center;gap:1rem;width:100%;padding:1.15rem 1.4rem;
+  border:1px solid rgba(255,255,255,.1);border-radius:14px;text-align:left;
+  box-shadow:0 6px 18px -8px rgba(0,0,0,.5);
+  opacity:0;transform:translateY(24px) scale(.97);
+  transition:opacity .52s cubic-bezier(.22,1,.36,1),transform .52s cubic-bezier(.22,1,.36,1),box-shadow .2s ease,border-color .2s ease}
+.arq.is-in .arq-capa{opacity:1;transform:none;transition-delay:var(--d,0s)}
+.arq-capa--1{background:linear-gradient(160deg,#12304F,#0A192F);border-color:rgba(74,144,226,.3)}
+.arq-capa--2{background:linear-gradient(160deg,#16436B,#0E2C46);border-color:rgba(74,144,226,.34);width:92%}
+.arq-capa--3{background:linear-gradient(160deg,#12463C,#0C2C28);border-color:rgba(47,191,135,.34);width:80%}
+.arq-capa--4{background:linear-gradient(160deg,#3D3316,#241D0C);border-color:rgba(212,175,55,.38);width:66%}
+.arq-capa__n{flex:none;width:38px;height:38px;display:grid;place-items:center;border-radius:11px;
+  background:rgba(255,255,255,.09);font-family:"Fraunces",Georgia,serif;font-size:1.15rem;color:#F8F9FA;
+  transition:transform .22s ease}
+.arq-capa h3{margin:0;font-size:1.02rem;color:#F8F9FA;letter-spacing:.01em}
+.arq-capa p{margin:.25rem 0 0;font-size:.86rem;line-height:1.55;color:#B9CADC}
+@media(hover:hover){
+  .arq-capa:hover{transform:translateY(-4px) scale(1.012);box-shadow:0 14px 30px -10px rgba(0,0,0,.6);border-color:rgba(212,175,55,.45)}
+  .arq-capa:hover .arq-capa__n{transform:scale(1.06)}
+}
+
+/* ── Datos ── */
+.arq__datos{display:grid;grid-template-columns:1fr;gap:1rem}
+.arq-dato{padding:1.5rem;border:1px solid rgba(255,255,255,.09);border-radius:16px;
+  background:rgba(255,255,255,.03);
+  opacity:0;transform:translateY(20px);
+  transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1)}
+.arq.is-in .arq-dato{opacity:1;transform:none}
+.arq.is-in .arq-dato:nth-child(2){transition-delay:.1s}
+.arq.is-in .arq-dato:nth-child(3){transition-delay:.2s}
+.arq.is-in .arq-dato:nth-child(4){transition-delay:.3s}
+.arq-anillo{width:84px;height:84px;transform:rotate(-90deg);margin-bottom:.5rem}
+.arq-anillo__v{transition:stroke-dashoffset 1.1s cubic-bezier(.22,1,.36,1) .25s}
+.arq.is-in .arq-anillo__v{stroke-dashoffset:calc(226 - (226 * var(--pct)) / 100)}
+.arq-dato__ico{display:grid;place-items:center;width:54px;height:54px;margin-bottom:.7rem;border-radius:50%;
+  background:rgba(212,175,55,.12);color:#D4AF37;font-size:1.35rem}
+.arq-dato__n{display:block;font-family:"Fraunces",Georgia,serif;font-size:2.1rem;line-height:1.1;color:#D4AF37;font-variant-numeric:tabular-nums}
+.arq-dato__n i{font-style:normal;font-size:.92rem;color:#B9CADC;letter-spacing:.04em}
+.arq-dato p{margin:.6rem 0 .7rem;font-size:.92rem;line-height:1.6;color:#D5E1EC}
+.arq-dato small{display:block;padding-top:.7rem;border-top:1px solid rgba(255,255,255,.08);font-size:.72rem;color:#8FA3BF}
+
+/* ── Flujo ── */
+.arq__flujo{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr;gap:1.4rem;counter-reset:paso}
+.arq__flujo li{position:relative;text-align:center;
+  opacity:0;transform:translateY(18px);
+  transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1)}
+.arq.is-in .arq__flujo li{opacity:1;transform:none;transition-delay:var(--d,0s)}
+.arq__flujo li::after{content:"↓";position:absolute;left:50%;bottom:-1.05rem;transform:translateX(-50%);color:rgba(212,175,55,.55);font-size:1rem}
+.arq__flujo li:last-child::after{display:none}
+.arq-paso__ico{display:grid;place-items:center;width:56px;height:56px;margin:0 auto .7rem;border-radius:50%;
+  border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);font-size:1.25rem}
+.arq-paso__ico--1{color:#4A90E2;border-color:rgba(74,144,226,.35)}
+.arq-paso__ico--2{color:#20D4B0;border-color:rgba(32,212,176,.35)}
+.arq-paso__ico--3{color:#2FBF87;border-color:rgba(47,191,135,.35)}
+.arq-paso__ico--4{color:#D4AF37;border-color:rgba(212,175,55,.4)}
+.arq__flujo b{display:block;font-size:.95rem;color:#F8F9FA;letter-spacing:.05em;text-transform:uppercase}
+.arq__flujo span:last-child{display:block;margin-top:.3rem;font-size:.85rem;line-height:1.55;color:#9DB0CC}
+
+/* ── Si falta una capa ── */
+.arq__faltas{display:grid;grid-template-columns:1fr;gap:1rem}
+.arq-falta{padding:1.4rem;border:1px solid rgba(255,255,255,.09);border-radius:15px;background:rgba(255,255,255,.03);
+  opacity:0;transform:translateY(20px);
+  transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1),border-color .2s ease,box-shadow .2s ease}
+.arq.is-in .arq-falta{opacity:1;transform:none;transition-delay:var(--d,0s)}
+.arq-falta > span{display:grid;place-items:center;width:34px;height:34px;margin-bottom:.7rem;border-radius:9px;
+  background:rgba(233,110,110,.13);color:#E96E6E;font-size:.9rem;font-weight:800;transition:transform .2s ease}
+.arq-falta b{display:block;font-size:.95rem;color:#F8F9FA;letter-spacing:.04em;text-transform:uppercase}
+.arq-falta p{margin:.45rem 0 0;font-size:.88rem;line-height:1.6;color:#B9CADC}
+@media(hover:hover){
+  .arq-falta:hover{transform:translateY(-5px);border-color:rgba(212,175,55,.35);box-shadow:0 14px 30px -12px rgba(0,0,0,.55)}
+  .arq-falta:hover > span{transform:scale(1.05)}
+}
+
+/* ── CTA ── */
+.arq__cta{margin-top:3.4rem;padding:2.4rem 1.6rem;border:1px solid rgba(212,175,55,.2);border-radius:20px;text-align:center;
+  background:linear-gradient(150deg,rgba(212,175,55,.08),rgba(255,255,255,.02))}
+.arq__cta h3{margin:0 0 .7rem;font-family:"Fraunces",Georgia,serif;font-size:1.45rem;color:#F8F9FA}
+.arq__cta p{max-width:56ch;margin:0 auto 1.5rem;font-size:.96rem;line-height:1.65;color:#C7D6E6}
+.arq__cta-btns{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center}
+.arq__cta-btns .btn{min-height:44px}
+.arq__cta-btns i{display:inline-block;font-style:normal;transition:transform .2s ease}
+.arq__cta-btns .btn:hover i{transform:translateX(3px)}
+.arq__legal{margin:1.8rem 0 0;font-size:.75rem;line-height:1.65;color:#7E93B0}
+
+/* ── Adaptación ── */
+@media(min-width:768px){
+  .arq__datos{grid-template-columns:repeat(2,1fr)}
+  .arq__faltas{grid-template-columns:repeat(2,1fr)}
+  .arq__flujo{grid-template-columns:repeat(4,1fr);gap:1rem}
+  .arq__flujo li::after{content:"→";left:auto;right:-.6rem;bottom:auto;top:28px;transform:none}
+  .arq-capa{padding:1.3rem 1.7rem}
+}
+@media(min-width:1200px){
+  .arq__datos{grid-template-columns:repeat(4,1fr)}
+  .arq__faltas{grid-template-columns:repeat(4,1fr)}
+  .arq__piramide{padding:3rem 0 1.6rem}
+  .arq-capa h3{font-size:1.1rem}
+}
+
+/* ── Movimiento reducido: estado final inmediato ── */
+@media(prefers-reduced-motion:reduce){
+  .arq__linea{width:180px;transition:none}
+  .arq-capa,.arq-dato,.arq__flujo li,.arq-falta{opacity:1;transform:none;transition:none}
+  .arq__casa{stroke-dashoffset:0;animation:none}
+  .arq-anillo__v{transition:none;stroke-dashoffset:calc(226 - (226 * var(--pct)) / 100)}
+  .arq-capa:hover,.arq-falta:hover{transform:none}
+  .arq__cta-btns .btn:hover i{transform:none}
+}
+</style>
+
 <style id="cita-agente-v1">
 /* ═══ CITA EN CURSO — guía de conversación del agente ═══ */
 .office-tabs{display:flex;gap:.5rem;margin:0 0 1.6rem;padding:.35rem;border-radius:14px;background:rgba(255,255,255,.04);width:fit-content}
@@ -1051,6 +1190,132 @@ body.cliente-mode .cita__lado{padding:2.6rem}
       <b>Contenido educativo</b>
       <p>Este sitio ofrece por ahora orientación, calculadoras y preguntas para preparar una conversación informada. No solicita, negocia ni vende seguros, y no describe productos de ninguna aseguradora. La licencia ya está emitida; cuando existan los nombramientos de aseguradora correspondientes se habilitará la opción de conversar con un agente.</p>
     </div>
+  </div>
+</section>
+
+<!-- ══ ARQUITECTURA DE LA PROTECCIÓN FINANCIERA ══ -->
+<section class="section arq" id="arquitectura" aria-labelledby="arq-titulo">
+  <div class="arq__fondo" aria-hidden="true"></div>
+  <div class="wrap">
+
+    <header class="arq__head">
+      <p class="eyebrow">La arquitectura de</p>
+      <h2 class="title" id="arq-titulo">La protección financiera familiar</h2>
+      <span class="arq__linea" aria-hidden="true"></span>
+      <p class="arq__sub">4 capas. 1 propósito: proteger su presente, su futuro y a quienes más ama.</p>
+      <p class="lead">La vida es impredecible, pero tu familia no tiene por qué enfrentarla sin un plan. Estas cuatro capas trabajan juntas para ayudarte a construir mayor estabilidad financiera.</p>
+    </header>
+
+    <!-- Pirámide: en el DOM va de arriba hacia abajo; la animación entra
+         desde la base (Salud) hacia la cima (Retiro) con delays propios. -->
+    <div class="arq__piramide">
+      <svg class="arq__casa" viewBox="0 0 400 300" aria-hidden="true" focusable="false">
+        <path d="M200 14 L386 118 L386 288 L14 288 L14 118 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+
+      <article class="arq-capa arq-capa--4" style="--d:.62s">
+        <span class="arq-capa__n" aria-hidden="true">4</span>
+        <div>
+          <h3>Retiro</h3>
+          <p>Construye recursos para mantener independencia y calidad de vida durante tus años de retiro.</p>
+        </div>
+      </article>
+
+      <article class="arq-capa arq-capa--3" style="--d:.46s">
+        <span class="arq-capa__n" aria-hidden="true">3</span>
+        <div>
+          <h3>Seguro de vida</h3>
+          <p>Ayuda a proteger económicamente a quienes dependen de ti si llegara a faltar tu ingreso.</p>
+        </div>
+      </article>
+
+      <article class="arq-capa arq-capa--2" style="--d:.3s">
+        <span class="arq-capa__n" aria-hidden="true">2</span>
+        <div>
+          <h3>Fondo de emergencia</h3>
+          <p>Tu colchón financiero para gastos inesperados y períodos temporales de dificultad.</p>
+        </div>
+      </article>
+
+      <article class="arq-capa arq-capa--1" style="--d:.14s">
+        <span class="arq-capa__n" aria-hidden="true">1</span>
+        <div>
+          <h3>Seguro de salud</h3>
+          <p>Protege tu bienestar y ayuda a reducir el impacto financiero de enfermedades o accidentes.</p>
+        </div>
+      </article>
+    </div>
+
+    <!-- Datos verificados -->
+    <h3 class="arq__h3">Datos que importan</h3>
+    <div class="arq__datos">
+      <article class="arq-dato">
+        <svg class="arq-anillo" viewBox="0 0 84 84" aria-hidden="true" focusable="false">
+          <circle cx="42" cy="42" r="36" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="7"/>
+          <circle class="arq-anillo__v" cx="42" cy="42" r="36" fill="none" stroke="#4A90E2" stroke-width="7"
+                  stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="226" style="--pct:37"/>
+        </svg>
+        <b class="arq-dato__n"><span data-cuenta="37">0</span>%</b>
+        <p>de los adultos no cubriría completamente un gasto inesperado de $400 utilizando efectivo o su equivalente.</p>
+        <small>Reserva Federal — Economic Well-Being of U.S. Households</small>
+      </article>
+
+      <article class="arq-dato">
+        <span class="arq-dato__ico" aria-hidden="true">✚</span>
+        <b class="arq-dato__n"><span data-cuenta="4">0</span> de cada 10</b>
+        <p>adultos reportan algún tipo de deuda relacionada con atención médica.</p>
+        <small>KFF — Health Care Debt in the United States</small>
+      </article>
+
+      <article class="arq-dato">
+        <span class="arq-dato__ico" aria-hidden="true">$</span>
+        <b class="arq-dato__n">$<span data-cuenta="220">0</span> <i>mil millones</i></b>
+        <p>es la estimación de deuda médica total en Estados Unidos.</p>
+        <small>KFF — Health Care Debt in the United States</small>
+      </article>
+
+      <article class="arq-dato">
+        <svg class="arq-anillo" viewBox="0 0 84 84" aria-hidden="true" focusable="false">
+          <circle cx="42" cy="42" r="36" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="7"/>
+          <circle class="arq-anillo__v" cx="42" cy="42" r="36" fill="none" stroke="#D4AF37" stroke-width="7"
+                  stroke-linecap="round" stroke-dasharray="226" stroke-dashoffset="226" style="--pct:35"/>
+        </svg>
+        <b class="arq-dato__n"><span data-cuenta="35">0</span>%</b>
+        <p>de los adultos no jubilados considera que su ahorro para el retiro va por buen camino.</p>
+        <small>Reserva Federal — Economic Well-Being of U.S. Households</small>
+      </article>
+    </div>
+
+    <!-- Cómo trabajan juntas -->
+    <h3 class="arq__h3">Cómo trabajan juntas las 4 capas</h3>
+    <ol class="arq__flujo">
+      <li style="--d:0s"><span class="arq-paso__ico arq-paso__ico--1" aria-hidden="true">✚</span><b>Salud</b><span>Te protege frente al impacto de eventos médicos.</span></li>
+      <li style="--d:.13s"><span class="arq-paso__ico arq-paso__ico--2" aria-hidden="true">◆</span><b>Emergencia</b><span>Absorbe gastos inesperados sin depender inmediatamente de deuda.</span></li>
+      <li style="--d:.26s"><span class="arq-paso__ico arq-paso__ico--3" aria-hidden="true">♥</span><b>Vida</b><span>Ayuda a proteger financieramente a tu familia.</span></li>
+      <li style="--d:.39s"><span class="arq-paso__ico arq-paso__ico--4" aria-hidden="true">◎</span><b>Retiro</b><span>Transforma años de ahorro y planificación en recursos para el futuro.</span></li>
+    </ol>
+
+    <!-- Si falta una capa -->
+    <h3 class="arq__h3">¿Qué pasa si falta una capa?</h3>
+    <div class="arq__faltas">
+      <article class="arq-falta" style="--d:0s"><span aria-hidden="true">✕</span><b>Sin salud</b><p>Un accidente o enfermedad puede transformarse en una carga financiera importante.</p></article>
+      <article class="arq-falta" style="--d:.1s"><span aria-hidden="true">✕</span><b>Sin emergencia</b><p>Un gasto inesperado puede obligar a utilizar tarjetas o préstamos.</p></article>
+      <article class="arq-falta" style="--d:.2s"><span aria-hidden="true">✕</span><b>Sin vida</b><p>Una familia puede enfrentar pérdida de ingresos y mayor presión económica.</p></article>
+      <article class="arq-falta" style="--d:.3s"><span aria-hidden="true">✕</span><b>Sin retiro</b><p>El futuro puede depender excesivamente del trabajo, familiares u otras fuentes.</p></article>
+    </div>
+
+    <!-- CTA -->
+    <div class="arq__cta">
+      <h3>Descubre qué protección necesita tu familia</h3>
+      <p>Cada familia tiene necesidades diferentes. Podemos ayudarte a identificar cuáles opciones pueden ajustarse mejor a tu situación.</p>
+      <div class="arq__cta-btns">
+        <a class="btn btn--gold solo-autorizado" href="#cotizar">Solicitar orientación <i aria-hidden="true">→</i></a>
+        <a class="btn btn--gold solo-educativo" href="#calculadoras">Calcular mi necesidad <i aria-hidden="true">→</i></a>
+        <a class="btn btn--ghost" href="#pilares">Conocer mis opciones</a>
+      </div>
+    </div>
+
+    <p class="arq__legal">Contenido educativo. La información presentada no constituye asesoramiento fiscal, legal, médico ni de inversión. La disponibilidad, elegibilidad, beneficios y características de los productos dependen de cada aseguradora y situación individual.</p>
   </div>
 </section>
 
@@ -3133,6 +3398,49 @@ $('#exitPanel').onclick = () => {
   url.hash = 'top';
   location.href = url.toString();
 };
+
+/* ═══════════ ARQUITECTURA DE LA PROTECCIÓN ═══════════
+   Un solo IntersectionObserver activa toda la sección: añade .is-in y el
+   CSS se encarga del resto (capas, anillos, tarjetas) mediante delays.
+   Los contadores sí necesitan JS, con requestAnimationFrame. */
+(function arquitectura(){
+  const sec = document.getElementById('arquitectura');
+  if (!sec) return;
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function contar(el){
+    const fin = Number(el.dataset.cuenta) || 0;
+    if (reduce) { el.textContent = fin; return; }
+    const dur = 1200, ini = performance.now();
+    const paso = ahora => {
+      const p = Math.min((ahora - ini) / dur, 1);
+      // easeOutCubic: sube rápido y se asienta al final.
+      el.textContent = Math.round(fin * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(paso);
+    };
+    requestAnimationFrame(paso);
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    // Sin soporte: se muestra todo en su estado final, sin animación.
+    sec.classList.add('is-in');
+    sec.querySelectorAll('[data-cuenta]').forEach(el => { el.textContent = el.dataset.cuenta; });
+    return;
+  }
+
+  const obs = new IntersectionObserver((entradas) => {
+    entradas.forEach(e => {
+      if (!e.isIntersecting) return;
+      sec.classList.add('is-in');
+      // Los contadores arrancan cuando las tarjetas ya están entrando.
+      setTimeout(() => sec.querySelectorAll('[data-cuenta]').forEach(contar), reduce ? 0 : 320);
+      obs.disconnect();           // una sola vez por visita
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+
+  obs.observe(sec);
+})();
 
 /* ═══════════ ACCESO DISCRETO AL PANEL ═══════════
    Tres toques seguidos en el logo del encabezado abren el panel interno.
