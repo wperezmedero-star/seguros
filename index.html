@@ -618,6 +618,19 @@ input:focus-visible,select:focus-visible,.pillar:focus-visible,.scard:focus-visi
   0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,.42)}
   50%{box-shadow:0 0 0 7px rgba(212,175,55,0)}
 }
+.bot.is-listening .bot__av{animation:av-escuchando 1.1s ease-in-out infinite;border-color:#2FBF87}
+.bot.is-listening .bot__av img{animation:av-responde 1.1s ease-in-out infinite}
+@keyframes av-escuchando{
+  0%,100%{box-shadow:0 0 0 2px rgba(47,191,135,.18),0 0 0 6px rgba(47,191,135,.05)}
+  50%{box-shadow:0 0 0 4px rgba(47,191,135,.28),0 0 0 10px rgba(47,191,135,0)}
+}
+.bot.is-speaking .bot__av{animation:av-hablando .82s ease-in-out infinite;border-color:#D4AF37}
+.bot.is-speaking .bot__av img{animation:av-responde .82s ease-in-out infinite}
+@keyframes av-hablando{
+  0%,100%{box-shadow:0 0 0 2px rgba(212,175,55,.16)}
+  50%{box-shadow:0 0 0 5px rgba(212,175,55,.3),0 0 16px rgba(212,175,55,.34)}
+}
+@keyframes av-responde{0%,100%{transform:scale(.96)}50%{transform:scale(1.04)}}
 .fab--bot{background:#0A192F;box-shadow:0 14px 34px -10px rgba(212,175,55,.7);border:1px solid rgba(212,175,55,.4)}
 .fab__logo{width:40px;height:40px;object-fit:contain;display:block;filter:drop-shadow(0 3px 8px rgba(0,0,0,.45))}
 /* Nada de giro permanente: un logo que se mueve sin parar cansa la vista.
@@ -657,7 +670,9 @@ input:focus-visible,select:focus-visible,.pillar:focus-visible,.scard:focus-visi
   .msg{animation:none}
   .fab--bot::after,
   .bot.is-open .bot__av img,
-  .bot.is-thinking .bot__av{animation:none}
+  .bot.is-thinking .bot__av,
+  .bot.is-listening .bot__av,.bot.is-listening .bot__av img,
+  .bot.is-speaking .bot__av,.bot.is-speaking .bot__av img{animation:none}
   .fab--bot:hover .fab__logo{transform:none}
 }
 .bot__x{margin-left:auto;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(255,255,255,.2);font-size:1.1rem;line-height:1}
@@ -3175,7 +3190,7 @@ $('#botName').textContent = BOT_TREE.name;
 
 /* Voz provista por el navegador. Este sitio no conserva audio ni transcripciones. */
 const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
-const V = { lang:'es-US', output:false, recognition:null, listening:false };
+const V = { lang:'es-US', output:false, recognition:null, listening:false, speechId:0 };
 const BOT_COPY = {
   es: {
     name:BOT_TREE.name, sub:'Orientación educativa', langButton:'ES', langLabel:'Cambiar a inglés',
@@ -3216,11 +3231,15 @@ const FREE_REPLIES = {
 function copy(){ return BOT_COPY[V.lang.startsWith('en') ? 'en' : 'es']; }
 function speak(text){
   if (!V.output || !('speechSynthesis' in window) || !text) return;
+  const speechId=++V.speechId;
   speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = V.lang; utterance.rate = .96; utterance.pitch = 1;
   const match = speechSynthesis.getVoices().find(v => v.lang.toLowerCase().startsWith(V.lang.slice(0,2).toLowerCase()));
   if (match) utterance.voice = match;
+  utterance.onstart=()=>{if(speechId===V.speechId)bot.classList.add('is-speaking');};
+  const finish=()=>{if(speechId===V.speechId)bot.classList.remove('is-speaking');};
+  utterance.onend=finish; utterance.onerror=finish;
   speechSynthesis.speak(utterance);
 }
 
@@ -3486,6 +3505,7 @@ function startEnglish(){
   showTopicMenu();
 }
 function resetConversation(){
+  V.speechId++; bot.classList.remove('is-speaking','is-listening');
   if ('speechSynthesis' in window) speechSynthesis.cancel();
   Object.keys(S.data).forEach(k=>delete S.data[k]);
   S.tags.length=0; Object.keys(S.meta).forEach(k=>delete S.meta[k]);
@@ -3528,7 +3548,10 @@ $('#botVoice').onclick = () => {
   $('#botVoice').setAttribute('aria-pressed',String(V.output));
   syncLanguage();
   $('#botVoiceStatus').textContent=V.output?copy().voiceOn:copy().voiceOff;
-  if (V.output) speak(copy().voiceOn); else if ('speechSynthesis' in window) speechSynthesis.cancel();
+  if (V.output) speak(copy().voiceOn); else {
+    V.speechId++; bot.classList.remove('is-speaking');
+    if ('speechSynthesis' in window) speechSynthesis.cancel();
+  }
 };
 
 function ensureRecognition(){
@@ -3536,7 +3559,7 @@ function ensureRecognition(){
   if (V.recognition) return V.recognition;
   const r = new SpeechRecognitionAPI();
   r.continuous=false; r.interimResults=false; r.maxAlternatives=1;
-  r.onstart=()=>{V.listening=true;$('#botMic').classList.add('is-listening');$('#botVoiceStatus').textContent=copy().listening;};
+  r.onstart=()=>{V.listening=true;$('#botMic').classList.add('is-listening');bot.classList.add('is-listening');$('#botVoiceStatus').textContent=copy().listening;};
   r.onresult=e=>{
     const transcript=e.results[0][0].transcript.trim();
     $('#botInput').value=transcript; $('#botVoiceStatus').textContent=copy().heard;
@@ -3546,7 +3569,7 @@ function ensureRecognition(){
     if (e.error==='aborted') return;
     $('#botVoiceStatus').textContent=(e.error==='not-allowed'||e.error==='service-not-allowed')?copy().denied:copy().unavailable;
   };
-  r.onend=()=>{V.listening=false;$('#botMic').classList.remove('is-listening');};
+  r.onend=()=>{V.listening=false;$('#botMic').classList.remove('is-listening');bot.classList.remove('is-listening');};
   V.recognition=r; return r;
 }
 $('#botMic').onclick=()=>{
@@ -3571,6 +3594,7 @@ $('#botOpen').onclick = () => {
 $('#botClose').onclick = () => {
   bot.classList.remove('is-open'); $('#botOpen').setAttribute('aria-expanded', false);
   if (V.recognition && V.listening) V.recognition.stop();
+  V.speechId++; bot.classList.remove('is-speaking','is-listening');
   if ('speechSynthesis' in window) speechSynthesis.cancel();
 };
 
