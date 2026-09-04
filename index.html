@@ -3198,7 +3198,7 @@ const R = { pc:null, dc:null, stream:null, audio:null, timer:null, connecting:fa
 const BOT_COPY = {
   es: {
     name:BOT_TREE.name, sub:'Orientación educativa', langButton:'ES', langLabel:'Cambiar a inglés',
-    input:'Escribe aquí…', mic:'Hablar por micrófono', listening:'Escuchando… Habla con naturalidad.',
+    input:'Escribe tu pregunta sobre seguros…', mic:'Hablar por micrófono', listening:'Escuchando… Habla con naturalidad.',
     heard:'Entendido. Preparando tu respuesta…', unavailable:'Tu navegador no permite usar el micrófono aquí. Puedes escribir tu pregunta.',
     denied:'El micrófono está bloqueado. Puedes habilitarlo en los permisos del navegador o escribir tu pregunta.',
     voiceOn:'Respuestas por voz activadas.', voiceOff:'Respuestas por voz desactivadas.',
@@ -3210,7 +3210,7 @@ const BOT_COPY = {
   },
   en: {
     name:'Family Protection Assistant', sub:'Educational guidance', langButton:'EN', langLabel:'Cambiar a español',
-    input:'Type your question…', mic:'Speak using the microphone', listening:'Listening… Speak naturally.',
+    input:'Type your insurance question…', mic:'Speak using the microphone', listening:'Listening… Speak naturally.',
     heard:'Got it. Preparing your answer…', unavailable:'Your browser cannot use the microphone here. You can type your question instead.',
     denied:'Microphone access is blocked. You can allow it in your browser settings or type your question.',
     voiceOn:'Voice responses are on.', voiceOff:'Voice responses are off.',
@@ -3224,19 +3224,47 @@ const BOT_COPY = {
 const FREE_REPLIES = {
   es: {
     vida:'El seguro de vida puede ayudar a proteger ingresos, deudas, educación y gastos finales. La cantidad y el tipo de cobertura requieren una revisión humana de tus prioridades y de las condiciones aplicables.',
+    vida_necesidad:'La regla de diez veces el ingreso es solo un punto de partida. Una revisión más completa suma hipoteca, deudas, educación, gastos finales y otros objetivos, y después resta la cobertura existente y los activos líquidos disponibles. ¿Quieres abrir la calculadora educativa de necesidad de seguro de vida?',
+    vida_tipo:'El seguro temporal puede servir para necesidades de duración definida, como años de crianza, hipoteca o reemplazo de ingresos. El permanente está diseñado para durar mientras se cumplan las condiciones contractuales y puede incluir valor en efectivo; la comparación debe revisar costos, duración, garantías, riesgos y alternativas. ¿Quieres continuar con unas preguntas generales para ordenar tu necesidad?',
+    vida_trabajo:'La cobertura de vida del trabajo puede ser útil, pero conviene confirmar cuánto ofrece, si es portable o convertible y qué ocurre al cambiar de empleo. Una cobertura individual puede complementar el beneficio laboral. ¿Deseas revisar qué responsabilidades familiares quieres proteger?',
+    vida_salud:'Tener una condición de salud no significa automáticamente que no puedas obtener cobertura. Las aseguradoras y los productos aplican criterios distintos, por lo que William tendría que revisar las opciones disponibles sin prometer aprobación. ¿Quieres preparar una conversación general sin compartir diagnósticos ni medicamentos?',
+    vida_revision:'Conviene revisar la póliza después de cambios importantes, como matrimonio, nacimiento de un hijo, compra de vivienda, cambio de trabajo, una deuda grande, divorcio o fallecimiento de un beneficiario. También es prudente revisar periódicamente beneficiarios y datos de contacto. ¿Quieres ver las preguntas que te ayudarán a prepararte?',
     salud:'La cobertura de salud debe revisarse según residencia, red médica, medicamentos, costos y período de inscripción aplicable. Este asistente solo ofrece orientación educativa y no determina elegibilidad.',
+    salud_costos:'La prima no es el costo total. También pueden influir el deducible, los copagos, el coaseguro, el máximo de bolsillo y los servicios fuera de la red o no cubiertos. ¿Quieres abrir la calculadora educativa de costo anual de salud?',
+    salud_terminos:'La prima mantiene activa la cobertura; el deducible es la cantidad aplicable que pagas antes de que el plan comparta ciertos costos; el copago es una cantidad fija y el coaseguro es un porcentaje, según las reglas del plan. ¿Quieres comparar también el máximo de bolsillo y la red?',
+    salud_red:'Para confirmar si un médico está en la red, revisa el directorio actualizado del plan y confírmalo directamente con la oficina antes de recibir atención. Una oficina puede aceptar una compañía sin participar en todos sus planes. ¿Quieres saber qué otros detalles conviene verificar antes de inscribirte?',
+    salud_bolsillo:'El máximo de bolsillo limita determinados gastos cubiertos y aplicables durante el año, normalmente dentro de la red. La prima, ciertos gastos fuera de la red y servicios no cubiertos pueden quedar fuera; no es el máximo absoluto de todo gasto médico. ¿Quieres revisar un ejemplo en la calculadora?',
     medicare:'Medicare tiene reglas y períodos propios. Para información oficial consulta Medicare.gov; cualquier conversación sobre planes debe continuar con un agente debidamente certificado y materiales aprobados.',
+    medicare_65:'Cumplir 65 años no significa que cualquier plan sea adecuado ni que todas las personas sigan el mismo proceso. La inscripción y la coordinación con cobertura laboral requieren una revisión individual; algunas personas también pueden ser elegibles antes por discapacidad, enfermedad renal terminal o ALS. ¿Quieres preparar las preguntas para hablar con un agente certificado?',
     retiro:'Las anualidades son contratos a largo plazo y pueden incluir límites de liquidez o cargos por retiro. Antes de considerar una opción deben revisarse objetivos, plazo, riesgos, situación financiera y alternativas.',
+    retiro_ingreso:'Algunos contratos ofrecen modalidades de ingreso de por vida, pero no toda anualidad ni todo retiro produce el mismo resultado. Las garantías dependen del contrato, las elecciones, los cargos y la capacidad de pago de la aseguradora emisora. ¿Quieres revisar qué factores pueden afectar el monto?',
+    retiro_liquidez:'La posibilidad de retirar dinero depende del contrato. Puede haber períodos y cargos de rescate, límites de retiro, ajustes o consecuencias fiscales; antes de decidir conviene confirmar por escrito cuánto es líquido en distintos momentos. ¿Quieres continuar con una revisión general de tus objetivos y plazo?',
+    retiro_indice:'Una anualidad indexada no necesariamente invierte directamente en el índice. El interés suele acreditarse mediante una fórmula vinculada en parte a un índice y puede aplicar participación, tope, margen, período y otras reglas contractuales. ¿Quieres saber qué documentos y condiciones deben compararse?',
+    retiro_cuatro:'La regla del 4 % es una hipótesis de planificación, no una garantía. El resultado puede cambiar por rendimientos, inflación, impuestos, comisiones, duración del retiro y secuencia de pérdidas. ¿Quieres probar distintos supuestos en la calculadora educativa?',
     contacto: AUTORIZADO ? 'Puedo ayudarte a preparar una conversación con William. Elige “Ver horarios” o abre el formulario; no compartas datos sensibles en este chat.' : 'Puedes escribirle a William por WhatsApp para una pregunta general. Mientras el sitio esté en modo educativo, el asistente no solicita ni negocia seguros.',
-    fallback:'Puedo orientarte sobre seguro de vida, cobertura de salud, Medicare o retiro y anualidades. Escribe uno de esos temas o usa las opciones de abajo.'
+    fallback:'No quiero adivinar una respuesta. Puedo orientarte sin costo sobre seguro de vida, cobertura de salud, Medicare o retiro y anualidades. Elige el tema más cercano y te haré una sola pregunta para ayudarte a avanzar.'
   },
   en: {
     vida:'Life insurance may help protect income, debts, education goals, and final expenses. The amount and type of coverage require a human review of your priorities and the applicable terms.',
+    vida_necesidad:'Ten times income is only a starting point. A fuller review adds mortgage debt, other debts, education, final expenses, and other goals, then subtracts existing coverage and liquid assets that would truly be available. Would you like to open the educational life insurance needs calculator?',
+    vida_tipo:'Term insurance can address needs with a defined duration, such as child-rearing years, a mortgage, or income replacement. Permanent insurance is designed to continue while contractual conditions are met and may include cash value; compare cost, duration, guarantees, risks, and alternatives. Would you like to answer a few general questions to organize your need?',
+    vida_trabajo:'Employer life insurance can be useful, but confirm the amount, portability, conversion options, and what happens if you leave the job. Individual coverage may complement the workplace benefit. Would you like to review the family responsibilities you want to protect?',
+    vida_salud:'A health condition does not automatically mean coverage is unavailable. Insurers and products use different criteria, so William would need to review available options without promising approval. Would you like to prepare a general conversation without sharing diagnoses or medications?',
+    vida_revision:'Reviewing a policy can be important after marriage, a birth, a home purchase, a job change, a major new debt, divorce, or a beneficiary’s death. Beneficiaries and contact information should also be checked periodically. Would you like to see the questions that can help you prepare?',
     salud:'Health coverage should be reviewed based on residence, provider network, prescriptions, costs, and the applicable enrollment period. This assistant provides education only and does not determine eligibility.',
+    salud_costos:'The premium is not the total cost. The deductible, copays, coinsurance, out-of-pocket maximum, and noncovered or out-of-network services may also matter. Would you like to open the educational annual health cost calculator?',
+    salud_terminos:'The premium keeps coverage active; the deductible is the applicable amount paid before the plan shares certain costs; a copay is a fixed amount and coinsurance is a percentage under the plan’s rules. Would you like to compare the out-of-pocket maximum and provider network too?',
+    salud_red:'To confirm whether a doctor is in network, use the plan’s current directory and verify directly with the office before receiving care. An office may accept an insurer without participating in every plan. Would you like to review other details to verify before enrollment?',
+    salud_bolsillo:'The out-of-pocket maximum limits certain covered and applicable annual expenses, generally in network. Premiums and some out-of-network or noncovered expenses may be excluded, so it is not an absolute cap on all medical spending. Would you like to review an example in the calculator?',
     medicare:'Medicare has its own eligibility and enrollment rules. Use Medicare.gov for official information; discussions about specific plans must continue with a properly certified agent using approved materials.',
+    medicare_65:'Turning 65 does not mean every plan is suitable or that everyone follows the same process. Enrollment and coordination with employer coverage require an individual review; some people may qualify earlier due to disability, ESRD, or ALS. Would you like to prepare questions for a certified agent?',
     retiro:'Annuities are long-term contracts and may include liquidity limits or surrender charges. Goals, time horizon, risks, finances, and alternatives should be reviewed before considering an option.',
+    retiro_ingreso:'Some contracts offer lifetime income options, but not every annuity or withdrawal produces the same result. Guarantees depend on the contract, elections, charges, and the claims-paying ability of the issuing insurer. Would you like to review the factors that may affect the amount?',
+    retiro_liquidez:'Access to money depends on the contract. Surrender periods and charges, withdrawal limits, adjustments, or tax consequences may apply; confirm in writing how much is liquid at different times. Would you like to continue with a general review of your goals and time horizon?',
+    retiro_indice:'An indexed annuity does not necessarily invest directly in an index. Interest is generally credited using a formula linked in part to an index and may use participation rates, caps, margins, periods, and other contract rules. Would you like to know which documents and conditions should be compared?',
+    retiro_cuatro:'The 4% rule is a planning assumption, not a guarantee. Results can change with returns, inflation, taxes, fees, retirement length, and the sequence of losses. Would you like to test different assumptions in the educational calculator?',
     contacto: AUTORIZADO ? 'I can help you prepare a conversation with William. Choose “View times” or open the contact form, and do not share sensitive information in this chat.' : 'You can message William on WhatsApp with a general question. While this site is in educational mode, the assistant does not solicit or negotiate insurance.',
-    fallback:'I can provide educational guidance about life insurance, health coverage, Medicare, or retirement and annuities. Type one of those topics or use the options below.'
+    fallback:'I do not want to guess. I can provide no-cost guidance about life insurance, health coverage, Medicare, or retirement and annuities. Choose the closest topic and I will ask one question to help you move forward.'
   }
 };
 
@@ -3470,12 +3498,33 @@ function checkInterrupts(text){
 
 function topicFrom(text){
   const low = text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  if (/(diez veces|10 veces|ten times|cuanto seguro|how much life)/.test(low)) return 'vida_necesidad';
+  if (/(temporal|permanente|term (life|insurance)|permanent (life|insurance)|whole life)/.test(low)) return 'vida_tipo';
+  if (/(seguro.*trabajo|trabajo.*seguro|empleador|employer|workplace|cambio de empleo|leave.*job)/.test(low)) return 'vida_trabajo';
+  if (/(condicion de salud|problema de salud|health condition|enfermedad.*seguro de vida)/.test(low)) return 'vida_salud';
+  if (/(revisar.*poliza|cambiar.*beneficiario|beneficiario|review.*policy|change.*beneficiar)/.test(low)) return 'vida_revision';
+  if (/(prima.*deducible|costo.*plan|plan.*barato|costo anual|total cost|annual cost|cheapest plan)/.test(low)) return 'salud_costos';
+  if (/(que (es|significa).*(prima|deducible|copago|coaseguro)|deductible|copay|coinsurance)/.test(low)) return 'salud_terminos';
+  if (/(medico.*red|doctor.*red|proveedor.*red|in.?network|provider network|doctor.*network)/.test(low)) return 'salud_red';
+  if (/(maximo de bolsillo|out.of.pocket maximum|out of pocket maximum)/.test(low)) return 'salud_bolsillo';
+  if (/(cumplir.*65|tengo 65|turning 65|turn 65|cerca.*65|almost 65)/.test(low)) return 'medicare_65';
+  if (/(ingreso.*por vida|dinero.*acabar|lifetime income|money.*run out)/.test(low)) return 'retiro_ingreso';
+  if (/(retirar.*dinero|sacar.*dinero|cargo.*rescate|liquid|withdraw|surrender charge)/.test(low)) return 'retiro_liquidez';
+  if (/(indexada|indice|indexed annuit|invest.*index)/.test(low)) return 'retiro_indice';
+  if (/(regla.*4|4 ?%|four percent rule)/.test(low)) return 'retiro_cuatro';
   if (/(medicare|65 anos|65 years)/.test(low)) return 'medicare';
   if (/(vida|life insurance|familia|family|hipoteca|mortgage|gastos finales|final expenses)/.test(low)) return 'vida';
   if (/(salud|health|medical coverage|obamacare|aca)/.test(low)) return 'salud';
   if (/(retiro|retirement|anualidad|annuit)/.test(low)) return 'retiro';
   if (/(cita|appointment|contact|hablar con william|talk to william|telefono|phone|whatsapp)/.test(low)) return 'contacto';
   return 'fallback';
+}
+function baseTopic(topic){
+  if (topic.startsWith('vida_')) return 'vida';
+  if (topic.startsWith('salud_')) return 'salud';
+  if (topic.startsWith('medicare_')) return 'medicare';
+  if (topic.startsWith('retiro_')) return 'retiro';
+  return topic;
 }
 function openWhatsApp(){
   const msg = V.lang.startsWith('en') ? 'Hello William, I visited your website and have a general question.' : 'Hola William, visité tu página y tengo una pregunta general.';
@@ -3498,7 +3547,7 @@ function contextualButtons(topic){
 function respondTopic(topic){
   const lang = V.lang.startsWith('en') ? 'en' : 'es';
   say(FREE_REPLIES[lang][topic] || FREE_REPLIES[lang].fallback);
-  contextualButtons(topic);
+  contextualButtons(baseTopic(topic));
 }
 function showTopicMenu(){
   const en = V.lang.startsWith('en');
