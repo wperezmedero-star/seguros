@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>William Pérez — Agente de seguros en Hialeah</title>
+<title>William Pérez-Mederos — Agente de seguros en Hialeah</title>
 <meta name="description" content="Agente de seguros licenciado en Florida. Vida, salud, Medicare y anualidades. Atención en español en Hialeah y todo el sur de la Florida.">
 <meta name="theme-color" content="#0B2B3C">
-<meta property="og:title" content="William Pérez — Agente de seguros">
+<meta property="og:title" content="William Pérez-Mederos — Agente de seguros">
 <meta property="og:description" content="Vida, salud, Medicare y anualidades. En español, en Hialeah.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="app.webmanifest">
@@ -17,7 +17,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
 
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"InsuranceAgency","name":"William Pérez — Agente de Seguros","url":"https://williamperezseguros.com","telephone":"+1-786-354-8796","areaServed":"Miami-Dade County, Florida","availableLanguage":["es","en"],"address":{"@type":"PostalAddress","addressLocality":"Hialeah","addressRegion":"FL","addressCountry":"US"}}
+{"@context":"https://schema.org","@type":"InsuranceAgency","name":"William Pérez-Mederos — Agente de Seguros","url":"https://williamperezseguros.com","telephone":"+1-786-354-8796","areaServed":"Miami-Dade County, Florida","availableLanguage":["es","en"],"address":{"@type":"PostalAddress","streetAddress":"650 E 58th St","addressLocality":"Hialeah","addressRegion":"FL","postalCode":"33013","addressCountry":"US"}}
 </script>
 
 <style>
@@ -28,7 +28,8 @@
 
 :root{
   --tinta:#0B2B3C; --tinta-2:#123B50;
-  --mar:#0E9C9C; --sol:#FFC24B;
+  --mar:#0E9C9C; --sol:#D4A94A;   /* dorado credencial */
+  --sol-claro:#F0CE76;
   --espuma:#EEF4F5; --nube:#FFFFFF;
   --texto:#0B2B3C; --texto-suave:#4A6472;
   --linea:#D6E2E5; --wa:#1EBE5D;
@@ -112,22 +113,37 @@ a{color:inherit}
   from{font-variation-settings:"wdth" 64;opacity:0;filter:blur(7px)}
   to  {font-variation-settings:"wdth" 118;opacity:1;filter:blur(0)}
 }
-.id .rol{margin:11px 0 0;font-size:16px;color:#C4DFE4;max-width:24ch}
-.sello{
-  display:inline-flex;align-items:center;gap:7px;margin-top:15px;
-  background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.24);
-  padding:7px 13px 7px 9px;border-radius:999px;font-size:12.5px;color:#DEEFF2;
-  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);position:relative;overflow:hidden;
+.id .lema{margin:12px 0 0;font-size:19px;line-height:1.25;color:var(--sol-claro);
+  font-weight:600;font-variation-settings:"wdth" 104;max-width:20ch;letter-spacing:-.01em}
+.id .rol{margin:7px 0 0;font-size:15.5px;color:#B9D8DE;max-width:26ch}
+/* ---- franja de credenciales: lo que compra la confianza ---- */
+.credencial{
+  position:relative;z-index:5;background:var(--tinta-2);color:#fff;
+  border-top:1px solid rgba(255,255,255,.09);
+  display:flex;align-items:center;flex-wrap:wrap;gap:0 14px;
+  padding:14px var(--gutter) 15px;
 }
-.sello svg{width:14px;height:14px;flex:none;color:var(--sol)}
-.sello::after{
+.credencial .escudo{width:26px;height:26px;flex:none;color:var(--sol);margin-right:2px}
+.credencial .dato{padding-left:14px;border-left:1px solid rgba(255,255,255,.18);line-height:1.25}
+.credencial .dato:first-of-type{padding-left:0;border-left:0}
+.credencial .dato b{display:block;font-size:15px;font-weight:700;letter-spacing:-.01em;
+  font-variation-settings:"wdth" 108;font-variant-numeric:tabular-nums}
+.credencial .dato span{display:block;font-size:11px;color:#8FB4BF;margin-top:1px}
+.credencial .verificada{
+  flex:1 1 100%;display:inline-flex;align-items:center;gap:7px;margin-top:12px;
+  border:1px solid var(--sol);color:var(--sol-claro);border-radius:999px;
+  padding:7px 14px 7px 10px;font-size:12.5px;position:relative;overflow:hidden;
+}
+.credencial .verificada svg{width:15px;height:15px;flex:none;color:var(--sol)}
+.credencial .verificada::after{
   content:"";position:absolute;inset:0;
-  background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.42) 50%,transparent 62%);
-  transform:translateX(-130%);animation:barrido 5.5s 2s ease-in-out infinite;
+  background:linear-gradient(105deg,transparent 38%,rgba(240,206,118,.30) 50%,transparent 62%);
+  transform:translateX(-130%);animation:barrido 6s 2.4s ease-in-out infinite;
 }
 @keyframes barrido{0%{transform:translateX(-130%)}22%,100%{transform:translateX(130%)}}
 .subir{animation:subir .8s both}
-.id .rol{animation:subir .8s .5s both}
+.id .lema{animation:subir .8s .46s both}
+.id .rol{animation:subir .8s .58s both}
 .id .sello{animation:subir .8s .64s both}
 @keyframes subir{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
@@ -192,7 +208,31 @@ a{color:inherit}
 .card .marca{position:absolute;top:15px;left:15px;width:38px;height:38px;border-radius:11px;
   background:rgba(255,255,255,.15);display:grid;place-items:center;
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
-.card .marca svg{width:20px;height:20px;color:var(--sol)}
+.card .marca svg{width:20px;height:20px;color:var(--sol-claro)}
+.card.asesoria{
+  background-image:
+    radial-gradient(70% 50% at 25% 12%, rgba(212,169,74,.30), transparent 62%),
+    radial-gradient(80% 60% at 80% 88%, rgba(14,156,156,.42), transparent 66%),
+    linear-gradient(160deg,#14495E,#0B2B3C);
+}
+.card.asesoria::before{background:linear-gradient(to top,rgba(6,24,33,.88) 6%,rgba(6,24,33,.34) 58%,rgba(6,24,33,.10) 100%)}
+.card.asesoria .filigrana{
+  position:absolute;width:118%;height:118%;top:-24%;right:-42%;
+  color:rgba(240,206,118,.13);pointer-events:none;
+}
+.card.asesoria .promesas{
+  position:relative;list-style:none;margin:0;padding:0 17px;
+  display:flex;flex-direction:column;gap:11px;justify-content:center;flex:1;
+}
+.card.asesoria .promesas li{
+  position:relative;padding-left:23px;font-size:14px;line-height:1.35;color:#E4F1F3;
+}
+.card.asesoria .promesas li::before{
+  content:"";position:absolute;left:0;top:5px;width:13px;height:8px;
+  border-left:2px solid var(--sol-claro);border-bottom:2px solid var(--sol-claro);
+  transform:rotate(-45deg);border-radius:1px;
+}
+.card.asesoria .txt{border-top:1px solid rgba(255,255,255,.14);margin:0 17px;padding:14px 0 17px}
 .puntos{display:flex;gap:6px;justify-content:center;margin-top:2px}
 .puntos i{width:6px;height:6px;border-radius:50%;background:var(--linea);transition:.3s}
 .puntos i.on{background:var(--mar);width:20px;border-radius:3px}
@@ -308,7 +348,7 @@ dialog.hoja[open]::backdrop{animation:fade .42s both}
 
 <nav class="barra" id="barra" aria-hidden="true">
   <img src="foto.jpg" alt="">
-  <b>William Pérez</b>
+  <b>William Pérez-Mederos</b>
   <a class="mini" href="https://wa.me/17863548796">
     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.7 1-.9 1.2-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.5-.6c.1-.2.2-.3.3-.5 0-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1.1 2.8 1.2 3c.2.2 2.1 3.2 5.1 4.4 1.9.8 2.6.9 3.5.7.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg>
     Escribir
@@ -319,19 +359,27 @@ dialog.hoja[open]::backdrop{animation:fade .42s both}
   <header class="hero" id="hero">
     <div class="aurora"></div>
     <div class="foto-caja" id="fotoCaja">
-      <img class="foto" src="foto.jpg" alt="William Pérez, agente de seguros" width="900" height="1125" fetchpriority="high">
+      <img class="foto" src="foto.jpg" alt="William Pérez-Mederos, agente de seguros" width="900" height="1125" fetchpriority="high">
     </div>
     <div class="grano"></div>
     <div class="scrim"></div>
     <div class="id">
-      <h1>William Pérez</h1>
-      <p class="rol">Agente de seguros licenciado en Florida. Le explico sus opciones en español, sin apuro.</p>
-      <span class="sello">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-        Licencia 2-15 · G369134 · NPN 22325493
-      </span>
+      <h1>William Pérez-Mederos</h1>
+      <p class="lema">Primero escucho, después propongo.</p>
+      <p class="rol">Agente de seguros licenciado en Florida. Atención en español, sin apuro.</p>
     </div>
   </header>
+
+  <div class="credencial">
+    <svg class="escudo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+    <div class="dato"><b>Licencia 0215</b><span>Vida, Salud y Contratos Variables</span></div>
+    <div class="dato"><b>G369134</b><span>Licencia de Florida</span></div>
+    <div class="dato"><b>22325493</b><span>NPN</span></div>
+    <span class="verificada">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></svg>
+      Verificable en el Estado de Florida
+    </span>
+  </div>
 
   <div class="acciones">
     <a class="btn wa" href="https://wa.me/17863548796?text=Hola%20William%2C%20vi%20su%20tarjeta%20y%20quiero%20informaci%C3%B3n">
@@ -382,12 +430,23 @@ dialog.hoja[open]::backdrop{animation:fade .42s both}
       <span class="marca"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/><path d="m9.5 12 2 2 3.5-4"/></svg></span>
       <div class="txt"><b>Accidentes</b><span>Efectivo cuando algo pasa de golpe</span></div>
     </a>
+    <a class="card asesoria" href="https://wa.me/17863548796?text=Quiero%20que%20me%20explique%20mis%20opciones">
+      <svg class="filigrana" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+      <span class="marca"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 14h6M9 18h4"/></svg></span>
+      <ul class="promesas">
+        <li>La primera conversación no cuesta nada</li>
+        <li>En su casa, en una cafetería o por video</li>
+        <li>Todo explicado en español, palabra por palabra</li>
+        <li>Usted decide cuándo, o si no quiere seguir</li>
+      </ul>
+      <div class="txt"><b>Asesoría personal</b><span>Le explico sus opciones con calma, paso a paso</span></div>
+    </a>
     <a class="card" style="--img:url('anualidad.jpg')" href="https://wa.me/17863548796?text=Quiero%20informaci%C3%B3n%20sobre%20anualidades">
       <span class="marca"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18V9M9 18V5M15 18v-7M21 18v-11"/></svg></span>
       <div class="txt"><b>Anualidades</b><span>Un ingreso fijo para el retiro</span></div>
     </a>
   </div>
-  <div class="puntos" id="puntos"><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="puntos" id="puntos"><i></i><i></i><i></i><i></i><i></i><i></i></div>
 
 
   <button class="calc-abre rev" id="abreCalc">
@@ -418,7 +477,7 @@ dialog.hoja[open]::backdrop{animation:fade .42s both}
   </section>
 
   <footer>
-    <p class="lic">William Pérez · Licencia de Florida 2-15 n.º G369134 · NPN 22325493</p>
+    <p class="lic">William Pérez-Mederos · Licencia de Florida 0215 n.º G369134 · NPN 22325493</p>
     <p>Vida, Salud y Anualidades. Atiendo en Hialeah y el condado de Miami-Dade, Florida.</p>
     <p><a href="tel:+17863548796">786-354-8796</a> · <a href="mailto:wperezmedero@gmail.com">wperezmedero@gmail.com</a></p>
     <p>Esta tarjeta es informativa y no constituye una oferta de cobertura ni un contrato de seguro. Los beneficios, costos y condiciones dependen de la póliza y de la aseguradora que la emita. No estoy afiliado ni respaldado por Medicare, los CMS ni ninguna agencia del gobierno.</p>
@@ -625,14 +684,14 @@ addEventListener('load',pintar); pintar();
 
 /* --- guardar contacto (.vcf real) --- */
 $('#guardar').addEventListener('click',()=>{
-  const v=['BEGIN:VCARD','VERSION:3.0','N:Pérez;William;;;','FN:William Pérez',
-    'TITLE:Agente de Seguros Licenciado (2-15)','ORG:William Pérez Seguros',
+  const v=['BEGIN:VCARD','VERSION:3.0','N:Pérez-Mederos;William;;;','FN:William Pérez-Mederos',
+    'TITLE:Agente de Seguros Licenciado en Florida (0215)','ORG:William Pérez-Mederos, Agente de Seguros',
     'TEL;TYPE=CELL,VOICE:+17863548796','EMAIL;TYPE=INTERNET:wperezmedero@gmail.com',
-    'URL:https://williamperezseguros.com','ADR;TYPE=WORK:;;;Hialeah;FL;;USA',
-    'NOTE:Vida, Salud, Medicare y Anualidades. Licencia FL G369134 · NPN 22325493.',
+    'URL:https://williamperezseguros.com','ADR;TYPE=WORK:;;650 E 58th St;Hialeah;FL;33013;USA',
+    'NOTE:Vida, Salud y Contratos Variables. Licencia de Florida 0215 n.º G369134 · NPN 22325493.',
     'END:VCARD'].join('\r\n');
   const u=URL.createObjectURL(new Blob([v],{type:'text/vcard;charset=utf-8'}));
-  const a=document.createElement('a'); a.href=u; a.download='William-Perez.vcf';
+  const a=document.createElement('a'); a.href=u; a.download='William-Perez-Mederos.vcf';
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(()=>URL.revokeObjectURL(u),4000);
   if(navigator.vibrate) navigator.vibrate([10,40,10]);
@@ -641,7 +700,7 @@ $('#guardar').addEventListener('click',()=>{
 
 /* --- compartir nativo --- */
 $('#compartir').addEventListener('click', async ()=>{
-  const d={title:'William Pérez — Agente de seguros',
+  const d={title:'William Pérez-Mederos — Agente de seguros',
     text:'Mi tarjeta: seguros de vida, salud, Medicare y anualidades en español.',
     url:location.href};
   try{
