@@ -536,6 +536,27 @@ input:focus-visible,select:focus-visible,.pillar:focus-visible,.scard:focus-visi
   color:#9DB0CC;transition:all .3s}
 .refs a:hover{border-color:#D4AF37;color:#D4AF37}
 
+/* Relato progresivo de “Sobre mí”. El contenido permanece en el HTML y solo
+   se anima cuando JavaScript y las preferencias de movimiento lo permiten. */
+#sobre-mi.story-motion .story-reveal{
+  opacity:0;
+  transform:translate3d(0,18px,0);
+  transition:opacity .68s cubic-bezier(.22,1,.36,1),
+             transform .68s cubic-bezier(.22,1,.36,1);
+  transition-delay:var(--story-delay,0ms);
+  will-change:opacity,transform
+}
+#sobre-mi.story-motion .story-reveal.is-written{opacity:1;transform:none}
+#sobre-mi.story-motion .about__body h3.story-reveal{transform:translate3d(0,12px,0)}
+#sobre-mi.story-motion .pullquote.story-reveal{transform:translate3d(0,14px,0)}
+#sobre-mi.story-motion .about__facts .story-reveal{transform:translate3d(-10px,0,0)}
+
+@media(prefers-reduced-motion:reduce){
+  #sobre-mi.story-motion .story-reveal{
+    opacity:1!important;transform:none!important;transition:none!important;will-change:auto!important
+  }
+}
+
 /* ═══ ALCANCE ESTATAL ═══ */
 .state{position:relative;overflow:hidden;background:#04101f;isolation:isolate}
 .state picture,.state img{display:block;width:100%;height:100%;object-fit:cover}
@@ -1814,7 +1835,7 @@ body.cliente-mode .cita__lado{padding:2.6rem}
         </div>
       </div>
 
-      <div class="about__body reveal">
+      <div class="about__body">
         <h3>Mis raíces</h3>
         <p>Crecí en una familia monoparental con muy pocos recursos materiales, pero con valores suficientes para orientar toda una vida. Mis abuelos fueron fundamentales en mi formación. Sus enseñanzas me ayudaron a comprender que el valor de una persona no depende de lo que posee, sino de la clase de ser humano que decide ser y de cómo trata a quienes la rodean.</p>
         <p>Ese origen me enseñó a apreciar la familia, la responsabilidad y la importancia de contribuir positivamente a la sociedad. No recuerdo mi infancia solo por lo que nos faltaba, sino también por los principios que recibí.</p>
@@ -1859,7 +1880,7 @@ body.cliente-mode .cita__lado{padding:2.6rem}
         <h3>Un compromiso de aprendizaje continuo</h3>
         <p>Después de recibir mi licencia, deseo continuar estudiando las leyes de Florida, las normas de cumplimiento y únicamente los productos que esté autorizado a presentar. Obtener una licencia no representa el final del aprendizaje: representa el comienzo de una responsabilidad profesional que exige preparación, límites claros y actualización continua.</p>
 
-        <p style="font-size:.8rem;color:#7E93AE;border-top:1px solid rgba(255,255,255,.1);padding-top:1.2rem;margin-top:2rem">William Perez-Mederos no es una compañía de seguros ni está afiliado con Medicare, CMS, HealthCare.gov o ninguna entidad gubernamental. Posee la licencia Florida 2-15 n.º G369134, emitida el 17 de agosto de 2026. Todavía no cuenta con nombramientos de aseguradoras, por lo que aún no puede solicitar, negociar ni vender seguros. Esta página ofrece información general; no constituye cotización, oferta, solicitud, recomendación, asesoramiento legal o fiscal ni promesa de cobertura.</p>
+        <p class="about__legal" style="font-size:.8rem;color:#7E93AE;border-top:1px solid rgba(255,255,255,.1);padding-top:1.2rem;margin-top:2rem">William Perez-Mederos no es una compañía de seguros ni está afiliado con Medicare, CMS, HealthCare.gov o ninguna entidad gubernamental. Posee la licencia Florida 2-15 n.º G369134, emitida el 17 de agosto de 2026. Todavía no cuenta con nombramientos de aseguradoras, por lo que aún no puede solicitar, negociar ni vender seguros. Esta página ofrece información general; no constituye cotización, oferta, solicitud, recomendación, asesoramiento legal o fiscal ni promesa de cobertura.</p>
       </div>
     </div>
   </div>
@@ -4126,6 +4147,44 @@ $$('[data-legal]').forEach(a => a.onclick = e => {
   openDialog(legalModal);
 });
 $('#legalClose').onclick = () => closeDialog(legalModal);
+</script>
+<script id="about-story-motion-v1">
+(()=>{
+  'use strict';
+  const section=document.getElementById('sobre-mi');
+  const body=section?.querySelector('.about__body');
+  if(!section||!body)return;
+
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const narrative=[...body.children].filter(el=>!el.classList.contains('about__legal'));
+  const facts=[...section.querySelectorAll('.about__facts .fact')];
+  const animated=[...narrative,...facts];
+
+  animated.forEach(el=>el.classList.add('story-reveal'));
+  facts.forEach((el,index)=>el.style.setProperty('--story-delay',`${220+(index*105)}ms`));
+
+  if(reduce||!('IntersectionObserver' in window)){
+    animated.forEach(el=>el.classList.add('is-written'));
+    return;
+  }
+
+  section.classList.add('story-motion');
+  const observer=new IntersectionObserver(entries=>{
+    const visible=entries
+      .filter(entry=>entry.isIntersecting)
+      .sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top);
+
+    visible.forEach((entry,index)=>{
+      if(!entry.target.closest('.about__facts')){
+        entry.target.style.setProperty('--story-delay',`${Math.min(index,3)*85}ms`);
+      }
+      entry.target.classList.add('is-written');
+      observer.unobserve(entry.target);
+    });
+  },{threshold:.08,rootMargin:'0px 0px -9% 0px'});
+
+  animated.forEach(el=>observer.observe(el));
+})();
 </script>
 <script id="premium-motion-v1-js">
 (()=>{
