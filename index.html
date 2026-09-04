@@ -690,6 +690,7 @@ input:focus-visible,select:focus-visible,.pillar:focus-visible,.scard:focus-visi
 .bot__ask input{flex:1;padding:.6rem .9rem;border-radius:100px;background:#16294A;border:1px solid rgba(255,255,255,.16);font-size:.85rem}
 .bot__ask button{width:38px;height:38px;flex:none;border-radius:50%;background:#D4AF37;color:#0A192F;display:grid;place-items:center}
 .bot__ask .bot__mic{background:#16294A;color:#D4AF37;border:1px solid rgba(212,175,55,.35)}
+.bot__ask .bot__mic.is-connected{background:#1E8C8C;color:#fff;border-color:#60C7C7}
 .bot__ask .bot__mic.is-listening{background:#D4AF37;color:#0A192F;animation:mic-listening 1.35s ease-in-out infinite}
 .bot__ask .bot__mic[hidden]{display:none}
 .bot__voice-status{min-height:0;padding:0 1.15rem;color:#9DB0CC;font-size:.72rem;text-align:center;transition:all .2s}
@@ -2584,6 +2585,8 @@ const CONFIG = {
   modo: "educativo",
 
   whatsapp: "17863548796",
+  voiceEndpoint: "https://william-seguros-voz.wperezmedero.workers.dev/session",
+  voiceMaxMs: 180000,
   crmEndpoint: "",
   recaptchaKey: "",
   waFallback: true,
@@ -3188,9 +3191,10 @@ const bot = $('#bot'), botLog = $('#botLog'), botOpts = $('#botOpts');
 const S = { data:{}, tags:[], meta:{}, started:false, node:null, multi:new Set(), ended:false };
 $('#botName').textContent = BOT_TREE.name;
 
-/* Voz provista por el navegador. Este sitio no conserva audio ni transcripciones. */
+/* Voz natural por WebRTC. Si no está disponible, se usa la voz del navegador. */
 const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
 const V = { lang:'es-US', output:false, recognition:null, listening:false, speechId:0 };
+const R = { pc:null, dc:null, stream:null, audio:null, timer:null, connecting:false, active:false, generation:0, state:'' };
 const BOT_COPY = {
   es: {
     name:BOT_TREE.name, sub:'Orientación educativa', langButton:'ES', langLabel:'Cambiar a inglés',
@@ -3198,6 +3202,10 @@ const BOT_COPY = {
     heard:'Entendido. Preparando tu respuesta…', unavailable:'Tu navegador no permite usar el micrófono aquí. Puedes escribir tu pregunta.',
     denied:'El micrófono está bloqueado. Puedes habilitarlo en los permisos del navegador o escribir tu pregunta.',
     voiceOn:'Respuestas por voz activadas.', voiceOff:'Respuestas por voz desactivadas.',
+    voiceReady:'Toca el micrófono para conversar con voz natural.', connecting:'Conectando con la asistente…',
+    connected:'Voz natural activa. Ya puedes hablar.', thinking:'Pensando…', speaking:'La asistente está hablando…',
+    ended:'Conversación de voz finalizada.', sessionLimit:'La conversación de voz terminó al llegar a 3 minutos.',
+    realtimeError:'No se pudo abrir la voz natural. Usaremos el micrófono del navegador.', stopMic:'Finalizar conversación de voz',
     foot:'Asistente automático. No cotiza, no determina elegibilidad ni da consejo médico. No envíes SSN, número de Medicare, diagnósticos ni datos bancarios.'
   },
   en: {
@@ -3206,6 +3214,10 @@ const BOT_COPY = {
     heard:'Got it. Preparing your answer…', unavailable:'Your browser cannot use the microphone here. You can type your question instead.',
     denied:'Microphone access is blocked. You can allow it in your browser settings or type your question.',
     voiceOn:'Voice responses are on.', voiceOff:'Voice responses are off.',
+    voiceReady:'Tap the microphone to start a natural voice conversation.', connecting:'Connecting to the assistant…',
+    connected:'Natural voice is active. You can speak now.', thinking:'Thinking…', speaking:'The assistant is speaking…',
+    ended:'Voice conversation ended.', sessionLimit:'The voice conversation ended after 3 minutes.',
+    realtimeError:'Natural voice could not start. We will use your browser microphone.', stopMic:'End voice conversation',
     foot:'Automated assistant. It does not quote, determine eligibility, or give medical advice. Do not send Social Security, Medicare, medical, or banking information.'
   }
 };
@@ -3230,7 +3242,7 @@ const FREE_REPLIES = {
 
 function copy(){ return BOT_COPY[V.lang.startsWith('en') ? 'en' : 'es']; }
 function speak(text){
-  if (!V.output || !('speechSynthesis' in window) || !text) return;
+  if (!V.output || R.active || R.connecting || !('speechSynthesis' in window) || !text) return;
   const speechId=++V.speechId;
   speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
@@ -3505,7 +3517,8 @@ function startEnglish(){
   showTopicMenu();
 }
 function resetConversation(){
-  V.speechId++; bot.classList.remove('is-speaking','is-listening');
+  stopRealtime('');
+  V.speechId++; bot.classList.remove('is-speaking','is-listening','is-thinking');
   if ('speechSynthesis' in window) speechSynthesis.cancel();
   Object.keys(S.data).forEach(k=>delete S.data[k]);
   S.tags.length=0; Object.keys(S.meta).forEach(k=>delete S.meta[k]);
@@ -3516,11 +3529,10 @@ function syncLanguage(){
   const c=copy(), en=V.lang.startsWith('en');
   $('#botName').textContent=c.name; $('#botSub').textContent=c.sub;
   $('#botLang').textContent=c.langButton; $('#botLang').setAttribute('aria-label',c.langLabel);
-  $('#botInput').placeholder=c.input; $('#botMic').setAttribute('aria-label',c.mic); $('#botMic').title=c.mic;
+  $('#botInput').placeholder=c.input;
   $('#botFoot').textContent=c.foot; $('#botSend').setAttribute('aria-label',en?'Send':'Enviar');
   $('#botClose').setAttribute('aria-label',en?'Close assistant':'Cerrar asistente');
-  $('#botVoice').setAttribute('aria-label',V.output?(en?'Turn off voice responses':'Desactivar respuestas por voz'):(en?'Turn on voice responses':'Activar respuestas por voz'));
-  $('#botVoiceStatus').textContent='';
+  syncVoiceControls();
 }
 function sendFree(){
   const el = $('#botInput'), text = el.value.trim();
@@ -3543,16 +3555,124 @@ $('#botLang').onclick = () => {
     V.lang.startsWith('en') ? startEnglish() : go(BOT_TREE.start_node);
   }
 };
-$('#botVoice').onclick = () => {
-  V.output=!V.output;
-  $('#botVoice').setAttribute('aria-pressed',String(V.output));
-  syncLanguage();
-  $('#botVoiceStatus').textContent=V.output?copy().voiceOn:copy().voiceOff;
-  if (V.output) speak(copy().voiceOn); else {
-    V.speechId++; bot.classList.remove('is-speaking');
-    if ('speechSynthesis' in window) speechSynthesis.cancel();
+
+function syncVoiceControls(){
+  const c=copy(), running=R.active||R.connecting;
+  const micLabel=running?c.stopMic:c.mic;
+  $('#botMic').setAttribute('aria-label',micLabel); $('#botMic').title=micLabel;
+  $('#botVoice').setAttribute('aria-label',running?c.stopMic:(V.lang.startsWith('en')?'Start natural voice':'Iniciar voz natural'));
+  $('#botVoice').setAttribute('aria-pressed',String(running));
+}
+function setVoiceState(state,status){
+  if(R.state===state&&$('#botVoiceStatus').textContent===(status||'')){syncVoiceControls();return;}
+  R.state=state;
+  bot.classList.remove('is-speaking','is-listening','is-thinking');
+  $('#botMic').classList.remove('is-listening','is-connected');
+  if(state==='listening'){
+    bot.classList.add('is-listening'); $('#botMic').classList.add('is-listening');
+  }else if(state==='thinking'){
+    bot.classList.add('is-thinking'); $('#botMic').classList.add('is-connected');
+  }else if(state==='speaking'){
+    bot.classList.add('is-speaking'); $('#botMic').classList.add('is-connected');
+  }else if(state==='connecting') $('#botMic').classList.add('is-connected');
+  $('#botVoiceStatus').textContent=status||'';
+  syncVoiceControls();
+}
+function stopRealtime(status){
+  const hadSession=R.active||R.connecting||R.pc||R.stream;
+  R.generation++;
+  if(R.timer) clearTimeout(R.timer);
+  const dc=R.dc, pc=R.pc, stream=R.stream, audio=R.audio;
+  R.dc=null; R.pc=null; R.stream=null; R.audio=null; R.timer=null;
+  R.active=false; R.connecting=false; V.output=false;
+  try{if(dc)dc.close();}catch(_){}
+  try{if(pc)pc.close();}catch(_){}
+  if(stream) stream.getTracks().forEach(track=>track.stop());
+  if(audio){audio.pause();audio.srcObject=null;audio.remove();}
+  if(hadSession||status) setVoiceState('',status||''); else syncVoiceControls();
+}
+function handleRealtimeEvent(raw,generation){
+  if(generation!==R.generation) return;
+  let event;
+  try{event=JSON.parse(raw.data);}catch(_){return;}
+  const c=copy();
+  if(event.type==='input_audio_buffer.speech_started') setVoiceState('listening',c.listening);
+  else if(event.type==='input_audio_buffer.speech_stopped'||event.type==='response.created') setVoiceState('thinking',c.thinking);
+  else if(event.type==='output_audio_buffer.started'||event.type==='response.output_audio.delta') setVoiceState('speaking',c.speaking);
+  else if(event.type==='output_audio_buffer.stopped'||event.type==='response.done') setVoiceState('listening',c.connected);
+  else if(event.type==='response.output_audio_transcript.done'&&event.transcript) say(event.transcript);
+  else if(event.type==='error'){
+    console.error('Realtime API error',event.error||event);
+    stopRealtime(c.unavailable);
   }
-};
+}
+
+async function startRealtime(){
+  const c=copy();
+  if(R.active||R.connecting){stopRealtime(c.ended);return;}
+  if(!window.RTCPeerConnection||!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    startBrowserRecognition(c.realtimeError); return;
+  }
+  if(V.recognition&&V.listening) V.recognition.stop();
+  V.speechId++; if('speechSynthesis'in window) speechSynthesis.cancel();
+  V.output=true; R.connecting=true;
+  const generation=++R.generation;
+  setVoiceState('connecting',c.connecting);
+
+  try{
+    const pc=new RTCPeerConnection(); R.pc=pc;
+    const audio=document.createElement('audio');
+    audio.autoplay=true; audio.playsInline=true; audio.hidden=true; audio.setAttribute('aria-hidden','true');
+    document.body.appendChild(audio); R.audio=audio;
+    pc.ontrack=e=>{audio.srcObject=e.streams[0];audio.play().catch(()=>{});};
+    pc.onconnectionstatechange=()=>{
+      if(generation!==R.generation) return;
+      if(pc.connectionState==='failed') stopRealtime(copy().unavailable);
+    };
+
+    const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+    if(generation!==R.generation){stream.getTracks().forEach(track=>track.stop());return;}
+    R.stream=stream; stream.getAudioTracks().forEach(track=>pc.addTrack(track,stream));
+
+    const dc=pc.createDataChannel('oai-events'); R.dc=dc;
+    dc.onmessage=event=>handleRealtimeEvent(event,generation);
+    dc.onopen=()=>{
+      if(generation!==R.generation) return;
+      if(R.timer) clearTimeout(R.timer);
+      R.connecting=false; R.active=true;
+      setVoiceState('listening',copy().connected);
+      R.timer=setTimeout(()=>stopRealtime(copy().sessionLimit),CONFIG.voiceMaxMs);
+    };
+    dc.onclose=()=>{
+      if(generation===R.generation&&R.active) stopRealtime(copy().ended);
+    };
+
+    const offer=await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    const controller=new AbortController();
+    const connectionTimeout=setTimeout(()=>controller.abort(),20000);
+    let response;
+    try{
+      response=await fetch(CONFIG.voiceEndpoint,{method:'POST',body:offer.sdp,headers:{'Content-Type':'application/sdp'},signal:controller.signal});
+    }finally{clearTimeout(connectionTimeout);}
+    const responseText=await response.text();
+    if(!response.ok) throw new Error('Voice session '+response.status+': '+responseText.slice(0,160));
+    if(generation!==R.generation) return;
+    await pc.setRemoteDescription({type:'answer',sdp:responseText});
+    R.timer=setTimeout(()=>{
+      if(generation!==R.generation||!R.connecting) return;
+      stopRealtime(''); startBrowserRecognition(copy().realtimeError);
+    },15000);
+  }catch(error){
+    if(generation!==R.generation) return;
+    console.error('Natural voice connection error',error);
+    const denied=error&&(['NotAllowedError','PermissionDeniedError'].includes(error.name));
+    stopRealtime(denied?copy().denied:'');
+    if(!denied) startBrowserRecognition(copy().realtimeError);
+  }
+}
+
+$('#botVoice').onclick=startRealtime;
 
 function ensureRecognition(){
   if (!SpeechRecognitionAPI) return null;
@@ -3572,18 +3692,16 @@ function ensureRecognition(){
   r.onend=()=>{V.listening=false;$('#botMic').classList.remove('is-listening');bot.classList.remove('is-listening');};
   V.recognition=r; return r;
 }
-$('#botMic').onclick=()=>{
-  if(!V.output){
-    V.output=true;
-    $('#botVoice').setAttribute('aria-pressed','true');
-    syncLanguage();
-  }
+function startBrowserRecognition(message){
+  V.output=true; syncVoiceControls();
   const r=ensureRecognition();
   if(!r){$('#botVoiceStatus').textContent=copy().unavailable;return;}
   if(V.listening){r.stop();return;}
   r.lang=V.lang;
+  if(message) $('#botVoiceStatus').textContent=message;
   try{r.start();}catch(_){$('#botVoiceStatus').textContent=copy().unavailable;}
-};
+}
+$('#botMic').onclick=startRealtime;
 
 syncLanguage();
 
@@ -3594,20 +3712,19 @@ $('#botOpen').onclick = () => {
   // El pulso del botón cumple su función una sola vez: al abrirlo, el
   // visitante ya sabe que existe y no hace falta seguir llamándole.
   $('#botOpen').classList.add('is-known');
-  if(isOpen && !V.output){
-    V.output=true;
-    $('#botVoice').setAttribute('aria-pressed','true');
-    syncLanguage();
-    $('#botVoiceStatus').textContent=copy().voiceOn;
+  if (isOpen && !S.started) {
+    S.started = true; V.lang.startsWith('en') ? startEnglish() : go(BOT_TREE.start_node);
+    $('#botVoiceStatus').textContent=copy().voiceReady;
   }
-  if (isOpen && !S.started) { S.started = true; V.lang.startsWith('en') ? startEnglish() : go(BOT_TREE.start_node); }
 };
 $('#botClose').onclick = () => {
   bot.classList.remove('is-open'); $('#botOpen').setAttribute('aria-expanded', false);
   if (V.recognition && V.listening) V.recognition.stop();
-  V.speechId++; bot.classList.remove('is-speaking','is-listening');
+  stopRealtime(''); V.output=false;
+  V.speechId++; bot.classList.remove('is-speaking','is-listening','is-thinking');
   if ('speechSynthesis' in window) speechSynthesis.cancel();
 };
+window.addEventListener('pagehide',()=>stopRealtime(''));
 
 /* ═══════════ PANEL ═══════════ */
 const LEADS = [
