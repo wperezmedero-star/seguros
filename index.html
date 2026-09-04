@@ -3202,8 +3202,8 @@ const BOT_COPY = {
     heard:'Entendido. Preparando tu respuesta…', unavailable:'Tu navegador no permite usar el micrófono aquí. Puedes escribir tu pregunta.',
     denied:'El micrófono está bloqueado. Puedes habilitarlo en los permisos del navegador o escribir tu pregunta.',
     voiceOn:'Respuestas por voz activadas.', voiceOff:'Respuestas por voz desactivadas.',
-    voiceReady:'Toca el micrófono para conversar con voz natural.', connecting:'Conectando con la asistente…',
-    connected:'Voz natural activa. Ya puedes hablar.', thinking:'Pensando…', speaking:'La asistente está hablando…',
+    voiceReady:'Toca el micrófono: la asistente te recibirá y te guiará.', connecting:'Conectando con la asistente…',
+    connected:'Voz natural activa. Puedes responderle con tranquilidad.', thinking:'Pensando…', speaking:'La asistente está hablando…',
     ended:'Conversación de voz finalizada.', sessionLimit:'La conversación de voz terminó al llegar a 3 minutos.',
     realtimeError:'No se pudo abrir la voz natural. Usaremos el micrófono del navegador.', stopMic:'Finalizar conversación de voz',
     foot:'Asistente automático. No cotiza, no determina elegibilidad ni da consejo médico. No envíes SSN, número de Medicare, diagnósticos ni datos bancarios.'
@@ -3214,8 +3214,8 @@ const BOT_COPY = {
     heard:'Got it. Preparing your answer…', unavailable:'Your browser cannot use the microphone here. You can type your question instead.',
     denied:'Microphone access is blocked. You can allow it in your browser settings or type your question.',
     voiceOn:'Voice responses are on.', voiceOff:'Voice responses are off.',
-    voiceReady:'Tap the microphone to start a natural voice conversation.', connecting:'Connecting to the assistant…',
-    connected:'Natural voice is active. You can speak now.', thinking:'Thinking…', speaking:'The assistant is speaking…',
+    voiceReady:'Tap the microphone: the assistant will welcome and guide you.', connecting:'Connecting to the assistant…',
+    connected:'Natural voice is active. You can answer at your own pace.', thinking:'Thinking…', speaking:'The assistant is speaking…',
     ended:'Voice conversation ended.', sessionLimit:'The voice conversation ended after 3 minutes.',
     realtimeError:'Natural voice could not start. We will use your browser microphone.', stopMic:'End voice conversation',
     foot:'Automated assistant. It does not quote, determine eligibility, or give medical advice. Do not send Social Security, Medicare, medical, or banking information.'
@@ -3607,6 +3607,24 @@ function handleRealtimeEvent(raw,generation){
   }
 }
 
+function realtimeInstructions(){
+  return `Eres la asistente virtual educativa de William Perez-Mederos para su sitio de seguros en Florida.
+
+Habla en el idioma del visitante; usa español por defecto. Tu voz debe sentirse cálida, natural, tranquila y profesional. Responde de forma breve, clara y sin jerga. Haz una sola pregunta a la vez.
+
+Sé proactiva sin ser insistente: inicia con una bienvenida breve y pregunta si la persona desea hablar de seguro de vida, salud, Medicare o retiro y anualidades. Identifica su necesidad con preguntas generales, útiles y no sensibles. Después de explicar, ofrece dos o tres caminos seguros para continuar. Si la consulta es vaga, ayuda a elegir un tema. Resume lo entendido cuando sea útil y cierra con un próximo paso claro, como consultar una fuente oficial, usar una herramienta educativa del sitio o hablar directamente con William. No repitas la presentación ni las advertencias en cada turno.
+
+El sitio está en modo educativo. Explica conceptos generales y comparaciones educativas, pero no cotices primas, no recomiendes un producto específico, no prometas cobertura o aprobación, no completes solicitudes y no afirmes representar a una aseguradora ni al gobierno. Cuando una pregunta requiera revisar elegibilidad, costos, cobertura o una póliza concreta, explica qué factores suelen importar e indica que William debe revisarla personalmente. Si una regla, fecha o cifra puede haber cambiado, no la inventes: recomienda verificarla en la fuente oficial correspondiente.
+
+No solicites ni repitas números de Seguro Social, Medicare, cuentas bancarias, tarjetas, contraseñas ni detalles médicos sensibles. Si alguien comparte esos datos, pídele que deje de hacerlo. Para emergencias médicas o peligro inmediato, indica llamar al 911. Aclara cuando corresponda que eres una asistente virtual y que la información es educativa, no asesoría legal, médica o financiera.`;
+}
+
+function proactiveGreeting(){
+  return V.lang.startsWith('en')
+    ? 'Greet the visitor warmly and briefly. Introduce yourself as William’s virtual educational assistant, then ask one concise question offering these choices: life insurance, health coverage or Medicare, or retirement and annuities. Do not add a long disclaimer.'
+    : 'Saluda al visitante con calidez y brevedad. Preséntate como la asistente virtual educativa de William y luego haz una pregunta breve ofreciendo estas opciones: seguro de vida, salud o Medicare, o retiro y anualidades. No añadas una advertencia larga.';
+}
+
 async function startRealtime(){
   const c=copy();
   if(R.active||R.connecting){stopRealtime(c.ended);return;}
@@ -3640,7 +3658,9 @@ async function startRealtime(){
       if(generation!==R.generation) return;
       if(R.timer) clearTimeout(R.timer);
       R.connecting=false; R.active=true;
-      setVoiceState('listening',copy().connected);
+      dc.send(JSON.stringify({type:'session.update',session:{type:'realtime',instructions:realtimeInstructions()}}));
+      dc.send(JSON.stringify({type:'response.create',response:{instructions:proactiveGreeting()}}));
+      setVoiceState('thinking',copy().thinking);
       R.timer=setTimeout(()=>stopRealtime(copy().sessionLimit),CONFIG.voiceMaxMs);
     };
     dc.onclose=()=>{
