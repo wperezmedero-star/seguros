@@ -1133,6 +1133,22 @@ body.cliente-mode .cita__lado{padding:2.6rem}
 @media(max-width:390px){.viz-grid{grid-template-columns:1fr}.viz-ringrow{grid-template-columns:1fr}.viz-ring{margin:auto}}
 @media(prefers-reduced-motion:reduce){.calc-viz{opacity:1!important;transform:none!important;animation:none!important}.viz-seg,.viz-col i{transform:none!important;animation:none!important}.viz-ring{opacity:1!important;transform:none!important;animation:none!important}.viz-line{stroke-dashoffset:0!important;animation:none!important}.viz-dot{opacity:1!important;animation:none!important}}
 </style>
+
+<style id="closing-video-style">
+/* Cierre visual: aislado del asistente y del resto de la interfaz */
+.closing-video{position:relative;background:#071425;padding:clamp(3.5rem,7vw,6rem) 0;border-top:1px solid rgba(212,175,55,.14);overflow:hidden}
+.closing-video::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(55% 70% at 50% 45%,rgba(212,175,55,.08),transparent 72%)}
+.closing-video__wrap{width:min(100% - 2rem,1200px);margin-inline:auto;display:grid;place-items:center;position:relative;z-index:1}
+.closing-video__frame{width:min(100%,430px);aspect-ratio:512/886;border-radius:24px;overflow:hidden;background:#0A192F;border:1px solid rgba(212,175,55,.28);box-shadow:0 30px 70px -34px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.03)}
+.closing-video__frame video{display:block;width:100%;height:100%;object-fit:cover;background:#0A192F}
+@media(max-width:560px){
+  .closing-video{padding:2.6rem 0}
+  .closing-video__wrap{width:min(100% - 1.35rem,1200px)}
+  .closing-video__frame{width:min(100%,390px);border-radius:20px}
+}
+@media(prefers-reduced-motion:reduce){.closing-video__frame video{scroll-behavior:auto}}
+</style>
+
 </head>
 
 <body>
@@ -1981,6 +1997,47 @@ body.cliente-mode .cita__lado{padding:2.6rem}
     </div>
   </div>
 </section>
+
+
+<!-- ══ CIERRE VISUAL ══ -->
+<section class="closing-video" id="closing-video-section" aria-label="Presentación de William Perez-Mederos">
+  <div class="closing-video__wrap">
+    <div class="closing-video__frame">
+      <video id="closingVideo" muted playsinline preload="metadata" aria-label="Presentación visual de William Perez-Mederos">
+        <source src="351FC124-E1BD-4F7D-9B76-137C52DA4FE9.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+</section>
+<script id="closing-video-js">
+(()=>{
+  const video=document.getElementById('closingVideo');
+  if(!video)return;
+  let completed=false;
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  video.addEventListener('ended',()=>{completed=true;});
+  const play=()=>{
+    if(completed||reduce)return;
+    const p=video.play();
+    if(p&&typeof p.catch==='function')p.catch(()=>{});
+  };
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting&&entry.intersectionRatio>=.4) play();
+        else if(!video.paused&&!completed) video.pause();
+      });
+    },{threshold:[0,.4,.75]});
+    io.observe(video);
+  }else{play();}
+  video.addEventListener('click',()=>{
+    completed=false;
+    video.currentTime=0;
+    const p=video.play();
+    if(p&&typeof p.catch==='function')p.catch(()=>{});
+  });
+})();
+</script>
 
 <footer class="footer">
   <div class="wrap">
