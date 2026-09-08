@@ -1158,13 +1158,13 @@ body.cliente-mode .cita__lado{padding:2.6rem}
 .closing-video__scene.is-awake .closing-video__frame::after{animation:lampShimmer 1.15s 2.45s ease-out both}
 @keyframes lampShimmer{0%{transform:translateX(-145%);opacity:0}18%{opacity:.65}100%{transform:translateX(145%);opacity:0}}
 
-.genie-lamp{position:absolute;left:calc(50% - 300px);bottom:18px;width:240px;height:155px;z-index:6;filter:drop-shadow(0 18px 20px rgba(0,0,0,.52));transform:translateY(8px) rotate(-2deg);opacity:.93;transition:transform 1s cubic-bezier(.22,1,.36,1),opacity .7s ease}
+.genie-lamp{position:absolute;left:calc(50% - 316px);bottom:18px;width:265px;height:160px;z-index:6;filter:drop-shadow(0 20px 22px rgba(0,0,0,.48)) drop-shadow(0 0 10px rgba(212,175,55,.08));transform:translateY(8px) rotate(-1.2deg);opacity:.96;transition:transform 1s cubic-bezier(.22,1,.36,1),opacity .7s ease}
 .closing-video__scene.is-awake .genie-lamp{transform:translateY(0) rotate(0);opacity:1}
 .genie-lamp svg{width:100%;height:100%;overflow:visible}
 .lamp-body{transform-origin:50% 70%}
 .closing-video__scene.is-awake .lamp-body{animation:lampBreathe 2.4s ease-in-out 1}
 @keyframes lampBreathe{0%,100%{transform:scale(1)}38%{transform:scale(1.025)}62%{transform:scale(.995)}}
-.lamp-flare{position:absolute;left:198px;top:36px;width:22px;height:22px;border-radius:50%;background:#FFE9A0;box-shadow:0 0 10px #FFE9A0,0 0 24px #D4AF37,0 0 54px rgba(212,175,55,.75);opacity:0;transform:scale(.25);z-index:8}
+.lamp-flare{position:absolute;left:250px;top:46px;width:20px;height:20px;border-radius:50%;background:#FFE9A0;box-shadow:0 0 10px #FFE9A0,0 0 24px #D4AF37,0 0 54px rgba(212,175,55,.75);opacity:0;transform:scale(.25);z-index:8}
 .closing-video__scene.is-awake .lamp-flare{animation:flarePop 1.15s .25s ease-out both}
 @keyframes flarePop{0%{opacity:0;transform:scale(.25)}35%{opacity:1;transform:scale(1.28)}100%{opacity:.32;transform:scale(.65)}}
 
@@ -1191,9 +1191,9 @@ filter:blur(12px);transform:scale(.1) rotate(-30deg)}
 
 @media(max-width:720px){
  .closing-video__scene{min-height:700px;padding:1rem .25rem 6.8rem}
- .genie-lamp{left:50%;bottom:10px;width:190px;height:125px;transform:translateX(-50%) rotate(-2deg)}
+ .genie-lamp{left:50%;bottom:10px;width:210px;height:126px;transform:translateX(-50%) rotate(-1deg)}
  .closing-video__scene.is-awake .genie-lamp{transform:translateX(-50%) rotate(0)}
- .lamp-flare{left:calc(50% + 58px);top:auto;bottom:88px;width:18px;height:18px}
+ .lamp-flare{left:calc(50% + 78px);top:auto;bottom:90px;width:17px;height:17px}
  .magic-stream{left:calc(50% - 76px);bottom:92px;width:220px;height:330px}
  .closing-video__frame{transform:translate(-18px,135px) scale(.12) rotate(-3deg);transform-origin:50% 100%}
 }
@@ -2064,36 +2064,93 @@ filter:blur(12px);transform:scale(.1) rotate(-30deg)}
 
       <div class="genie-lamp" aria-hidden="true">
         <div class="lamp-flare"></div>
-        <svg viewBox="0 0 260 165" role="img">
+        <svg viewBox="0 0 300 180" role="img">
           <defs>
             <linearGradient id="lampGold" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#7B5713"/>
-              <stop offset=".24" stop-color="#E8C967"/>
-              <stop offset=".46" stop-color="#FFF0A8"/>
-              <stop offset=".67" stop-color="#C2912D"/>
-              <stop offset="1" stop-color="#6A460C"/>
+              <stop offset="0" stop-color="#5A3A08"/>
+              <stop offset=".16" stop-color="#B77A16"/>
+              <stop offset=".34" stop-color="#F5D36D"/>
+              <stop offset=".49" stop-color="#FFF4B8"/>
+              <stop offset=".63" stop-color="#E1AD3D"/>
+              <stop offset=".82" stop-color="#9C6411"/>
+              <stop offset="1" stop-color="#4B2D06"/>
             </linearGradient>
-            <linearGradient id="lampDark" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#F2D879"/>
-              <stop offset="1" stop-color="#8B6219"/>
+            <linearGradient id="lampSoft" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#FFF2A8"/>
+              <stop offset=".45" stop-color="#E1B64F"/>
+              <stop offset="1" stop-color="#8B5710"/>
             </linearGradient>
-            <filter id="lampGlow" x="-60%" y="-60%" width="220%" height="220%">
-              <feGaussianBlur stdDeviation="4" result="b"/>
+            <radialGradient id="lampHighlight" cx=".38" cy=".2" r=".9">
+              <stop offset="0" stop-color="#FFF8D8" stop-opacity=".95"/>
+              <stop offset=".22" stop-color="#F5D36D" stop-opacity=".55"/>
+              <stop offset=".7" stop-color="#9A5E0C" stop-opacity=".1"/>
+              <stop offset="1" stop-color="#5C3708" stop-opacity="0"/>
+            </radialGradient>
+            <filter id="lampGlow" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="5" result="b"/>
               <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
           </defs>
           <g class="lamp-body">
-            <path d="M61 72c10-26 35-39 69-39 28 0 51 9 66 29-9 5-14 13-16 23-4 23-24 42-60 42-37 0-62-19-67-44-1-4 2-8 8-11z" fill="url(#lampGold)" stroke="#5F430F" stroke-width="2"/>
-            <path d="M62 73C36 70 20 78 9 93c17-5 35-4 52 7" fill="none" stroke="url(#lampGold)" stroke-width="13" stroke-linecap="round"/>
-            <path d="M187 66c18-18 36-24 57-18-14 4-24 12-31 23-7 11-17 16-31 15" fill="none" stroke="url(#lampGold)" stroke-width="11" stroke-linecap="round"/>
-            <path d="M242 48l11-1-7 8" fill="#EBCF73" stroke="#705014" stroke-width="1.5"/>
-            <path d="M83 126h78c7 0 12 4 14 10H69c2-6 7-10 14-10z" fill="url(#lampDark)" stroke="#60420E" stroke-width="2"/>
-            <path d="M106 33c1-12 8-20 22-20 13 0 20 8 21 20" fill="url(#lampGold)" stroke="#60420E" stroke-width="2"/>
-            <ellipse cx="127.5" cy="13" rx="16" ry="5" fill="#D6AF45" stroke="#60420E" stroke-width="1.5"/>
-            <circle cx="128" cy="8" r="5" fill="#F4DE86" stroke="#60420E" stroke-width="1.4"/>
-            <path d="M80 78c20 11 75 12 97-2" fill="none" stroke="rgba(255,244,189,.72)" stroke-width="2.4" stroke-linecap="round"/>
-            <path d="M95 108c17 9 47 8 62 0" fill="none" stroke="rgba(78,49,5,.32)" stroke-width="3" stroke-linecap="round"/>
-            <circle cx="244" cy="49" r="3.5" fill="#FFF0A8" filter="url(#lampGlow)"/>
+            <!-- elegant low, sweeping body -->
+            <path d="M72 82
+                     C82 58 110 46 148 47
+                     C179 48 202 57 219 74
+                     C208 79 201 89 197 100
+                     C191 119 168 131 137 132
+                     C103 132 79 119 73 98
+                     C70 91 69 86 72 82Z"
+                  fill="url(#lampGold)" stroke="#4F3007" stroke-width="1.8"/>
+            <path d="M81 80
+                     C101 64 129 60 163 63
+                     C184 65 199 70 209 79
+                     C190 84 172 88 151 89
+                     C126 90 104 87 81 80Z"
+                  fill="url(#lampHighlight)" opacity=".92"/>
+
+            <!-- refined handle -->
+            <path d="M73 85
+                     C49 74 27 75 15 92
+                     C5 106 13 124 30 129
+                     C46 134 60 122 63 110
+                     C65 102 60 96 51 96
+                     C42 96 37 103 39 110
+                     C41 116 48 118 53 114"
+                  fill="none" stroke="url(#lampGold)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+
+            <!-- long elegant spout -->
+            <path d="M205 77
+                     C226 60 248 55 279 59
+                     C265 64 253 73 244 85
+                     C235 97 222 101 203 99"
+                  fill="none" stroke="url(#lampGold)" stroke-width="10" stroke-linecap="round"/>
+            <path d="M278 59 L294 57 L284 67 Z"
+                  fill="#F2CE66" stroke="#5A3508" stroke-width="1.2"/>
+
+            <!-- lid -->
+            <path d="M105 46 C112 31 129 24 148 24 C166 24 181 31 188 45"
+                  fill="url(#lampSoft)" stroke="#5A3508" stroke-width="1.7"/>
+            <ellipse cx="147" cy="24" rx="18" ry="4.8" fill="#DFAF45" stroke="#5A3508" stroke-width="1.4"/>
+            <circle cx="147" cy="18" r="4.8" fill="#F8DD80" stroke="#5A3508" stroke-width="1.2"/>
+
+            <!-- slim pedestal -->
+            <path d="M113 130
+                     C116 138 115 142 110 146
+                     L99 152
+                     C97 154 98 157 101 157
+                     H174
+                     C177 157 178 154 176 152
+                     L165 146
+                     C160 142 160 138 163 130Z"
+                  fill="url(#lampSoft)" stroke="#5A3508" stroke-width="1.6"/>
+
+            <!-- subtle engraved accents -->
+            <path d="M86 94 C109 104 165 106 193 92" fill="none" stroke="rgba(255,245,199,.68)" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M97 112 C118 121 158 121 178 111" fill="none" stroke="rgba(91,51,4,.24)" stroke-width="2.1" stroke-linecap="round"/>
+            <path d="M116 70 C137 65 165 66 184 73" fill="none" stroke="rgba(255,250,224,.55)" stroke-width="1.5" stroke-linecap="round"/>
+
+            <!-- glowing mouth -->
+            <circle cx="286" cy="61" r="3.8" fill="#FFF2A8" filter="url(#lampGlow)"/>
           </g>
         </svg>
       </div>
