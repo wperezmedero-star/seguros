@@ -1147,6 +1147,62 @@ body.cliente-mode .cita__lado{padding:2.6rem}
   .closing-video__frame{width:min(100%,390px);border-radius:20px}
 }
 @media(prefers-reduced-motion:reduce){.closing-video__frame video{scroll-behavior:auto}}
+
+/* ═══ LÁMPARA CINEMATOGRÁFICA — el video nace de la luz ═══ */
+.closing-video__scene{width:min(100%,860px);min-height:760px;position:relative;display:grid;place-items:center;padding:2rem 1rem 5.5rem;isolation:isolate}
+.closing-video__scene::before{content:"";position:absolute;width:min(86vw,660px);height:min(86vw,660px);border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.10),rgba(212,175,55,.025) 42%,transparent 70%);filter:blur(8px);opacity:0;transform:scale(.65);transition:opacity 1.2s ease,transform 1.8s cubic-bezier(.22,1,.36,1);z-index:-1}
+.closing-video__scene.is-awake::before{opacity:1;transform:scale(1)}
+.closing-video__frame{position:relative;z-index:4;opacity:0;transform:translate(-120px,145px) scale(.12) rotate(-4deg);transform-origin:18% 94%;filter:blur(12px) brightness(1.35);clip-path:polygon(4% 94%,13% 82%,26% 73%,46% 66%,69% 58%,89% 46%,100% 24%,100% 100%,0 100%);transition:opacity .32s ease 1.25s,transform 1.55s cubic-bezier(.16,1,.3,1) 1.25s,filter 1.35s ease 1.25s,clip-path 1.55s cubic-bezier(.16,1,.3,1) 1.25s;box-shadow:0 34px 85px -32px rgba(0,0,0,.92),0 0 0 1px rgba(255,255,255,.03)}
+.closing-video__scene.is-awake .closing-video__frame{opacity:1;transform:translate(0,0) scale(1) rotate(0);filter:blur(0) brightness(1);clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}
+.closing-video__frame::after{content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;background:linear-gradient(120deg,transparent 26%,rgba(255,237,172,.62) 48%,transparent 68%);transform:translateX(-145%);opacity:0;z-index:3}
+.closing-video__scene.is-awake .closing-video__frame::after{animation:lampShimmer 1.15s 2.45s ease-out both}
+@keyframes lampShimmer{0%{transform:translateX(-145%);opacity:0}18%{opacity:.65}100%{transform:translateX(145%);opacity:0}}
+
+.genie-lamp{position:absolute;left:calc(50% - 300px);bottom:18px;width:240px;height:155px;z-index:6;filter:drop-shadow(0 18px 20px rgba(0,0,0,.52));transform:translateY(8px) rotate(-2deg);opacity:.93;transition:transform 1s cubic-bezier(.22,1,.36,1),opacity .7s ease}
+.closing-video__scene.is-awake .genie-lamp{transform:translateY(0) rotate(0);opacity:1}
+.genie-lamp svg{width:100%;height:100%;overflow:visible}
+.lamp-body{transform-origin:50% 70%}
+.closing-video__scene.is-awake .lamp-body{animation:lampBreathe 2.4s ease-in-out 1}
+@keyframes lampBreathe{0%,100%{transform:scale(1)}38%{transform:scale(1.025)}62%{transform:scale(.995)}}
+.lamp-flare{position:absolute;left:198px;top:36px;width:22px;height:22px;border-radius:50%;background:#FFE9A0;box-shadow:0 0 10px #FFE9A0,0 0 24px #D4AF37,0 0 54px rgba(212,175,55,.75);opacity:0;transform:scale(.25);z-index:8}
+.closing-video__scene.is-awake .lamp-flare{animation:flarePop 1.15s .25s ease-out both}
+@keyframes flarePop{0%{opacity:0;transform:scale(.25)}35%{opacity:1;transform:scale(1.28)}100%{opacity:.32;transform:scale(.65)}}
+
+.magic-stream{position:absolute;left:calc(50% - 98px);bottom:112px;width:300px;height:360px;z-index:3;pointer-events:none;opacity:0;filter:blur(.2px)}
+.magic-stream::before,.magic-stream::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:100%;border-radius:48% 52% 60% 40%;transform-origin:0 100%;background:
+ radial-gradient(circle at 12% 91%,rgba(255,239,178,.95) 0 2%,transparent 9%),
+ radial-gradient(ellipse at 34% 70%,rgba(212,175,55,.38),transparent 34%),
+ radial-gradient(ellipse at 62% 43%,rgba(242,218,137,.24),transparent 38%),
+ radial-gradient(ellipse at 82% 20%,rgba(212,175,55,.18),transparent 34%);
+filter:blur(12px);transform:scale(.1) rotate(-30deg)}
+.magic-stream::after{filter:blur(24px);opacity:.72;transform:scale(.12) rotate(-27deg)}
+.closing-video__scene.is-awake .magic-stream{animation:streamVisible 2.15s .35s ease both}
+.closing-video__scene.is-awake .magic-stream::before{animation:streamGrow 1.7s .38s cubic-bezier(.12,.8,.2,1) both}
+.closing-video__scene.is-awake .magic-stream::after{animation:streamGrow 1.9s .48s cubic-bezier(.12,.8,.2,1) both}
+@keyframes streamVisible{0%{opacity:0}14%{opacity:1}78%{opacity:.82}100%{opacity:0}}
+@keyframes streamGrow{0%{transform:scale(.08) rotate(-30deg)}55%{transform:scale(.78) rotate(-8deg)}100%{transform:scale(1.12) rotate(4deg)}}
+
+.magic-particles{position:absolute;inset:0;z-index:5;pointer-events:none}
+.magic-particles i{position:absolute;width:4px;height:4px;border-radius:50%;background:#F7D978;box-shadow:0 0 10px rgba(247,217,120,.9);opacity:0}
+.magic-particles i:nth-child(1){left:31%;bottom:20%}.magic-particles i:nth-child(2){left:38%;bottom:30%;width:3px;height:3px}.magic-particles i:nth-child(3){left:44%;bottom:42%}.magic-particles i:nth-child(4){left:49%;bottom:55%;width:3px;height:3px}.magic-particles i:nth-child(5){left:56%;bottom:66%}.magic-particles i:nth-child(6){left:62%;bottom:74%;width:3px;height:3px}.magic-particles i:nth-child(7){left:68%;bottom:62%}.magic-particles i:nth-child(8){left:73%;bottom:49%;width:3px;height:3px}
+.closing-video__scene.is-awake .magic-particles i{animation:sparkRise 1.55s ease-out both}
+.closing-video__scene.is-awake .magic-particles i:nth-child(1){animation-delay:.55s}.closing-video__scene.is-awake .magic-particles i:nth-child(2){animation-delay:.72s}.closing-video__scene.is-awake .magic-particles i:nth-child(3){animation-delay:.88s}.closing-video__scene.is-awake .magic-particles i:nth-child(4){animation-delay:1.02s}.closing-video__scene.is-awake .magic-particles i:nth-child(5){animation-delay:1.18s}.closing-video__scene.is-awake .magic-particles i:nth-child(6){animation-delay:1.34s}.closing-video__scene.is-awake .magic-particles i:nth-child(7){animation-delay:1.5s}.closing-video__scene.is-awake .magic-particles i:nth-child(8){animation-delay:1.66s}
+@keyframes sparkRise{0%{opacity:0;transform:translate(0,22px) scale(.2)}24%{opacity:1}100%{opacity:0;transform:translate(22px,-86px) scale(1.3)}}
+
+@media(max-width:720px){
+ .closing-video__scene{min-height:700px;padding:1rem .25rem 6.8rem}
+ .genie-lamp{left:50%;bottom:10px;width:190px;height:125px;transform:translateX(-50%) rotate(-2deg)}
+ .closing-video__scene.is-awake .genie-lamp{transform:translateX(-50%) rotate(0)}
+ .lamp-flare{left:calc(50% + 58px);top:auto;bottom:88px;width:18px;height:18px}
+ .magic-stream{left:calc(50% - 76px);bottom:92px;width:220px;height:330px}
+ .closing-video__frame{transform:translate(-18px,135px) scale(.12) rotate(-3deg);transform-origin:50% 100%}
+}
+@media(prefers-reduced-motion:reduce){
+ .closing-video__scene{min-height:auto;padding:1rem 0}
+ .genie-lamp,.lamp-flare,.magic-stream,.magic-particles{display:none!important}
+ .closing-video__frame{opacity:1!important;transform:none!important;filter:none!important;clip-path:none!important;transition:none!important}
+ .closing-video__frame::after{display:none!important}
+}
 </style>
 
 </head>
@@ -1999,42 +2055,100 @@ body.cliente-mode .cita__lado{padding:2.6rem}
 </section>
 
 
-<!-- ══ CIERRE VISUAL ══ -->
+<!-- ══ CIERRE VISUAL · LÁMPARA ══ -->
 <section class="closing-video" id="closing-video-section" aria-label="Presentación de William Perez-Mederos">
   <div class="closing-video__wrap">
-    <div class="closing-video__frame">
-      <video id="closingVideo" muted playsinline preload="metadata" aria-label="Presentación visual de William Perez-Mederos">
-        <source src="351FC124-E1BD-4F7D-9B76-137C52DA4FE9.mp4" type="video/mp4">
-      </video>
+    <div class="closing-video__scene" id="closingVideoScene">
+      <div class="magic-stream" aria-hidden="true"></div>
+      <div class="magic-particles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+      <div class="genie-lamp" aria-hidden="true">
+        <div class="lamp-flare"></div>
+        <svg viewBox="0 0 260 165" role="img">
+          <defs>
+            <linearGradient id="lampGold" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#7B5713"/>
+              <stop offset=".24" stop-color="#E8C967"/>
+              <stop offset=".46" stop-color="#FFF0A8"/>
+              <stop offset=".67" stop-color="#C2912D"/>
+              <stop offset="1" stop-color="#6A460C"/>
+            </linearGradient>
+            <linearGradient id="lampDark" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#F2D879"/>
+              <stop offset="1" stop-color="#8B6219"/>
+            </linearGradient>
+            <filter id="lampGlow" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="4" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <g class="lamp-body">
+            <path d="M61 72c10-26 35-39 69-39 28 0 51 9 66 29-9 5-14 13-16 23-4 23-24 42-60 42-37 0-62-19-67-44-1-4 2-8 8-11z" fill="url(#lampGold)" stroke="#5F430F" stroke-width="2"/>
+            <path d="M62 73C36 70 20 78 9 93c17-5 35-4 52 7" fill="none" stroke="url(#lampGold)" stroke-width="13" stroke-linecap="round"/>
+            <path d="M187 66c18-18 36-24 57-18-14 4-24 12-31 23-7 11-17 16-31 15" fill="none" stroke="url(#lampGold)" stroke-width="11" stroke-linecap="round"/>
+            <path d="M242 48l11-1-7 8" fill="#EBCF73" stroke="#705014" stroke-width="1.5"/>
+            <path d="M83 126h78c7 0 12 4 14 10H69c2-6 7-10 14-10z" fill="url(#lampDark)" stroke="#60420E" stroke-width="2"/>
+            <path d="M106 33c1-12 8-20 22-20 13 0 20 8 21 20" fill="url(#lampGold)" stroke="#60420E" stroke-width="2"/>
+            <ellipse cx="127.5" cy="13" rx="16" ry="5" fill="#D6AF45" stroke="#60420E" stroke-width="1.5"/>
+            <circle cx="128" cy="8" r="5" fill="#F4DE86" stroke="#60420E" stroke-width="1.4"/>
+            <path d="M80 78c20 11 75 12 97-2" fill="none" stroke="rgba(255,244,189,.72)" stroke-width="2.4" stroke-linecap="round"/>
+            <path d="M95 108c17 9 47 8 62 0" fill="none" stroke="rgba(78,49,5,.32)" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="244" cy="49" r="3.5" fill="#FFF0A8" filter="url(#lampGlow)"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="closing-video__frame">
+        <video id="closingVideo" muted playsinline preload="metadata" aria-label="Presentación visual de William Perez-Mederos">
+          <source src="351FC124-E1BD-4F7D-9B76-137C52DA4FE9.mp4" type="video/mp4">
+        </video>
+      </div>
     </div>
   </div>
 </section>
 <script id="closing-video-js">
 (()=>{
   const video=document.getElementById('closingVideo');
-  if(!video)return;
-  let completed=false;
+  const scene=document.getElementById('closingVideoScene');
+  if(!video||!scene)return;
+  let completed=false,awakened=false,playTimer=0;
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  video.addEventListener('ended',()=>{completed=true;});
-  const play=()=>{
-    if(completed||reduce)return;
+
+  const safePlay=()=>{
+    if(completed)return;
     const p=video.play();
     if(p&&typeof p.catch==='function')p.catch(()=>{});
   };
+
+  const awaken=()=>{
+    if(awakened)return;
+    awakened=true;
+    scene.classList.add('is-awake');
+    if(reduce){ safePlay(); return; }
+    playTimer=window.setTimeout(safePlay,2450);
+  };
+
+  video.addEventListener('ended',()=>{completed=true;});
+
   if('IntersectionObserver' in window){
     const io=new IntersectionObserver(entries=>{
       entries.forEach(entry=>{
-        if(entry.isIntersecting&&entry.intersectionRatio>=.4) play();
-        else if(!video.paused&&!completed) video.pause();
+        if(entry.isIntersecting&&entry.intersectionRatio>=.28){
+          awaken();
+          if(awakened&&!completed&&video.paused&&scene.classList.contains('is-awake')&&video.currentTime>0) safePlay();
+        }else if(!video.paused&&!completed){
+          video.pause();
+        }
       });
-    },{threshold:[0,.4,.75]});
-    io.observe(video);
-  }else{play();}
+    },{threshold:[0,.28,.55]});
+    io.observe(scene);
+  }else{awaken();}
+
   video.addEventListener('click',()=>{
     completed=false;
+    clearTimeout(playTimer);
     video.currentTime=0;
-    const p=video.play();
-    if(p&&typeof p.catch==='function')p.catch(()=>{});
+    safePlay();
   });
 })();
 </script>
