@@ -1242,6 +1242,61 @@ filter:blur(12px);transform:scale(.1) rotate(-30deg)}
 }
 </style>
 
+
+<style id="section-readability-v1">
+/* Scoped presentation refinements; existing calculators and assistant keep their behavior. */
+.arq__bajo{grid-template-columns:minmax(0,1fr);gap:2.5rem}
+.arq__bajo .arq__col:first-child{padding-right:0;border-right:0}
+.arq__flujo,.arq__faltas{gap:1.25rem}
+.arq__flujo{grid-template-columns:repeat(2,minmax(0,1fr))}
+.arq__flujo li{padding:.5rem .75rem;min-width:0}
+.arq__flujo li::after{display:none}
+.arq__flujo b,.arq-falta b{font-size:.9375rem;line-height:1.45;letter-spacing:.035em;text-wrap:balance}
+.arq__flujo span:last-child,.arq-falta p{font-size:1rem;line-height:1.65;color:#3C4E63}
+.arq__flujo span:last-child{max-width:28ch;margin:.5rem auto 0}
+.arq__faltas{grid-template-columns:repeat(2,minmax(0,1fr))}
+.arq-falta{padding:1.5rem 1.25rem;min-width:0}
+.arq-falta__x{display:none}
+.arq__h3{font-size:1rem;line-height:1.5;letter-spacing:.1em;text-wrap:balance}
+.arq__cta p{margin-inline:auto}
+.arq__legal{color:#4A5B75;font-size:.875rem}
+#calculadoras{padding-top:clamp(2.5rem,5vw,4rem)}
+#calculadoras h2.title{font-size:clamp(2rem,1.2rem + 2.5vw,3rem);max-width:26ch;text-wrap:balance}
+#calculadoras .lead{font-size:1.0625rem;line-height:1.7;max-width:72ch;margin-top:1rem}
+#calculadoras .tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;max-width:60rem;border-radius:20px;gap:.35rem;margin-top:1.6rem}
+#calculadoras .tab{min-width:0;min-height:48px;font-size:.875rem;letter-spacing:.035em;line-height:1.45;padding:.75rem .85rem;white-space:normal;text-wrap:balance}
+#calculadoras .calc{margin-top:1.4rem}
+#calculadoras .calc>div,#calculadoras .field{min-width:0}
+#calculadoras .field label{font-size:.875rem;letter-spacing:.04em;line-height:1.5}
+#calculadoras .calc__intro{font-size:1rem}
+#calculadoras .calc__big{overflow-wrap:anywhere}
+@media(min-width:768px){
+  /* Leave a clear right-hand gutter for the existing floating contact buttons. */
+  .arq>.wrap,#calculadoras>.wrap{width:min(calc(100% - 8rem),1200px);margin-left:max(2rem,calc((100% - 1200px)/2));margin-right:auto}
+}
+@media(min-width:1040px){
+  .arq__flujo,.arq__faltas{grid-template-columns:repeat(4,minmax(0,1fr))}
+  #calculadoras .tabs{grid-template-columns:repeat(4,minmax(0,1fr));border-radius:999px}
+  .burger{display:none}
+}
+@media(min-width:920px) and (max-width:1199px){
+  #calculadoras .calc.is-active{grid-template-columns:minmax(0,1fr);gap:2rem}
+  #calculadoras .calc__out{position:static}
+}
+@media(max-width:519px){
+  .arq__faltas{grid-template-columns:minmax(0,1fr)}
+  .arq-falta{text-align:left;padding:1.25rem}
+  .arq-falta__ico{margin:0 0 .5rem}
+  .arq__flujo{gap:1.5rem .75rem}
+  .arq__flujo li{padding:0}
+  .arq__cta{padding:1.75rem 1.25rem}
+  .arq__cta-btns{flex-direction:column;align-items:stretch}
+  .arq__cta-btns .btn{white-space:normal}
+  #calculadoras .calc{padding:1.25rem}
+  #calculadoras .calc__out{padding:1.25rem}
+  #calculadoras .calc__row{flex-wrap:wrap;gap:.25rem .75rem}
+}
+</style>
 </head>
 
 <body>
@@ -1479,9 +1534,9 @@ filter:blur(12px);transform:scale(.1) rotate(-30deg)}
       <div class="arq__col">
         <h3 class="arq__h3 arq__h3--c">Cómo trabajan juntas las 4 capas</h3>
         <ol class="arq__flujo">
-          <li style="--d:0s"><span class="arq-paso__ico arq-paso__ico--1" aria-hidden="true">✚</span><b>Salud</b><span>Te protege frente al impacto de eventos médicos.</span></li>
-          <li style="--d:.13s"><span class="arq-paso__ico arq-paso__ico--2" aria-hidden="true">◆</span><b>Emergencia</b><span>Absorbe gastos inesperados sin depender inmediatamente de deuda.</span></li>
-          <li style="--d:.26s"><span class="arq-paso__ico arq-paso__ico--3" aria-hidden="true">♥</span><b>Vida</b><span>Ayuda a proteger financieramente a tu familia.</span></li>
+          <li style="--d:0s"><span class="arq-paso__ico arq-paso__ico--1" aria-hidden="true">✚</span><b>Seguro de salud</b><span>Te protege frente al impacto de eventos médicos.</span></li>
+          <li style="--d:.13s"><span class="arq-paso__ico arq-paso__ico--2" aria-hidden="true">◆</span><b>Fondo de emergencia</b><span>Absorbe gastos inesperados sin depender inmediatamente de deuda.</span></li>
+          <li style="--d:.26s"><span class="arq-paso__ico arq-paso__ico--3" aria-hidden="true">♥</span><b>Seguro de vida</b><span>Ayuda a proteger financieramente a tu familia.</span></li>
           <li style="--d:.39s"><span class="arq-paso__ico arq-paso__ico--4" aria-hidden="true">◎</span><b>Retiro</b><span>Transforma años de ahorro y planificación en recursos para el futuro.</span></li>
         </ol>
       </div>
@@ -1489,10 +1544,10 @@ filter:blur(12px);transform:scale(.1) rotate(-30deg)}
       <div class="arq__col">
         <h3 class="arq__h3 arq__h3--c">¿Qué pasa si falta una capa?</h3>
         <div class="arq__faltas">
-          <article class="arq-falta arq-falta--1" style="--d:0s"><span class="arq-falta__x" aria-hidden="true">✕</span><i class="arq-falta__ico" aria-hidden="true">✚</i><b>Sin salud</b><p>Un accidente o enfermedad puede transformarse en una carga financiera importante.</p></article>
-          <article class="arq-falta arq-falta--2" style="--d:.1s"><span class="arq-falta__x" aria-hidden="true">✕</span><i class="arq-falta__ico" aria-hidden="true">◆</i><b>Sin emergencia</b><p>Un gasto inesperado puede obligar a utilizar tarjetas de crédito o préstamos.</p></article>
-          <article class="arq-falta arq-falta--3" style="--d:.2s"><span class="arq-falta__x" aria-hidden="true">✕</span><i class="arq-falta__ico" aria-hidden="true">♥</i><b>Sin vida</b><p>Una familia puede enfrentar pérdida de ingresos y mayor presión económica.</p></article>
-          <article class="arq-falta arq-falta--4" style="--d:.3s"><span class="arq-falta__x" aria-hidden="true">✕</span><i class="arq-falta__ico" aria-hidden="true">◎</i><b>Sin retiro</b><p>El futuro puede depender excesivamente del trabajo, familiares u otras fuentes.</p></article>
+          <article class="arq-falta arq-falta--1" style="--d:0s"><span class="arq-falta__x" aria-hidden="true">✕</span><i class="arq-falta__ico" aria-hidden="true">✚</i><b>Sin seguro de salud</b><p>Un accidente o enfermedad puede transformarse en una carga financiera importante.</p></article>
+          <article class="arq-falta arq-falta--2" style="--d:.1s"><span class="arq-falta__x" aria-hidden="true">✕</span><i class="arq-falta__ico" aria-hidden="true">◆</i><b>Sin fondo de emergencia</b><p>Un gasto inesperado puede obligar a utilizar tarjetas de crédito o préstamos.</p></article>
+          <article class="arq-falta arq-falta--3" style="--d:.2s"><span class="arq-falta__x" aria-hidden="true">✕</span><i class="arq-falta__ico" aria-hidden="true">♥</i><b>Sin seguro de vida</b><p>Una familia puede enfrentar pérdida de ingresos y mayor presión económica.</p></article>
+          <article class="arq-falta arq-falta--4" style="--d:.3s"><span class="arq-falta__x" aria-hidden="true">✕</span><i class="arq-falta__ico" aria-hidden="true">◎</i><b>Sin ahorro para el retiro</b><p>El futuro puede depender excesivamente del trabajo, familiares u otras fuentes.</p></article>
         </div>
       </div>
     </div>
@@ -1522,7 +1577,7 @@ filter:blur(12px);transform:scale(.1) rotate(-30deg)}
     <p class="lead reveal">Usa las calculadoras para preparar preguntas sobre vida, gastos médicos, retiro y universidad. Los resultados son estimaciones educativas basadas únicamente en los datos que introduzcas; no son ofertas ni recomendaciones.</p>
 
     <div class="tabs" role="tablist" aria-label="Elegir calculadora">
-      <button class="tab" role="tab" aria-selected="true" data-calc="vida">Necesidad de vida</button>
+      <button class="tab" role="tab" aria-selected="true" data-calc="vida">Protección de vida</button>
       <button class="tab" role="tab" aria-selected="false" data-calc="retiro">Proyección de retiro</button>
       <button class="tab" role="tab" aria-selected="false" data-calc="salud">Gastos médicos</button>
       <button class="tab" role="tab" aria-selected="false" data-calc="uni">Ahorro universitario</button>
