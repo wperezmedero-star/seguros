@@ -1203,6 +1203,43 @@ filter:blur(12px);transform:scale(.1) rotate(-30deg)}
  .closing-video__frame{opacity:1!important;transform:none!important;filter:none!important;clip-path:none!important;transition:none!important}
  .closing-video__frame::after{display:none!important}
 }
+
+/* Lamp sequence: rock, smoke, then video. */
+.genie-lamp{pointer-events:auto;cursor:pointer;outline-offset:6px}
+.genie-lamp:focus-visible{outline:2px solid #D4AF37;border-radius:20px}
+.closing-video__scene.is-awake .lamp-body{animation:lampRock 1.35s ease-in-out both}
+@keyframes lampRock{
+ 0%,100%{transform:translateY(0) rotate(0)}
+ 18%{transform:translateY(-5px) rotate(-7deg)}
+ 38%{transform:translateY(-10px) rotate(8deg)}
+ 58%{transform:translateY(-7px) rotate(-6deg)}
+ 78%{transform:translateY(-3px) rotate(4deg)}
+}
+.closing-video__scene.is-awake .lamp-flare{animation:flarePop 1.8s 1s ease-out both}
+.magic-stream{left:var(--spout-x,50%);bottom:var(--spout-bottom,112px);width:min(300px,55vw);height:420px;z-index:5}
+.magic-stream::before,.magic-stream::after{transform-origin:0 100%;background:
+ radial-gradient(ellipse at 6% 96%,rgba(255,245,211,.95),transparent 13%),
+ radial-gradient(ellipse at 17% 79%,rgba(249,235,199,.8),transparent 23%),
+ radial-gradient(ellipse at 23% 57%,rgba(231,220,195,.6),transparent 30%),
+ radial-gradient(ellipse at 38% 32%,rgba(237,224,185,.5),transparent 33%),
+ radial-gradient(ellipse at 55% 12%,rgba(212,175,55,.3),transparent 35%);
+ filter:blur(13px)}
+.closing-video__scene.is-awake .magic-stream{animation:streamVisible 3.7s 1s ease both}
+.closing-video__scene.is-awake .magic-stream::before{animation:lampSmoke 3.5s 1s ease-out both}
+.closing-video__scene.is-awake .magic-stream::after{animation:lampSmoke 3.6s 1.25s ease-out both;filter:blur(22px)}
+@keyframes lampSmoke{
+ 0%{transform:scale(.06) rotate(0)}
+ 35%{transform:scale(.6) rotate(-15deg)}
+ 70%{transform:scale(.95) rotate(-25deg)}
+ 100%{transform:scale(1.14) rotate(-32deg)}
+}
+.closing-video__frame{transition-delay:2.5s,2.5s,2.5s,2.5s;transform-origin:var(--frame-origin-x,50%) var(--frame-origin-y,100%)}
+.closing-video__scene.is-awake .closing-video__frame::after{animation-delay:3.7s}
+.closing-video__scene.is-resetting .closing-video__frame{transition:none}
+@media(prefers-reduced-motion:reduce){
+ .genie-lamp{display:block!important;position:relative;left:auto;bottom:auto;transform:none!important;width:180px}
+ .closing-video__scene.is-awake .lamp-body{animation:none}
+}
 </style>
 
 </head>
@@ -2062,7 +2099,7 @@ filter:blur(12px);transform:scale(.1) rotate(-30deg)}
       <div class="magic-stream" aria-hidden="true"></div>
       <div class="magic-particles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 
-      <div class="genie-lamp" aria-hidden="true">
+      <div class="genie-lamp" role="button" tabindex="0" aria-label="Repetir animación de la lámpara y el video" title="Toca para repetir">
         <div class="lamp-flare"></div>
         <img class="lamp-body" src="lampara-dorada-realista.webp" width="1536" height="1024" alt="" loading="lazy" decoding="async">
       </div>
@@ -2077,48 +2114,62 @@ filter:blur(12px);transform:scale(.1) rotate(-30deg)}
 </section>
 <script id="closing-video-js">
 (()=>{
-  const video=document.getElementById('closingVideo');
-  const scene=document.getElementById('closingVideoScene');
-  if(!video||!scene)return;
-  let completed=false,awakened=false,playTimer=0;
-  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const safePlay=()=>{
-    if(completed)return;
-    const p=video.play();
-    if(p&&typeof p.catch==='function')p.catch(()=>{});
-  };
-
-  const awaken=()=>{
-    if(awakened)return;
-    awakened=true;
-    scene.classList.add('is-awake');
-    if(reduce){ safePlay(); return; }
-    playTimer=window.setTimeout(safePlay,2450);
-  };
-
-  video.addEventListener('ended',()=>{completed=true;});
-
-  if('IntersectionObserver' in window){
-    const io=new IntersectionObserver(entries=>{
-      entries.forEach(entry=>{
-        if(entry.isIntersecting&&entry.intersectionRatio>=.28){
-          awaken();
-          if(awakened&&!completed&&video.paused&&scene.classList.contains('is-awake')&&video.currentTime>0) safePlay();
-        }else if(!video.paused&&!completed){
-          video.pause();
-        }
-      });
-    },{threshold:[0,.28,.55]});
-    io.observe(scene);
-  }else{awaken();}
-
-  video.addEventListener('click',()=>{
-    completed=false;
-    clearTimeout(playTimer);
-    video.currentTime=0;
-    safePlay();
-  });
+ const video=document.getElementById('closingVideo');
+ const scene=document.getElementById('closingVideoScene');
+ const lamp=scene&&scene.querySelector('.genie-lamp');
+ if(!video||!scene||!lamp)return;
+ const reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
+ let awakened=false,completed=false,ready=false,visible=false,timer=0;
+ const position=()=>{
+   const s=scene.getBoundingClientRect(),l=lamp.getBoundingClientRect();
+   const f=scene.querySelector('.closing-video__frame');
+   scene.style.setProperty('--spout-x',(l.left-s.left+l.width*.97)+'px');
+   scene.style.setProperty('--spout-bottom',(s.bottom-l.top-l.height*.36)+'px');
+   scene.style.setProperty('--frame-origin-x',(l.left-s.left+l.width*.97-f.offsetLeft)+'px');
+   scene.style.setProperty('--frame-origin-y',(l.top-s.top+l.height*.36-f.offsetTop)+'px');
+ };
+ const play=()=>{
+   if(!ready||completed||!visible||document.hidden)return;
+   const p=video.play();
+   if(p&&p.catch)p.catch(()=>{video.controls=true;});
+ };
+ const awaken=(replay=false)=>{
+   if(awakened&&!replay)return;
+   awakened=true;completed=false;ready=false;
+   clearTimeout(timer);video.pause();
+   if(replay)video.currentTime=0;
+   scene.classList.add('is-resetting');
+   scene.classList.remove('is-awake');
+   position();
+   void scene.offsetWidth;
+   scene.classList.remove('is-resetting');
+   scene.classList.add('is-awake');
+   timer=setTimeout(()=>{ready=true;play();},reduce.matches?0:4000);
+ };
+ video.addEventListener('ended',()=>{completed=true;});
+ lamp.addEventListener('click',()=>awaken(true));
+ lamp.addEventListener('keydown',e=>{
+   if(e.key==='Enter'||e.key===' '){e.preventDefault();awaken(true);}
+ });
+ video.addEventListener('click',()=>{
+   if(video.controls)return;
+   completed=false;ready=true;
+   if(video.ended)video.currentTime=0;
+   play();
+ });
+ if('IntersectionObserver' in window){
+   const sceneObserver=new IntersectionObserver(entries=>{
+     visible=entries[0].isIntersecting;
+     if(visible)play();else video.pause();
+   },{threshold:0});
+   sceneObserver.observe(scene);
+   const lampObserver=new IntersectionObserver(entries=>{
+     if(entries[0].isIntersecting){awaken();lampObserver.disconnect();}
+   },{threshold:.65});
+   lampObserver.observe(lamp);
+ }else{visible=true;awaken();}
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)video.pause();else play();});
+ window.addEventListener('resize',position,{passive:true});
 })();
 </script>
 
