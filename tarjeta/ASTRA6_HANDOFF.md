@@ -1,5 +1,23 @@
 # Astra 6 Handoff — Tarjeta Digital Premium / Lead Engine 2027
 
+## PRINCIPIO CRÍTICO — NO REHACER DESDE CERO
+
+Este proyecto es una **evolución directa de la tarjeta existente** en `https://williamperezseguros.com/tarjeta/`.
+
+NO crear una tarjeta nueva ignorando la actual.
+NO sustituir por una plantilla genérica.
+NO eliminar funciones útiles para empezar de cero.
+
+La misión es tomar la tarjeta actual que William ya usa, **preservar su identidad, sus datos reales, su foto, sus funciones útiles, su calculadora, sus accesos de contacto, su PWA/offline y su lógica existente**, y llevar todo eso a una generación superior en diseño, iconografía, UX, conversión, velocidad y confianza.
+
+Antes de tocar la implementación, estudiar `tarjeta/index.html` completo y clasificar cada bloque como:
+- conservar tal cual;
+- conservar pero elevar;
+- reemplazar por una versión claramente superior;
+- retirar solo si perjudica la experiencia o conversión.
+
+La comparación final debe ser claramente reconocible como **la misma tarjeta de William, evolucionada**, no como un producto distinto sin continuidad.
+
 ## Estado y alcance
 
 Trabaja **solo** en la rama `card-v2-premium-lead-engine` del repositorio `wperezmedero-star/seguros`.
