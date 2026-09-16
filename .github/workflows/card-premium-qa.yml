@@ -48,3 +48,23 @@ jobs:
             tarjeta/review/qa-latest/desktop-hero.jpg
             tarjeta/review/qa-latest/desktop.jpg
           if-no-files-found: warn
+
+      - name: Package production-ready card
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: william-card-ready
+          path: |
+            tarjeta/index.html
+            tarjeta/card.css
+            tarjeta/card-core.css
+            tarjeta/card-luminous.css
+            tarjeta/card.js
+            tarjeta/card-core.js
+            tarjeta/app.webmanifest
+            tarjeta/sw.js
+            tarjeta/sw-core.js
+            tarjeta/icono.png
+            tarjeta/assets/**
+            tarjeta/vendor/**
+          if-no-files-found: error
