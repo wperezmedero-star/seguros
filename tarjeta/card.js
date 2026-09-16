@@ -27,7 +27,7 @@
     if(document.getElementById('premium-a11y-polish'))return;
     const style=document.createElement('style');
     style.id='premium-a11y-polish';
-    style.textContent='dialog.hoja .campo label em{color:#526477!important}dialog.hoja .draft-status,dialog.hoja .draft-status strong{color:#705500!important}@keyframes heroEnterReadable{from{transform:translateY(18px) scale(.99)}to{transform:none}}.topbar,.hero-copy,.credentials{animation-name:heroEnterReadable!important;filter:none!important}';
+    style.textContent='dialog.hoja .campo label em{color:#526477!important}dialog.hoja .draft-status,dialog.hoja .draft-status strong{color:#705500!important}@keyframes heroEnterReadable{from{transform:translateY(18px) scale(.99)}to{transform:none}}@keyframes portraitEnterReadable{from{transform:translateY(16px) scale(.992)}to{transform:none}}.topbar,.hero-copy,.credentials{animation-name:heroEnterReadable!important;filter:none!important;opacity:1!important}.portrait{animation-name:portraitEnterReadable!important;filter:none!important;opacity:1!important}.motion-ready .motion-reveal{opacity:1!important;filter:none!important;transform:translateY(16px) scale(.996)!important}.motion-ready .motion-reveal.motion-in{opacity:1!important;filter:none!important;transform:none!important}';
     document.head.appendChild(style);
   };
 
