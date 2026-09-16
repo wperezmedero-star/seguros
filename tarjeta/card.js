@@ -14,6 +14,8 @@
     svg.setAttribute('viewBox','0 0 24 24');
     svg.setAttribute('fill','none');
     svg.setAttribute('stroke','currentColor');
+    svg.setAttribute('stroke-linecap','round');
+    svg.setAttribute('stroke-linejoin','round');
     svg.innerHTML=iconMarkup[key];
     svg.classList.add('edu-icon');
   };
@@ -54,6 +56,19 @@
       dialog.hoja .draft-status,dialog.hoja .draft-status strong{color:#705500!important}
       .dime-callout .secondary{background:#0c4e69!important;color:#fff!important;border-color:#0b4058!important;box-shadow:0 10px 24px rgba(12,78,105,.18)!important}
       .dime-callout .secondary:hover,.dime-callout .secondary:focus-visible{background:#0f6f86!important;border-color:#8a6812!important;color:#fff!important}
+
+      /* Final polish: spacing, icon consistency and tactile clarity */
+      .edu-icon{vector-effect:non-scaling-stroke}
+      .need>.icon,.marca{transition:transform .34s cubic-bezier(.2,.9,.25,1),box-shadow .34s ease,border-color .34s ease}
+      .need:hover>.icon,.need:focus-visible>.icon{transform:translateY(-2px) scale(1.035);box-shadow:0 9px 20px rgba(16,36,60,.10)}
+      .icon-btn,.text-btn{transition:transform .22s ease,color .22s ease,background .22s ease,border-color .22s ease}
+      .icon-btn:hover,.icon-btn:focus-visible{transform:translateY(-2px)}
+      .text-btn:hover,.text-btn:focus-visible{transform:translateY(-1px)}
+      .service-panel,.dime-callout,.contact-panel{overflow:hidden}
+      dialog.hoja .btn{min-height:50px}
+      #qrFrame{isolation:isolate}
+      #qrFrame::before{content:"";position:absolute;inset:8px;border:1px solid rgba(15,111,134,.12);border-radius:18px;pointer-events:none}
+
       @keyframes heroEnterReadable{from{transform:translateY(18px) scale(.99)}to{transform:none}}
       @keyframes portraitEnterReadable{from{transform:translateY(16px) scale(.992)}to{transform:none}}
       .topbar,.hero-copy,.credentials{animation-name:heroEnterReadable!important;filter:none!important;opacity:1!important}
@@ -66,10 +81,14 @@
         .brand{font-size:14px!important}.brand small{font-size:10px!important}.site-link{font-size:13px!important}
         .hero-intro{font-size:17px!important;line-height:1.72!important}.eyebrow{font-size:11px!important}.btn{font-size:14px!important}.reassurance,.text-btn{font-size:12px!important}
         .credentials{font-size:13px!important}.credential-intro small{font-size:11px!important}.credential-label{font-size:9px!important}.credentials strong{font-size:14px!important}.credentials a{font-size:12px!important}
+        .section{margin-top:76px!important}.section-heading{gap:16px!important;margin-bottom:24px!important}.needs{gap:12px!important}
+        .need{padding:20px!important;min-height:154px!important;gap:16px!important;border-radius:16px!important}.need>.icon{width:50px!important;height:50px!important;border-radius:16px!important}
         .section-heading p:last-child,.service-copy>p:not(.eyebrow),.section-intro,.lista li{font-size:14px!important}.need strong{font-size:18px!important}.need small{font-size:12px!important;line-height:1.5!important}
-        .service-copy .service-note,.panel-actions .text-btn{font-size:12px!important}.dime-callout p:not(.eyebrow){font-size:13px!important}.dime-callout .btn{font-size:13px!important}
-        .lista span{font-size:13px!important}.txt span{font-size:12px!important}.contact-panel p:not(.eyebrow){font-size:14px!important}.contact-links a{font-size:13px!important}.contact-ctas small{font-size:11px!important}
-        .keep p strong{font-size:16px!important}.keep p span{font-size:13px!important}.keep .btn{font-size:12px!important}footer{font-size:11px!important}.footer-actions .text-btn{font-size:11px!important}
+        .service-panel{padding:24px!important;gap:22px!important;border-radius:20px!important}.service-copy .service-note,.panel-actions .text-btn{font-size:12px!important}
+        .dime-callout{padding:22px!important;gap:18px!important;border-radius:20px!important}.dime-callout p:not(.eyebrow){font-size:13px!important}.dime-callout .btn{font-size:13px!important}
+        .lista span{font-size:13px!important}.txt span{font-size:12px!important}.contact-panel{padding:30px 22px!important;gap:28px!important;border-radius:22px!important}.contact-panel p:not(.eyebrow){font-size:14px!important}.contact-links a{font-size:13px!important}.contact-ctas small{font-size:11px!important}
+        .keep{padding-block:36px!important;gap:20px!important}.keep p strong{font-size:16px!important}.keep p span{font-size:13px!important}.keep .btn{font-size:12px!important}footer{font-size:11px!important}.footer-actions .text-btn{font-size:11px!important}
+        dialog.hoja{border-radius:22px!important}dialog.hoja .btn{min-height:52px!important}
       }
     `;
     document.head.appendChild(style);
