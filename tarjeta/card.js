@@ -63,6 +63,13 @@
       @media(max-width:699px){
         body{background:linear-gradient(180deg,#0b4562 0%,#11798f 24%,#eaf6f5 46%,#f7f1e6 67%,#0e5d76 83%,#0a192f 100%)!important}
         .credentials{border-radius:16px;padding-inline:16px}.areas{padding-top:32px;padding-bottom:34px}
+        .brand{font-size:14px!important}.brand small{font-size:10px!important}.site-link{font-size:13px!important}
+        .hero-intro{font-size:17px!important;line-height:1.72!important}.eyebrow{font-size:11px!important}.btn{font-size:14px!important}.reassurance,.text-btn{font-size:12px!important}
+        .credentials{font-size:13px!important}.credential-intro small{font-size:11px!important}.credential-label{font-size:9px!important}.credentials strong{font-size:14px!important}.credentials a{font-size:12px!important}
+        .section-heading p:last-child,.service-copy>p:not(.eyebrow),.section-intro,.lista li{font-size:14px!important}.need strong{font-size:18px!important}.need small{font-size:12px!important;line-height:1.5!important}
+        .service-copy .service-note,.panel-actions .text-btn{font-size:12px!important}.dime-callout p:not(.eyebrow){font-size:13px!important}.dime-callout .btn{font-size:13px!important}
+        .lista span{font-size:13px!important}.txt span{font-size:12px!important}.contact-panel p:not(.eyebrow){font-size:14px!important}.contact-links a{font-size:13px!important}.contact-ctas small{font-size:11px!important}
+        .keep p strong{font-size:16px!important}.keep p span{font-size:13px!important}.keep .btn{font-size:12px!important}footer{font-size:11px!important}.footer-actions .text-btn{font-size:11px!important}
       }
     `;
     document.head.appendChild(style);
