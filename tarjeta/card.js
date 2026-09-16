@@ -2,7 +2,6 @@
 (()=>{
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  /* Load the final visual theme as CSS instead of injecting style rules from JavaScript. */
   if(!document.querySelector('link[data-card-theme="ocean-luminous"]')){
     const theme=document.createElement('link');
     theme.rel='stylesheet';
@@ -68,24 +67,8 @@
     }
 
     if(reduce.matches)return;
-    document.documentElement.classList.add('motion-ready');
 
-    const targets=[...document.querySelectorAll('.section,.credentials,.keep,footer')];
-    targets.forEach(el=>el.classList.add('motion-reveal'));
-    if('IntersectionObserver' in window){
-      const io=new IntersectionObserver(entries=>{
-        entries.forEach(entry=>{
-          if(entry.isIntersecting){
-            entry.target.classList.add('motion-in');
-            io.unobserve(entry.target);
-          }
-        });
-      },{threshold:.12,rootMargin:'0px 0px -7% 0px'});
-      targets.forEach(el=>io.observe(el));
-    }else{
-      targets.forEach(el=>el.classList.add('motion-in'));
-    }
-
+    /* Keep all primary content visible at all times. Motion is reserved for tactile interactions. */
     const portrait=document.querySelector('.portrait');
     if(portrait && matchMedia('(hover:hover) and (pointer:fine)').matches){
       portrait.addEventListener('pointermove',e=>{
@@ -100,20 +83,14 @@
     document.addEventListener('pointerdown',e=>{
       const el=e.target.closest('.btn,.need,.icon-btn,.card');
       if(!el||typeof el.animate!=='function')return;
-      el.animate(
-        [{transform:'scale(1)'},{transform:'scale(.975)'},{transform:'scale(1)'}],
-        {duration:250,easing:'cubic-bezier(.2,.9,.25,1)'}
-      );
+      el.animate([{transform:'scale(1)'},{transform:'scale(.975)'},{transform:'scale(1)'}],{duration:250,easing:'cubic-bezier(.2,.9,.25,1)'});
     },{passive:true});
 
     const total=document.querySelector('#cTotal');
     if(total && 'MutationObserver' in window){
       const mo=new MutationObserver(()=>{
         if(total.textContent.trim()!=='$0'&&typeof total.animate==='function'){
-          total.animate(
-            [{transform:'scale(.95)',opacity:.55},{transform:'scale(1.03)',opacity:1},{transform:'scale(1)',opacity:1}],
-            {duration:480,easing:'cubic-bezier(.2,.9,.25,1)'}
-          );
+          total.animate([{transform:'scale(.95)',opacity:.55},{transform:'scale(1.03)',opacity:1},{transform:'scale(1)',opacity:1}],{duration:480,easing:'cubic-bezier(.2,.9,.25,1)'});
         }
       });
       mo.observe(total,{childList:true,characterData:true,subtree:true});
