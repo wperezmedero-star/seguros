@@ -27,7 +27,7 @@
     if(document.getElementById('premium-a11y-polish'))return;
     const style=document.createElement('style');
     style.id='premium-a11y-polish';
-    style.textContent='dialog.hoja .campo label em{color:#526477!important}';
+    style.textContent='dialog.hoja .campo label em{color:#526477!important}dialog.hoja .draft-status,dialog.hoja .draft-status strong{color:#705500!important}';
     document.head.appendChild(style);
   };
 
