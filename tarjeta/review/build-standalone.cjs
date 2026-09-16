@@ -38,6 +38,7 @@ html=html
  .replace(/<script[^>]+src=["']vendor\/qrcode\.min\.js["'][^>]*><\/script>\s*/i,'')
  .replace(/<script[^>]+src=["']card\.js["'][^>]*><\/script>\s*/i,'');
 const bundle=`\n<style id="standalone-card-css">${coreCss}\n${motionCss}</style>\n<script>window.CARD_PREVIEW=true;<\/script>\n<script>${qr}<\/script>\n<script>${coreJs}<\/script>\n<script>${motionJs}<\/script>\n`;
-html=html.replace('</body>',bundle+'\n</body>');
+// Use a replacement function so JavaScript's replacement-string rules do not collapse $$ into $.
+html=html.replace('</body>',()=>bundle+'\n</body>');
 fs.writeFileSync(out,html);
 console.log(`Standalone preview: ${out} (${Math.round(fs.statSync(out).size/1024)} KB)`);
