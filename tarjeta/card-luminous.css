@@ -1,0 +1,226 @@
+/* Ocean Luminous theme — visual system only. Behavior remains in card-core.js/card.js. */
+:root{
+  --ocean:#0f6f86;
+  --ocean-2:#17849a;
+  --ocean-deep:#0c536a;
+  --mist:#eaf5f5;
+  --mist-2:#f4faf9;
+  --ivory:#fbf7ee;
+  --paper:#fffdfa;
+  --ink:#173248;
+  --ink-soft:#556b79;
+  --line-light:#d6e4e5;
+  --gold-deep:#8a6812;
+}
+
+/* The page is light by default. Darkness is used only where it adds contrast. */
+html{background:var(--mist)}
+body{
+  background:linear-gradient(180deg,#0f6f86 0 29%,#edf7f6 29% 58%,#fbf7ee 58% 82%,#eef7f6 82% 100%)!important;
+  color:var(--ink);
+}
+body::before{opacity:.08!important}
+body::after{opacity:.07!important}
+
+/* Ocean hero: visibly blue, never near-black. */
+.topbar,.hero,.credentials{
+  position:relative;
+  z-index:1;
+  color:#fff;
+  background:#0f6f86!important;
+  box-shadow:0 0 0 100vmax #0f6f86;
+  clip-path:inset(0 -100vmax);
+}
+.topbar{border-bottom:1px solid rgba(255,255,255,.08)}
+.hero{background:linear-gradient(135deg,#0f6f86 0%,#147c92 52%,#0d5f77 100%)!important}
+.hero h1,.hero h2,.hero h3{color:#fff}
+.hero h1 em{color:#ffe09a}
+.hero-intro,.brand small,.site-link,.reassurance{color:#e4f1f3!important}
+.site-link:hover,.text-btn:hover{color:#fff2ba!important}
+.credentials{
+  background:#0c5e76!important;
+  border-block-color:rgba(255,255,255,.22)!important;
+  box-shadow:0 0 0 100vmax #0c5e76;
+}
+.credential-label,.credential-intro small{color:#d8ebee!important}
+.credentials strong{color:#fff!important}
+.credentials a{color:#fff0b0!important}
+.portrait{background:#0d5d75!important;border-color:rgba(255,226,151,.34)!important;box-shadow:0 28px 66px rgba(6,50,65,.24)!important}
+
+/* Main guidance area: full light canvas. */
+#necesidades,.approach,.keep{
+  position:relative;
+  isolation:isolate;
+  color:var(--ink)!important;
+}
+#necesidades::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  left:50%;
+  width:100vw;
+  transform:translateX(-50%);
+  top:-48px;
+  bottom:-52px;
+  background:linear-gradient(180deg,#edf8f7 0%,#f8fbf8 52%,#fbf6eb 100%)!important;
+  border-block:1px solid #d7e7e6;
+}
+#necesidades>.section-heading h2,#necesidades>.section-heading p,.approach h2,.approach h3,.approach b,.keep strong{color:var(--ink)!important}
+#necesidades>.section-heading p:last-child,.approach .section-intro,.approach .lista span,.approach .lista a,.keep span{color:var(--ink-soft)!important}
+#necesidades .eyebrow,.approach .eyebrow{color:var(--gold-deep)!important}
+
+/* Need selector: crisp, educational and unmistakably active. */
+.need{
+  background:#fff!important;
+  color:var(--ink)!important;
+  border-color:#d3e1e3!important;
+  box-shadow:0 12px 28px rgba(23,65,78,.07)!important;
+}
+.need small{color:#607484!important}
+.need>.icon{
+  width:50px!important;height:50px!important;padding:10px!important;border-radius:16px!important;
+  background:#eef6f7!important;border:1px solid #d0e2e5!important;color:#155e78!important;
+  stroke-width:1.95!important;box-shadow:0 7px 18px rgba(15,111,134,.08)!important;
+}
+.need[data-service="vida"]>.icon{background:#fff6e4!important;border-color:#ecd8a5!important;color:#8b6313!important}
+.need[data-service="salud"]>.icon{background:#e9f8f5!important;border-color:#c5e6de!important;color:#14766e!important}
+.need[data-service="medicare"]>.icon{background:#edf5fb!important;border-color:#c8ddeb!important;color:#245d88!important}
+.need[data-service="retiro"]>.icon{background:#f3f7e8!important;border-color:#dbe5bc!important;color:#607528!important}
+.need[aria-pressed="true"]{
+  background:#fffaf0!important;
+  border-color:#cda93d!important;
+  box-shadow:0 0 0 2px rgba(212,175,55,.13),0 16px 34px rgba(23,65,78,.10)!important;
+}
+.need[aria-pressed="true"] strong{color:#0b5269!important}
+.selected-mark{color:#8a6812!important}
+
+/* The answer panel is medium ocean blue, not navy. */
+.service-panel{
+  background:linear-gradient(135deg,#147d93 0%,#0f6f86 58%,#0d5b72 100%)!important;
+  border-color:#64a8b7!important;
+  color:#fff!important;
+  backdrop-filter:none!important;
+  box-shadow:0 22px 48px rgba(8,73,92,.18)!important;
+}
+.service-panel h3{color:#fff!important}
+.service-panel .eyebrow{color:#fff0ad!important}
+.service-panel .service-copy>p:not(.eyebrow){color:#e5f2f4!important}
+.service-panel .service-note{color:#fff!important}
+.service-panel .secondary{background:#fff!important;color:#0d5b72!important;border-color:#d8ecf0!important}
+.service-panel .text-btn{color:#fff!important}
+
+/* DIME is intentionally bright. */
+.dime-callout{
+  background:linear-gradient(135deg,#fffefa 0%,#f2faf9 100%)!important;
+  color:var(--ink)!important;
+  border-color:#c7dedf!important;
+  box-shadow:0 16px 36px rgba(19,88,105,.10)!important;
+}
+.dime-callout h2{color:var(--ink)!important}
+.dime-callout p:not(.eyebrow){color:var(--ink-soft)!important}
+.dime-callout .eyebrow{color:var(--gold-deep)!important}
+.dime-icon{background:#0f6f86!important;color:#fff0ad!important;border-color:#0d5c73!important}
+.dime-callout .secondary{background:#0f6f86!important;color:#fff!important;border-color:#0c5268!important}
+
+/* Method section: warm paper, generous contrast. */
+.approach::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  left:50%;width:100vw;transform:translateX(-50%);
+  top:-44px;bottom:-46px;
+  background:linear-gradient(180deg,#fffaf1 0%,#fbf7ee 64%,#f0f8f7 100%)!important;
+  border-block:1px solid #e4ddd0;
+}
+.approach .lista li{border-color:#d6dfdf!important}
+.approach .lista .icon{color:#8a6812!important}
+.approach .signature{color:#7c5c10!important}
+
+/* Services carousel lives on a light aqua section. Image cards provide the contrast. */
+.areas{
+  position:relative;
+  isolation:isolate;
+  color:var(--ink)!important;
+  padding-top:48px!important;
+  padding-bottom:48px!important;
+}
+.areas::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  left:50%;width:100vw;transform:translateX(-50%);
+  inset-block:0;
+  background:linear-gradient(180deg,#e7f4f4 0%,#f5faf8 100%)!important;
+  border-block:1px solid #d0e4e4;
+}
+.areas h2,.areas .section-heading p{color:var(--ink)!important}
+.areas .eyebrow{color:#7f6011!important}
+.areas .icon-btn{background:#fff!important;color:#0f647c!important;border-color:#c8dfe2!important;box-shadow:0 6px 16px rgba(15,111,134,.08)}
+.card{border-color:rgba(255,255,255,.48)!important;box-shadow:0 18px 34px rgba(24,65,78,.14)!important}
+.marca{background:#fffaf0!important;border-color:#e1ce92!important;color:#17405a!important;backdrop-filter:none!important}
+
+/* Contact: strong blue, but lighter and cleaner than the old navy block. */
+.contact-panel{
+  background:linear-gradient(135deg,#147d93 0%,#0f6f86 62%,#0d5b72 100%)!important;
+  border-color:#65a9b9!important;
+  color:#fff!important;
+  box-shadow:0 22px 48px rgba(9,74,91,.18)!important;
+}
+.contact-panel h2{color:#fff!important}
+.contact-panel p:not(.eyebrow){color:#e1f0f2!important}
+.contact-panel .eyebrow{color:#fff0ad!important}
+.contact-links a{color:#fff!important}
+.contact-panel .secondary{background:#fff!important;color:#0d5b72!important;border-color:#d8edf0!important}
+
+.keep{padding-block:44px!important}
+.keep::before{
+  content:"";position:absolute;z-index:-1;left:50%;width:100vw;transform:translateX(-50%);inset-block:0;
+  background:#fffaf1!important;border-block:1px solid #e5ddd0;
+}
+.keep>div>.icon{color:#8a6812!important}
+
+footer{
+  position:relative;
+  isolation:isolate;
+  color:#e7f1f3!important;
+}
+footer::before{
+  content:"";position:absolute;z-index:-1;left:50%;width:100vw;transform:translateX(-50%);inset-block:0;
+  background:#0d6077;
+}
+footer .lic{color:#fff!important}
+footer a{color:#fff0b0!important}
+
+.sticky{background:#0f6f86f5!important;border-color:#6fa9b7!important;box-shadow:0 16px 38px rgba(8,58,73,.24)!important;backdrop-filter:blur(12px)}
+
+/* Solid dialogs: no low-contrast glass. */
+dialog.hoja{background:#fffdfa!important;color:var(--ink)!important;border-color:#d7ddd8!important}
+dialog.hoja h2,dialog.hoja h3{color:var(--ink)!important}
+dialog.hoja p,dialog.hoja .fine,dialog.hoja label,dialog.hoja legend{color:#405769!important}
+dialog.hoja .eyebrow{color:var(--gold-deep)!important}
+dialog.hoja input,dialog.hoja select,dialog.hoja textarea{background:#fff!important;color:var(--ink)!important;border-color:#c9d6da!important}
+dialog.hoja .secondary{background:#eef5f5!important;color:var(--ink)!important;border-color:#cbdde0!important}
+dialog.hoja .close{background:#0f6f86!important;color:#fff!important;border-color:#0c566c!important}
+dialog.hoja .total{background:#0f6f86!important;color:#fff!important;border-color:#0c566c!important}
+
+/* Small-screen readability. */
+@media(max-width:699px){
+  body{background:linear-gradient(180deg,#0f6f86 0 26%,#edf8f7 26% 61%,#fbf7ee 61% 84%,#eef8f7 84% 100%)!important}
+  .brand{font-size:14px!important}.brand small{font-size:10px!important}.site-link{font-size:13px!important}
+  .hero-intro{font-size:17px!important;line-height:1.7!important}.eyebrow{font-size:11px!important}.btn{font-size:14px!important}
+  .reassurance,.text-btn{font-size:12px!important}.credentials{font-size:13px!important}.credential-intro small{font-size:11px!important}
+  .credential-label{font-size:9px!important}.credentials strong{font-size:14px!important}.credentials a{font-size:12px!important}
+  .section{margin-top:72px!important}.section-heading{gap:14px!important;margin-bottom:24px!important}
+  .need{padding:20px!important;min-height:158px!important;gap:16px!important;border-radius:17px!important}.need strong{font-size:18px!important}.need small{font-size:12px!important;line-height:1.55!important}
+  .section-heading p:last-child,.service-copy>p:not(.eyebrow),.section-intro,.lista li{font-size:14px!important}
+  .service-panel{padding:24px!important;gap:22px!important;border-radius:20px!important}.service-copy .service-note,.panel-actions .text-btn{font-size:12px!important}
+  .dime-callout{padding:22px!important;gap:18px!important;border-radius:20px!important}.dime-callout p:not(.eyebrow){font-size:13px!important}.dime-callout .btn{font-size:13px!important}
+  .lista span{font-size:13px!important}.txt span{font-size:12px!important}.contact-panel{padding:30px 22px!important;gap:28px!important;border-radius:22px!important}
+  .contact-panel p:not(.eyebrow){font-size:14px!important}.contact-links a{font-size:13px!important}.contact-ctas small{font-size:11px!important}
+  .keep{padding-block:36px!important;gap:20px!important}.keep p strong{font-size:16px!important}.keep p span{font-size:13px!important}.keep .btn{font-size:12px!important}
+  footer{font-size:11px!important}.footer-actions .text-btn{font-size:11px!important}
+}
+
+@media(prefers-reduced-motion:reduce){
+  body::before,body::after{animation:none!important}
+}
