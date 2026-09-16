@@ -1,22 +1,24 @@
-// Guarda la tarjeta en el teléfono: funciona aunque no haya señal.
-const CACHE = 'wp-tarjeta-v1';
-const ARCHIVOS = ['./','./index.html','./foto.jpg','./icono.png',
-  './vida.jpg','./medicare.jpg','./salud.jpg','./accidente.jpg','./anualidad.jpg'];
-
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARCHIVOS)).then(() => self.skipWaiting()));
+/* Premium Motion PWA bootstrap */
+const MOTION_CACHE='william-card-motion-v1';
+const MOTION_PATHS=['card-core.css','card-core.js'];
+const MOTION_ASSETS=MOTION_PATHS.map(path=>new URL(path,self.location.href).href);
+self.addEventListener('install',event=>{
+  event.waitUntil(caches.open(MOTION_CACHE).then(cache=>cache.addAll(MOTION_ASSETS.map(url=>new Request(url,{cache:'reload'})))).catch(()=>undefined));
 });
-self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(ks =>
-    Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+self.addEventListener('activate',event=>{
+  event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('william-card-motion-')&&k!==MOTION_CACHE).map(k=>caches.delete(k)))));
 });
-self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
-  e.respondWith(
-    caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
-      const copia = res.clone();
-      caches.open(CACHE).then(c => c.put(e.request, copia)).catch(()=>{});
-      return res;
-    }).catch(() => caches.match('./index.html')))
-  );
+self.addEventListener('fetch',event=>{
+  if(event.request.method!=='GET')return;
+  const url=new URL(event.request.url);
+  if(!MOTION_ASSETS.includes(url.origin+url.pathname))return;
+  event.respondWith((async()=>{
+    const cache=await caches.open(MOTION_CACHE);
+    const hit=await cache.match(url.origin+url.pathname);
+    if(hit)return hit;
+    const response=await fetch(event.request);
+    if(response.ok&&response.type==='basic')await cache.put(url.origin+url.pathname,response.clone());
+    return response;
+  })());
 });
+importScripts('./sw-core.js');

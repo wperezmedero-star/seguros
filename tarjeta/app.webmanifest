@@ -2,15 +2,26 @@
   "name": "William Pérez — Agente de Seguros",
   "short_name": "William Pérez",
   "description": "Vida, salud, Medicare y anualidades. En español, en Hialeah.",
-  "start_url": "./",
+  "start_url": "./?src=pwa",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0B2B3C",
-  "theme_color": "#0B2B3C",
+  "background_color": "#0A192F",
+  "theme_color": "#0A192F",
   "lang": "es",
   "icons": [
-    { "src": "icono.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icono.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
-  ]
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "id": "./"
 }

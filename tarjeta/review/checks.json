@@ -1,0 +1,74 @@
+{
+  "date": "2026-09-16T12:08:09.717Z",
+  "browser": "138.0.7204.0",
+  "checks": [
+    {
+      "name": "Selector de cuatro necesidades, WhatsApp contextual, teléfono y campaña",
+      "passed": true
+    },
+    {
+      "name": "DIME: fórmula original, límites, supuestos, privacidad y foco",
+      "passed": true
+    },
+    {
+      "name": "Formulario: validación, consentimiento, borrador veraz, correo, copia y cambio de interés",
+      "passed": true
+    },
+    {
+      "name": "vCard: descarga, datos originales, escape y UTF-8",
+      "passed": true
+    },
+    {
+      "name": "Compartir: fallback accesible y atribución sin parámetros ajenos",
+      "passed": true
+    },
+    {
+      "name": "QR: generación local, descarga y decodificación real",
+      "passed": true,
+      "url": "https://williamperezseguros.com/tarjeta/?src=instagram&utm_source=ig&utm_medium=social&utm_campaign=card-v2&utm_content=bio&interes=salud"
+    },
+    {
+      "name": "Los 12 eventos y almacenamiento sin nombre, teléfono o cifras DIME",
+      "passed": true
+    },
+    {
+      "name": "PWA: navegación offline con campaña nueva, DIME, QR y caché ajena conservada",
+      "passed": true
+    },
+    {
+      "name": "Viewport desktop 1440px: sin desbordes ni infracciones axe AA",
+      "passed": true
+    },
+    {
+      "name": "Viewport mobile 390px: sin desbordes ni infracciones axe AA",
+      "passed": true
+    },
+    {
+      "name": "Viewport small 320px: sin desbordes ni infracciones axe AA",
+      "passed": true
+    },
+    {
+      "name": "Viewport tablet 768px: sin desbordes ni infracciones axe AA",
+      "passed": true
+    },
+    {
+      "name": "Viewport zoom200 720px: sin desbordes ni infracciones axe AA",
+      "passed": true
+    },
+    {
+      "name": "Movimiento reducido",
+      "passed": true
+    },
+    {
+      "name": "Contacto esencial sin JavaScript",
+      "passed": true
+    },
+    {
+      "name": "Consola limpia, recursos sin errores y sin solicitudes externas",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "failed": [],
+  "external": []
+}
