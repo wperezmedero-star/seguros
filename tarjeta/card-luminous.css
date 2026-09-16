@@ -202,6 +202,10 @@ dialog.hoja input,dialog.hoja select,dialog.hoja textarea{background:#fff!import
 dialog.hoja .secondary{background:#eef5f5!important;color:var(--ink)!important;border-color:#cbdde0!important}
 dialog.hoja .close{background:#0f6f86!important;color:#fff!important;border-color:#0c566c!important}
 dialog.hoja .total{background:#0f6f86!important;color:#fff!important;border-color:#0c566c!important}
+dialog.hoja .campo label em{color:#526477!important}
+dialog.hoja .et{color:#526477!important}
+dialog.hoja .total .nota,dialog.hoja .nota{color:#f2f7f8!important}
+dialog.hoja .total .et{color:#eef6f7!important}
 
 /* Small-screen readability. */
 @media(max-width:699px){
