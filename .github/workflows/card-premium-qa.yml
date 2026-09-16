@@ -1,0 +1,47 @@
+name: Card Premium QA
+
+on:
+  push:
+    branches:
+      - card-v2-premium-lead-engine
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install QA dependencies
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install --no-save playwright axe-core jsqr pngjs
+          npx playwright install --with-deps chromium
+
+      - name: Run card smoke QA
+        env:
+          QA_OUTPUT: tarjeta/review/qa-latest
+        run: node tarjeta/review/smoke.cjs
+
+      - name: Upload QA screenshots and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: card-premium-qa
+          path: |
+            tarjeta/review/qa-latest/checks.json
+            tarjeta/review/qa-latest/mobile-hero.jpg
+            tarjeta/review/qa-latest/mobile.jpg
+            tarjeta/review/qa-latest/desktop-hero.jpg
+            tarjeta/review/qa-latest/desktop.jpg
+          if-no-files-found: warn
