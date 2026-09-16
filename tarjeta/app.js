@@ -165,9 +165,25 @@ function drawQR(el, text, size) {
   return true;
 }
 let backReady = false;
+let flipping = false;
 function setFlip(on) {
   if (on && !backReady) backReady = drawQR($('#backQr'), sharedURL('qr'), 300);
-  $('#card3d').classList.toggle('flipped', on);
+  const card = $('#card3d');
+  if (flipping) return;
+  if (!reduced && card.classList.contains('flipped') !== on) {
+    flipping = true; card.classList.add('fold');
+    setTimeout(() => {
+      setFlipState(card, on);
+      card.classList.add('unfold'); card.classList.remove('fold'); void card.offsetWidth;
+      card.classList.add('opening'); card.classList.remove('unfold');
+      setTimeout(() => { card.classList.remove('opening'); flipping = false; }, 420);
+    }, 340);
+    return;
+  }
+  setFlipState(card, on);
+}
+function setFlipState(card, on) {
+  card.classList.toggle('flipped', on);
   $('#flip').setAttribute('aria-pressed', String(on));
   $('#flipLabel').textContent = on ? 'Ver el frente de la tarjeta' : 'Voltear para ver mi QR';
   $('#cardBack').setAttribute('aria-hidden', String(!on));
@@ -180,18 +196,6 @@ $$('[data-show-qr]').forEach(b => b.addEventListener('click', () => {
   $('.card-stage').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
   setTimeout(() => setFlip(true), reduced ? 0 : 550);
 }));
-/* Tilt suave con el puntero (solo escritorio) */
-if (!reduced && matchMedia('(hover:hover) and (pointer:fine)').matches) {
-  const stage = $('.card-stage'), card = $('#card3d');
-  stage.addEventListener('pointermove', e => {
-    const r = stage.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
-    const base = card.classList.contains('flipped') ? 180 : 0;
-    card.style.transform = `rotateY(${base + x * 10}deg) rotateX(${-y * 8}deg)`;
-  });
-  stage.addEventListener('pointerleave', () => card.style.removeProperty('transform'));
-  $('#flip').addEventListener('click', () => card.style.removeProperty('transform'));
-  card.addEventListener('click', () => card.style.removeProperty('transform'));
-}
 if (location.hash === '#qr') setTimeout(() => setFlip(true), 400);
 if (matchMedia('(min-width:1180px)').matches) addEventListener('load', () => drawQR($('#deskQr'), sharedURL('escritorio'), 380));
 
