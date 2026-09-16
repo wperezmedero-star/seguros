@@ -1,6 +1,6 @@
 // Only public assets belonging to this card are cached. No forms, messages or external requests.
 const PREFIX='wp-tarjeta-';
-const CACHE=PREFIX+'v2-premium-20260916-3';
+const CACHE=PREFIX+'v2-premium-20260916-4';
 const ROOT=new URL('./',self.location.href).href;
 const INDEX=new URL('index.html',ROOT).href;
 const ASSETS=['index.html','card.css','card.js','app.webmanifest','vendor/qrcode.min.js','icono.png','assets/foto.webp','assets/foto-360.webp','assets/vida.webp','assets/salud.webp','assets/medicare.webp','assets/accidente.webp','assets/anualidad.webp','assets/icon-192.png','assets/icon-512.png','assets/inter-400.woff2','assets/inter-600.woff2','assets/fraunces-500.woff2'].map(path=>new URL(path,ROOT).href);
