@@ -28,17 +28,21 @@ jobs:
           npm install --no-save playwright axe-core jsqr pngjs
           npx playwright install --with-deps chromium
 
+      - name: Build self-contained interactive preview
+        run: node tarjeta/review/build-standalone.cjs
+
       - name: Run card smoke QA
         env:
           QA_OUTPUT: tarjeta/review/qa-latest
         run: node tarjeta/review/smoke.cjs
 
-      - name: Upload QA screenshots and report
+      - name: Upload QA screenshots, report and interactive preview
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: card-premium-qa
           path: |
+            tarjeta/review/INTERACTIVE.html
             tarjeta/review/qa-latest/checks.json
             tarjeta/review/qa-latest/mobile-hero.jpg
             tarjeta/review/qa-latest/mobile.jpg
