@@ -1,6 +1,6 @@
 /* Tarjeta de William Pérez-Mederos · modo sin conexión.
    Solo guarda archivos públicos de esta tarjeta. Cambie VERSION en cada publicación. */
-const VERSION = 'wp-tarjeta-v3-20260916';
+const VERSION = 'wp-tarjeta-v3-20260916b';
 const ROOT = new URL('./', self.location.href).href;
 const ASSETS = [
   './', 'index.html', 'app.css', 'app.js', 'app.webmanifest', 'vendor/qrcode.min.js', 'william-perez-mederos.vcf',

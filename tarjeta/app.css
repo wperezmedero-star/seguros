@@ -354,3 +354,7 @@ p{margin:0}
   body{background:#fff}.dock,.actions,.flip,.keep,.panel-actions,.toast,dialog,.desk-qr{display:none!important}
 }
 @media (max-width:419px){.dock-txt small{display:none}.dock-txt{font-size:15px}}
+
+/* iOS Safari: ocultar la cara no visible a mitad del giro */
+.face{transition:visibility 0s linear .45s}
+.card3d:not(.flipped) .back,.card3d.flipped .front{visibility:hidden}
