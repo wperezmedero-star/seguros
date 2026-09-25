@@ -27,8 +27,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap"></noscript>
 <script>
-/* Si se llega desde otra página del sitio, el rayo cubre la pantalla desde el primer instante. */
-try{if(sessionStorage.getItem('wps-rayo')==='1'){sessionStorage.removeItem('wps-rayo');if(!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('rayo-cubre')}}catch(e){}
+/* Si se llega desde otra página del sitio, conserva desde el primer pintado la transición elegida por el destino. */
+try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps-rayo')==='1'?'rayo':'');sessionStorage.removeItem('wps-transicion');sessionStorage.removeItem('wps-rayo');if(T&&!matchMedia('(prefers-reduced-motion: reduce)').matches){if(!/^(suave|cristal|rayo)$/.test(T))T='suave';document.documentElement.classList.add('trans-'+T,'rayo-cubre')}}catch(e){}
 /* Entrada del hero en cascada. La clase se pone aquí, antes del primer pintado,
    para que el contenido nunca aparezca y luego desaparezca (sin parpadeo).
    Si la página llega tapada por el rayo, la cascada espera a que se descubra. */
