@@ -281,8 +281,53 @@ function card(label, big, rows, explanation, disclaimer){
     '<p class="calc__disc">' + disclaimer + '</p>';
 }
 
-function runCalc(key){
+/* ═══ CIFRAS QUE SE TRANSFORMAN AL PRESIONAR "CALCULAR" ═══
+   Cada cifra del resultado (la grande y las de cada fila) viaja desde su
+   valor anterior hasta el nuevo en 700 ms con ease-out, en vez de cambiar de
+   golpe. Solo anima las cifras que cambiaron; respeta el formato ($, comas,
+   decimales, "/ mes"). Mientras cuenta, aria-busy evita que los lectores de
+   pantalla lean cada paso: al final leen solo el resultado. */
+const CIFRA = /-?\d[\d,]*(?:\.\d+)?/g;
+function cifrasDe(txt){ return (txt.match(CIFRA) || []).map(n => Number(n.replace(/,/g, ''))); }
+function formatoCifra(v, muestra){
+  const dec = (muestra.split('.')[1] || '').length;
+  const txt = Math.abs(v).toFixed(dec);
+  const [ent, frac] = txt.split('.');
+  /* Miles con coma, igual que el formato USD del sitio */
+  const conComas = ent.length > 3 ? ent.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ent;
+  return (v < 0 ? '-' : '') + conComas + (frac ? '.' + frac : '');
+}
+function animarCifras(out, antes){
+  if (slow || !antes) return;
+  const nodos = [...out.querySelectorAll('.calc__big, .calc__row b')];
+  const tareas = [];
+  nodos.forEach((el, i) => {
+    const previo = antes[i], final = el.textContent;
+    if (previo == null || previo === final) return;
+    const desde = cifrasDe(previo), hasta = cifrasDe(final), muestras = final.match(CIFRA) || [];
+    if (!hasta.length || desde.length !== hasta.length) return;
+    tareas.push({ el, final, desde, hasta, muestras });
+  });
+  if (!tareas.length) return;
+  out.setAttribute('aria-busy', 'true');
+  const DUR = 700, t0 = performance.now(), ease = t => 1 - Math.pow(1 - t, 3);
+  (function paso(ahora){
+    const t = Math.min(1, (ahora - t0) / DUR), k = ease(t);
+    tareas.forEach(tk => {
+      let j = 0;
+      tk.el.textContent = t < 1 ? tk.final.replace(CIFRA, m => {
+        const v = tk.desde[j] + (tk.hasta[j] - tk.desde[j]) * k;
+        return formatoCifra(v, tk.muestras[j++]);
+      }) : tk.final;
+    });
+    if (t < 1) requestAnimationFrame(paso); else out.removeAttribute('aria-busy');
+  })(t0);
+}
+
+function runCalc(key, animar){
   const def = CALC_DEFS[key], out = $('#out-' + key), input = {};
+  /* Se guardan las cifras visibles para animar desde ellas (solo con "Calcular") */
+  const antes = animar ? [...out.querySelectorAll('.calc__big, .calc__row b')].map(n => n.textContent) : null;
   try {
     for (const [name, kind] of Object.entries(def.fields)) {
       const el = $('#' + def.prefix + '-' + name);
@@ -292,6 +337,7 @@ function runCalc(key){
       input[name] = kind === 'pct' ? n / 100 : n;
     }
     out.innerHTML = def.render(IC[def.fn](input));
+    animarCifras(out, antes && antes.length ? antes : null);
   } catch (err) {
     out.innerHTML = '<span class="calc__label">No se pudo calcular</span>' +
       '<p class="calc__err">' + (err && err.message ? err.message : 'Revisa los datos ingresados.') + '</p>' +
@@ -299,7 +345,7 @@ function runCalc(key){
   }
 }
 
-$$('[data-run]').forEach(b => b.onclick = () => runCalc(b.dataset.run));
+$$('[data-run]').forEach(b => b.onclick = () => runCalc(b.dataset.run, true));
 $$('[data-reset]').forEach(b => b.onclick = () => {
   const def = CALC_DEFS[b.dataset.reset];
   Object.keys(def.fields).forEach(n => { $('#' + def.prefix + '-' + n).value = ''; });
@@ -324,10 +370,44 @@ $$('[data-faq]').forEach(t => t.onclick = () => {
   $$('[data-faq]').forEach(x => x.setAttribute('aria-selected', x === t));
   ['vida','salud','anualidades'].forEach(k => $('#faq-' + k).classList.toggle('is-hidden', k !== t.dataset.faq));
 });
-const io = new IntersectionObserver(es => es.forEach(e => {
-  if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
-}), { threshold:.12, rootMargin:'0px 0px -40px' });
-$$('.reveal').forEach(el => io.observe(el));
+/* ═══════════ REVELADO AL HACER SCROLL (sistema único) ═══════════
+   · Cada .reveal aparece una sola vez: fade + subida de 24 px en 600 ms (CSS).
+   · Escalonado por lote: los elementos que entran juntos en pantalla se
+     ordenan de arriba abajo y de izquierda a derecha, con 100 ms entre cada
+     uno (máx. 5 pasos). Un elemento que entra solo no espera a nadie.
+   · Grupos (.metodo, .stats, .reminders): el contenedor queda fijo y sus
+     hijos aparecen uno tras otro, también a 100 ms.
+   · Solo se anima opacity/transform: el espacio final se reserva desde el
+     inicio, así que no hay saltos de diseño (CLS = 0).
+   · Con "reducir movimiento" o sin IntersectionObserver, todo se ve de inmediato. */
+const REVEAL_STEP = 100, REVEAL_MAX = 5;
+$$('.metodo.reveal, .stats.reveal, .reminders.reveal').forEach(g => {
+  g.classList.add('reveal--grupo');
+  if (g.matches('.metodo, .stats')) g.classList.add('reveal--tiles');
+  [...g.children].forEach((c, i) => c.style.setProperty('--rv-i', Math.min(i, REVEAL_MAX)));
+});
+if (slow || !('IntersectionObserver' in window)) {
+  $$('.reveal').forEach(el => el.classList.add('is-in'));
+} else {
+  const io = new IntersectionObserver(es => {
+    /* Con un scroll muy rápido un elemento puede pasar sin llegar a "verse":
+       si ya quedó por encima de la pantalla, se muestra sin esperar. */
+    es.forEach(e => {
+      if (!e.isIntersecting && e.boundingClientRect.bottom < 0) {
+        e.target.style.setProperty('--rv-delay', '0ms');
+        e.target.classList.add('is-in'); io.unobserve(e.target);
+      }
+    });
+    const lote = es.filter(e => e.isIntersecting)
+      .sort((a, b) => (a.boundingClientRect.top - b.boundingClientRect.top) || (a.boundingClientRect.left - b.boundingClientRect.left));
+    lote.forEach((e, k) => {
+      e.target.style.setProperty('--rv-delay', Math.min(k, REVEAL_MAX) * REVEAL_STEP + 'ms');
+      e.target.classList.add('is-in');
+      io.unobserve(e.target);
+    });
+  }, { threshold:.12, rootMargin:'0px 0px -40px' });
+  $$('.reveal').forEach(el => io.observe(el));
+}
 
 /* ═══════════ SISTEMA DE ICONOS ═══════════
    Una sola definición para todo el sitio. Los iconos son decorativos
@@ -401,14 +481,8 @@ if (matchMedia('(hover:hover) and (pointer:fine)').matches) {
   });
 }
 
-/* Entrada escalonada de 70 ms entre hermanos, una sola vez */
-['.pillars', '.metodo', '.stats', '.cases', '.reminders'].forEach(sel => {
-  const c = document.querySelector(sel);
-  if (!c) return;
-  [...c.children].forEach((el, i) => {
-    if (el.classList.contains('reveal')) el.style.transitionDelay = (i * 70) + 'ms';
-  });
-});
+/* (El escalonado entre hermanos ahora lo maneja el sistema único de
+   revelado, en la sección "FAQ + REVEAL".) */
 
 /* ═══════════ CARRUSEL INFINITO ═══════════ */
 const SHOW = [
@@ -1790,12 +1864,7 @@ try {
   root.classList.add('motion-ready');
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  // Coordinate existing reveal elements into a quiet 70 ms cascade per section.
-  document.querySelectorAll('.section').forEach(section=>{
-    section.querySelectorAll('.reveal').forEach((el,index)=>{
-      el.style.setProperty('--motion-delay',`${Math.min(index,6)*70}ms`);
-    });
-  });
+  // (La cascada de .reveal vive ahora en el sistema único de revelado.)
 
   // Draw the three illustrative SVGs once, only when they actually enter view.
   const cases=[...document.querySelectorAll('.case')];
