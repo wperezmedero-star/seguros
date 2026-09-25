@@ -738,7 +738,7 @@ const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechReco
 let vozPreferida = true;
 try { vozPreferida = sessionStorage.getItem('wpVozRespuestas') !== '0'; } catch (_) {}
 const V = { lang:'es-US', output:vozPreferida, recognition:null, listening:false, speechId:0 };
-const R = { pc:null, dc:null, stream:null, audio:null, timer:null, connecting:false, active:false, generation:0, state:'', sender:null, watch:null, micGuard:null, silencio:null, recuperando:false, ultimaRecuperacion:0 };
+const R = { pc:null, dc:null, stream:null, audio:null, timer:null, connecting:false, active:false, generation:0, state:'', sender:null, watch:null, recuperando:false, ultimaRecuperacion:0, greeted:false, responsePending:false, responseWatch:null, sessionWatch:null };
 const BOT_COPY = {
   es: {
     name:BOT_TREE.name, sub:'Asistente virtual con IA', langButton:'ES', langLabel:'Cambiar a inglés',
@@ -819,7 +819,10 @@ function speak(text){
   speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = V.lang; utterance.rate = .96; utterance.pitch = 1;
-  const match = speechSynthesis.getVoices().find(v => v.lang.toLowerCase().startsWith(V.lang.slice(0,2).toLowerCase()));
+  const voices=speechSynthesis.getVoices();
+  const match=voices.find(v=>v.lang.toLowerCase()==='es-cu')
+    || voices.find(v=>v.lang.toLowerCase()==='es-us')
+    || voices.find(v=>v.lang.toLowerCase().startsWith(V.lang.slice(0,2).toLowerCase()));
   if (match) utterance.voice = match;
   utterance.onstart=()=>{if(speechId===V.speechId)bot.classList.add('is-speaking');};
   const finish=()=>{if(speechId===V.speechId)bot.classList.remove('is-speaking');};
@@ -1179,10 +1182,10 @@ function stopRealtime(status){
   R.generation++;
   if(R.timer) clearTimeout(R.timer);
   if(R.watch) clearInterval(R.watch);
-  if(R.micGuard) clearTimeout(R.micGuard);
-  if(R.silencio) clearInterval(R.silencio);
+  if(R.responseWatch) clearTimeout(R.responseWatch);
+  if(R.sessionWatch) clearTimeout(R.sessionWatch);
   const dc=R.dc, pc=R.pc, stream=R.stream, audio=R.audio;
-  R.dc=null; R.pc=null; R.stream=null; R.audio=null; R.timer=null; R.watch=null; R.micGuard=null; R.silencio=null; R.sender=null;
+  R.dc=null; R.pc=null; R.stream=null; R.audio=null; R.timer=null; R.watch=null; R.sender=null; R.responseWatch=null; R.sessionWatch=null; R.greeted=false; R.responsePending=false;
   sesionAudio('auto');
   R.active=false; R.connecting=false;
   try{if(dc)dc.close();}catch(_){}
@@ -1196,26 +1199,44 @@ function handleRealtimeEvent(raw,generation){
   let event;
   try{event=JSON.parse(raw.data);}catch(_){return;}
   const c=copy();
-  if(event.type==='input_audio_buffer.speech_started') setVoiceState('listening',c.listening);
-  else if(event.type==='input_audio_buffer.speech_stopped'||event.type==='response.created') setVoiceState('thinking',c.thinking);
+  if(event.type==='session.updated'&&!R.greeted){
+    if(R.sessionWatch) clearTimeout(R.sessionWatch);
+    R.sessionWatch=null;
+    R.greeted=true;
+    R.dc.send(JSON.stringify({type:'response.create',response:{instructions:proactiveGreeting()}}));
+  }
+  else if(event.type==='input_audio_buffer.speech_started') setVoiceState('listening',c.listening);
+  else if(event.type==='input_audio_buffer.speech_stopped'){
+    const assistantSpeaking=R.state==='speaking';
+    setVoiceState('thinking',c.thinking);
+    /* Si el VAD detecta la pregunta pero no crea la respuesta, pedirla una vez. */
+    if(R.responseWatch) clearTimeout(R.responseWatch);
+    R.responseWatch=assistantSpeaking?null:setTimeout(()=>{
+      R.responseWatch=null;
+      if(generation===R.generation&&R.active&&!R.responsePending&&R.dc?.readyState==='open'){
+        R.dc.send(JSON.stringify({type:'response.create'}));
+      }
+    },2500);
+  }
+  else if(event.type==='response.created'){
+    R.responsePending=true;
+    if(R.responseWatch) clearTimeout(R.responseWatch);
+    R.responseWatch=null;
+    setVoiceState('thinking',c.thinking);
+  }
   else if(event.type==='output_audio_buffer.started'){
-    /* Turnos: mientras la asistente habla, el micrófono se silencia. En iPhone
-       y iPad el eco del altavoz se colaba como si fuera la voz del visitante
-       y cortaba o confundía las respuestas. */
-    micAbierto(false); setVoiceState('speaking',c.speaking);
+    /* Mantener la pista WebRTC enviando audio. Safari puede no reanudarla
+       después de cambiar track.enabled durante la bienvenida. */
+    setVoiceState('speaking',c.speaking);
   }
   else if(event.type==='response.output_audio.delta') setVoiceState('speaking',c.speaking);
   else if(event.type==='output_audio_buffer.stopped'||event.type==='output_audio_buffer.cleared'){
-    if(R.micGuard) clearTimeout(R.micGuard);
-    if(R.silencio) clearInterval(R.silencio);
-    R.micGuard=setTimeout(()=>{ micAbierto(true); setVoiceState('listening',copy().connected); },250);
+    setVoiceState('listening',c.connected);
   }
   else if(event.type==='response.done'){
-    /* "response.done" llega cuando la respuesta terminó de generarse, pero el
-       audio puede seguir sonando varios segundos. Red de seguridad por si no
-       llega el aviso de fin de audio: se abre el micrófono cuando la voz de la
-       asistente de verdad se calla (o, como máximo, a los 45 s). */
-    esperarSilencio(generation);
+    R.responsePending=false;
+    /* response.done precede al final de la reproducción. La pista de entrada
+       permanece activa en ambos momentos para escuchar el siguiente turno. */
   }
   else if(event.type==='conversation.item.input_audio_transcription.completed'&&event.transcript&&event.transcript.trim()){
     /* Lo que la asistente entendió aparece en el chat como mensaje del visitante */
@@ -1226,37 +1247,20 @@ function handleRealtimeEvent(raw,generation){
     /* Los errores de un turno no cierran la conversación: si la conexión
        se cae de verdad, lo detectan dc.onclose y connectionState. */
     console.warn('Realtime API error',event.error||event);
+    if(event.error?.message&&R.state==='thinking') $('#botVoiceStatus').textContent=c.realtimeError;
   }
 }
 
-/* ═══ VOZ EN iPHONE / iPAD: sesión de audio, turnos y micrófono vigilado ═══ */
+/* ═══ VOZ EN iPHONE / iPAD: sesión de audio y micrófono vigilado ═══ */
 function sesionAudio(tipo){
   try{ if(navigator.audioSession) navigator.audioSession.type=tipo; }catch(_){}
-}
-function esperarSilencio(generation){
-  if(R.silencio) clearInterval(R.silencio);
-  const inicio=Date.now(); let quietos=0;
-  R.silencio=setInterval(async()=>{
-    if(generation!==R.generation||!R.pc){clearInterval(R.silencio);return;}
-    let nivel=null;
-    try{ (await R.pc.getStats()).forEach(r=>{ if(r.type==='inbound-rtp'&&r.kind==='audio'&&typeof r.audioLevel==='number') nivel=r.audioLevel; }); }catch(_){}
-    quietos=(nivel!==null&&nivel<0.01)?quietos+1:0;
-    if(quietos>=4||Date.now()-inicio>45000){
-      clearInterval(R.silencio); R.silencio=null;
-      if(R.stream&&!R.stream.getAudioTracks().some(t=>t.enabled)){ micAbierto(true); setVoiceState('listening',copy().connected); }
-    }
-  },350);
-}
-function micAbierto(on){
-  if(!R.stream) return;
-  R.stream.getAudioTracks().forEach(t=>{ t.enabled=on; });
 }
 function configuracionVoz(){
   const en=V.lang.startsWith('en');
   return {type:'realtime',instructions:realtimeInstructions(),audio:{input:{
     noise_reduction:{type:'near_field'},
     transcription:{model:'gpt-4o-mini-transcribe',language:en?'en':'es'},
-    turn_detection:{type:'server_vad',threshold:.55,prefix_padding_ms:300,silence_duration_ms:650,create_response:true,interrupt_response:false}
+    turn_detection:{type:'server_vad',threshold:.48,prefix_padding_ms:300,silence_duration_ms:800,create_response:true,interrupt_response:false}
   }}};
 }
 async function recuperarMic(generation){
@@ -1286,12 +1290,12 @@ function vigilarPista(pista,generation){
   pista.onmute=()=>{ setTimeout(()=>{ if(pista.muted) recuperarMic(generation); },1500); };
 }
 function vigilarEnvio(pc,generation){
-  /* Si el micrófono está abierto pero deja de enviar audio unos segundos,
+  /* Si el micrófono deja de enviar audio unos segundos,
      se intenta reconectar sin cortar la conversación. */
   let previo=-1, quietos=0;
   R.watch=setInterval(async()=>{
     if(generation!==R.generation||!R.active){clearInterval(R.watch);return;}
-    const abierto=R.stream&&R.stream.getAudioTracks().some(t=>t.enabled);
+    const abierto=R.stream&&R.stream.getAudioTracks().some(t=>t.readyState==='live');
     if(!abierto){quietos=0;return;}
     try{
       let enviados=-1;
@@ -1306,7 +1310,7 @@ function vigilarEnvio(pc,generation){
 function realtimeInstructions(){
   return `Eres la asistente virtual educativa de William Pérez-Mederos para su sitio de seguros en Florida.
 
-Habla en el idioma del visitante; usa español por defecto. Tu voz debe sentirse cálida, natural, tranquila y profesional. Responde de forma breve, clara y sin jerga. Haz una sola pregunta a la vez.
+Habla en el idioma del visitante; usa español por defecto. En español habla con voz femenina cálida y un acento cubano suave y natural, familiar para la comunidad cubana de Miami. Pronuncia con claridad; evita caricaturas, jerga forzada y frases estereotipadas. Si el visitante habla inglés, responde en inglés natural. Responde de forma breve, clara y sin jerga. Haz una sola pregunta a la vez.
 
 Sé proactiva sin ser insistente: inicia con una bienvenida breve y pregunta si la persona desea hablar de seguro de vida, salud, Medicare o retiro y anualidades. Identifica su necesidad con preguntas generales, útiles y no sensibles. Después de explicar, ofrece dos o tres caminos seguros para continuar. Si la consulta es vaga, ayuda a elegir un tema. Resume lo entendido cuando sea útil y cierra con un próximo paso claro, como consultar una fuente oficial, usar una herramienta educativa del sitio o hablar directamente con William. No repitas la presentación ni las advertencias en cada turno.
 
@@ -1370,8 +1374,11 @@ async function startRealtime(){
       if(R.timer) clearTimeout(R.timer);
       R.connecting=false; R.active=true;
       dc.send(JSON.stringify({type:'session.update',session:configuracionVoz()}));
+      R.sessionWatch=setTimeout(()=>{
+        if(generation!==R.generation||R.greeted) return;
+        stopRealtime(''); startBrowserRecognition(copy().realtimeError);
+      },8000);
       vigilarEnvio(pc,generation);
-      dc.send(JSON.stringify({type:'response.create',response:{instructions:proactiveGreeting()}}));
       setVoiceState('thinking',copy().thinking);
       R.timer=setTimeout(()=>stopRealtime(copy().sessionLimit),CONFIG.voiceMaxMs);
     };
