@@ -345,16 +345,19 @@ dialog::backdrop{background:rgba(4,10,20,.78)}
   font-weight:600;color:#D4AF37;letter-spacing:-.035em;line-height:1}
 .stat span{display:block;font-size:.85rem;color:#9DB0CC;margin-top:.6rem;line-height:1.45}
 /* Filo dorado que se dibuja sobre cada cifra cuando la fila entra en pantalla,
-   siguiendo el escalonado de las celdas (+250 ms). No ocupa espacio (absolute). */
+   siguiendo el escalonado de las celdas (+350 ms). No ocupa espacio (absolute). */
 .stat{position:relative}
-.stat::before{content:"";position:absolute;left:1.4rem;top:0;width:34px;height:2px;border-radius:2px;
+.stat::before{content:"";position:absolute;left:1.4rem;top:0;width:52px;height:2px;border-radius:2px;
   background:linear-gradient(90deg,#D4AF37,rgba(212,175,55,.35));
   transform:scaleX(0);transform-origin:left center;
-  transition:transform .6s cubic-bezier(.22,1,.36,1);
-  transition-delay:calc(var(--rv-delay,0ms) + var(--rv-i,0) * 100ms + 250ms)}
+  transition:transform .9s cubic-bezier(.22,1,.36,1);
+  transition-delay:calc(var(--rv-delay,0ms) + var(--rv-i,0) * 140ms + 350ms)}
 .stats.is-in .stat::before{transform:scaleX(1)}
 /* Cifras de las calculadoras: ancho fijo por dígito, para que no "bailen" al contar */
 .calc__big,.calc__row b{font-variant-numeric:tabular-nums}
+/* Mientras una cifra cuenta, brilla en dorado suave y vuelve a su color */
+.calc__big,.calc__row b{transition:color .5s ease-out,text-shadow .5s ease-out}
+.cifra-viva{color:#E8C86A!important;text-shadow:0 0 18px rgba(212,175,55,.35)}
 
 
 /* ═══ CARRUSEL INFINITO ═══ */
@@ -479,19 +482,19 @@ input:focus-visible,select:focus-visible,.pillar:focus-visible,.scard:focus-visi
   outline:2px solid #D4AF37;outline-offset:3px}
 
 /* ═══ REVELADO AL HACER SCROLL ═══
-   Fade + subida de 24 px en 600 ms, ease-out suave, una sola vez.
-   --rv-delay lo pone el JS (escalonado de 100 ms por lote). */
-.reveal{opacity:0;transform:translate3d(0,24px,0);
-  transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1);
+   Fade + subida de 36 px en 800 ms, ease-out suave, una sola vez.
+   --rv-delay lo pone el JS (escalonado de 140 ms por lote). */
+.reveal{opacity:0;transform:translate3d(0,36px,0);
+  transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1);
   transition-delay:var(--rv-delay,0ms)}
 .reveal.is-in{opacity:1;transform:none}
-/* Grupos: el contenedor queda quieto y sus hijos aparecen uno a uno (100 ms).
+/* Grupos: el contenedor queda quieto y sus hijos aparecen uno a uno (140 ms).
    En las rejillas con líneas finas (.metodo, .stats → .reveal--tiles) la celda
    se queda sólida y lo que sube es su contenido: así no se ven huecos. */
 .reveal.reveal--grupo{opacity:1;transform:none;transition:none}
-.reveal--grupo:not(.reveal--tiles)>*,.reveal--tiles>*>*{opacity:0;transform:translate3d(0,24px,0);
-  transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1);
-  transition-delay:calc(var(--rv-delay,0ms) + var(--rv-i,0) * 100ms)}
+.reveal--grupo:not(.reveal--tiles)>*,.reveal--tiles>*>*{opacity:0;transform:translate3d(0,36px,0);
+  transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1);
+  transition-delay:calc(var(--rv-delay,0ms) + var(--rv-i,0) * 140ms)}
 .reveal--grupo.is-in:not(.reveal--tiles)>*,.reveal--tiles.is-in>*>*{opacity:1;transform:none}
 
 @media(prefers-reduced-motion:reduce){
@@ -1363,12 +1366,13 @@ html.rayo-cubre .rayo__banda{animation:rayo-revela .44s cubic-bezier(.7,0,.3,1) 
 .drawer a .num::before{content:counter(menu,decimal-leading-zero)}
 
 /* ═══════════ ENTRADA DEL HERO (solo index.html) ═══════════
-   Cascada al cargar: titular → subtítulo → botones → foto, 120 ms entre
-   cada paso, 600 ms de fade + subida suave. La clase .hero-entra la pone el
+   Cascada al cargar: titular → subtítulo → botones → foto, 180 ms entre
+   cada paso, 850 ms de fade + subida suave (la foto además se asienta). La clase .hero-entra la pone el
    <script> del <head>, y nunca se pone con "reducir movimiento".
    fill-mode "backwards": al terminar, cada elemento vuelve a sus estilos
    normales, así el rotador del subtítulo sigue funcionando igual. */
-@keyframes hero-in{from{opacity:0;transform:translate3d(0,18px,0)}to{opacity:1;transform:none}}
+@keyframes hero-in{from{opacity:0;transform:translate3d(0,32px,0)}to{opacity:1;transform:none}}
+@keyframes hero-foto{from{opacity:0;transform:translate3d(0,24px,0) scale(1.03)}to{opacity:1;transform:none}}
 .hero-entra .hero .eyebrow,
 .hero-entra .hero .tagline,
 .hero-entra .hero .hero-h1,
@@ -1377,8 +1381,9 @@ html.rayo-cubre .rayo__banda{animation:rayo-revela .44s cubic-bezier(.7,0,.3,1) 
 .hero-entra .hero .hero__actions,
 .hero-entra .hero .hero__trust,
 .hero-entra .hero .hero__photo{
-  animation:hero-in .6s cubic-bezier(.22,1,.36,1) backwards;
-  animation-delay:calc(var(--hero-base,0s) + var(--hero-paso,0) * 120ms)}
+  animation:hero-in .85s cubic-bezier(.22,1,.36,1) backwards;
+  animation-delay:calc(var(--hero-base,0s) + var(--hero-paso,0) * 180ms)}
+.hero-entra .hero .hero__photo{animation-name:hero-foto;animation-duration:1s}
 .hero-entra .hero .hero__sub,.hero-entra .hero .rot-dots{--hero-paso:1}
 .hero-entra .hero .hero__actions{--hero-paso:2}
 .hero-entra .hero .hero__photo,.hero-entra .hero .hero__trust{--hero-paso:3}
