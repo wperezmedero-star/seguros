@@ -29,6 +29,10 @@
 <script>
 /* Si se llega desde otra página del sitio, el rayo cubre la pantalla desde el primer instante. */
 try{if(sessionStorage.getItem('wps-rayo')==='1'){sessionStorage.removeItem('wps-rayo');if(!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('rayo-cubre')}}catch(e){}
+/* Entrada del hero en cascada. La clase se pone aquí, antes del primer pintado,
+   para que el contenido nunca aparezca y luego desaparezca (sin parpadeo).
+   Si la página llega tapada por el rayo, la cascada espera a que se descubra. */
+try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){var H=document.documentElement;H.classList.add('hero-entra');if(H.classList.contains('rayo-cubre'))H.style.setProperty('--hero-base','.22s')}}catch(e){}
 </script>
 <link rel="stylesheet" href="assets/css/sitio.css">
 <script type="application/ld+json">
