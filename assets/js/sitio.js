@@ -647,7 +647,11 @@ $('#botName').textContent = BOT_TREE.name;
 
 /* Voz natural por WebRTC. Si no está disponible, se usa la voz del navegador. */
 const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
-const V = { lang:'es-US', output:false, recognition:null, listening:false, speechId:0 };
+/* V.output = el visitante quiere oír las respuestas (botón de bocina).
+   Encendido por defecto; su elección se recuerda en esta pestaña. */
+let vozPreferida = true;
+try { vozPreferida = sessionStorage.getItem('wpVozRespuestas') !== '0'; } catch (_) {}
+const V = { lang:'es-US', output:vozPreferida, recognition:null, listening:false, speechId:0 };
 const R = { pc:null, dc:null, stream:null, audio:null, timer:null, connecting:false, active:false, generation:0, state:'' };
 const BOT_COPY = {
   es: {
@@ -1063,8 +1067,11 @@ function syncVoiceControls(){
   const c=copy(), running=R.active||R.connecting;
   const micLabel=running?c.stopMic:c.mic;
   $('#botMic').setAttribute('aria-label',micLabel); $('#botMic').title=micLabel;
-  $('#botVoice').setAttribute('aria-label',running?c.stopMic:(V.lang.startsWith('en')?'Start natural voice':'Iniciar voz natural'));
-  $('#botVoice').setAttribute('aria-pressed',String(running));
+  const en=V.lang.startsWith('en');
+  const vozLabel=V.output?(en?'Mute spoken answers':'Silenciar respuestas por voz'):(en?'Turn on spoken answers':'Activar respuestas por voz');
+  $('#botVoice').setAttribute('aria-label',vozLabel); $('#botVoice').title=vozLabel;
+  $('#botVoice').setAttribute('aria-pressed',String(V.output));
+  $('#botVoice').classList.toggle('is-off',!V.output);
 }
 function setVoiceState(state,status){
   if(R.state===state&&$('#botVoiceStatus').textContent===(status||'')){syncVoiceControls();return;}
@@ -1087,7 +1094,7 @@ function stopRealtime(status){
   if(R.timer) clearTimeout(R.timer);
   const dc=R.dc, pc=R.pc, stream=R.stream, audio=R.audio;
   R.dc=null; R.pc=null; R.stream=null; R.audio=null; R.timer=null;
-  R.active=false; R.connecting=false; V.output=false;
+  R.active=false; R.connecting=false;
   try{if(dc)dc.close();}catch(_){}
   try{if(pc)pc.close();}catch(_){}
   if(stream) stream.getTracks().forEach(track=>track.stop());
@@ -1136,7 +1143,7 @@ async function startRealtime(){
   }
   if(V.recognition&&V.listening) V.recognition.stop();
   V.speechId++; if('speechSynthesis'in window) speechSynthesis.cancel();
-  V.output=true; R.connecting=true;
+  R.connecting=true;
   const generation=++R.generation;
   setVoiceState('connecting',c.connecting);
 
@@ -1145,7 +1152,15 @@ async function startRealtime(){
     const audio=document.createElement('audio');
     audio.autoplay=true; audio.playsInline=true; audio.hidden=true; audio.setAttribute('aria-hidden','true');
     document.body.appendChild(audio); R.audio=audio;
-    pc.ontrack=e=>{audio.srcObject=e.streams[0];audio.play().catch(()=>{});};
+    pc.ontrack=e=>{
+      audio.srcObject=e.streams[0];
+      audio.play().catch(()=>{
+        /* El navegador bloqueó el sonido: el siguiente toque en el asistente lo activa. */
+        $('#botVoiceStatus').textContent=V.lang.startsWith('en')?'Tap here to hear the assistant.':'Toca aquí para escuchar a la asistente.';
+        const activar=()=>{audio.play().catch(()=>{});};
+        bot.addEventListener('pointerdown',activar,{once:true});
+      });
+    };
     pc.onconnectionstatechange=()=>{
       if(generation!==R.generation) return;
       if(pc.connectionState==='failed') stopRealtime(copy().unavailable);
@@ -1210,7 +1225,20 @@ function voiceGate(){
   btns[1].onclick=()=>{box.remove();$('#botInput').focus();};
   $('#botOpts').before(box);btns[0].focus();
 }
-$('#botVoice').onclick=voiceGate;
+$('#botVoice').onclick=()=>{
+  V.output=!V.output;
+  try{sessionStorage.setItem('wpVozRespuestas',V.output?'1':'0');}catch(_){}
+  if(!V.output){
+    if(R.active||R.connecting) stopRealtime('');
+    V.speechId++; if('speechSynthesis'in window) speechSynthesis.cancel();
+    bot.classList.remove('is-speaking');
+    $('#botVoiceStatus').textContent=copy().voiceOff;
+  }else{
+    $('#botVoiceStatus').textContent=copy().voiceOn;
+    speak(ultimoTexto); /* se lee dentro del toque: así lo permiten iPhone y Chrome */
+  }
+  syncVoiceControls();
+};
 
 function ensureRecognition(){
   if (!SpeechRecognitionAPI) return null;
@@ -1231,7 +1259,7 @@ function ensureRecognition(){
   V.recognition=r; return r;
 }
 function startBrowserRecognition(message){
-  V.output=true; syncVoiceControls();
+  syncVoiceControls();
   const r=ensureRecognition();
   if(!r){$('#botVoiceStatus').textContent=copy().unavailable;return;}
   if(V.listening){r.stop();return;}
@@ -1260,7 +1288,7 @@ $('#botClose').onclick = () => {
   bot.classList.remove('is-open'); document.body.classList.remove('bot-open');
   $('#botOpen').setAttribute('aria-expanded', false);
   if (V.recognition && V.listening) V.recognition.stop();
-  stopRealtime(''); V.output=false;
+  stopRealtime('');
   V.speechId++; bot.classList.remove('is-speaking','is-listening','is-thinking');
   if ('speechSynthesis' in window) speechSynthesis.cancel();
 };
