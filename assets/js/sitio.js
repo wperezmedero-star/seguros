@@ -1369,6 +1369,7 @@ async function startRealtime(){
     const audio=document.createElement('audio');
     audio.autoplay=true; audio.playsInline=true; audio.hidden=true; audio.setAttribute('aria-hidden','true');
     audio.setAttribute('playsinline',''); audio.setAttribute('webkit-playsinline','');
+    audio.muted=!V.output;
     document.body.appendChild(audio); R.audio=audio;
     /* Se "desbloquea" el reproductor dentro del mismo toque (requisito de iOS) */
     try{ const p=audio.play(); if(p&&p.catch) p.catch(()=>{}); }catch(_){}
@@ -1503,95 +1504,6 @@ function sendRealtimeText(text){
   }
 }
 
-function ensureRecognition(){
-  if (!SpeechRecognitionAPI) return null;
-  if (V.recognition) return V.recognition;
-  const r = new SpeechRecognitionAPI();
-  r.continuous=false; r.interimResults=true; r.maxAlternatives=1;
-  r.onstart=()=>{
-    V.listening=true;
-    $('#botMic').classList.add('is-listening'); bot.classList.add('is-listening');
-    $('#botVoiceStatus').textContent=copy().listening;
-    syncVoiceControls();
-  };
-  r.onresult=e=>{
-    let transcript='';
-    for(let i=0;i<e.results.length;i++){
-      const part=e.results[i]?.[0]?.transcript||'';
-      if(part) transcript+=(transcript?' ':'')+part.trim();
-    }
-    transcript=transcript.trim();
-    if(!transcript) return;
-    V.lastTranscript=transcript;
-    if(V.recognitionMode!=='realtime'){
-      $('#botInput').value=transcript;
-      $('#botVoiceStatus').textContent=copy().heard;
-    }
-  };
-  r.onerror=e=>{
-    if(e.error==='aborted') return;
-    const denied=e.error==='not-allowed'||e.error==='service-not-allowed';
-    V.lastTranscript='';
-    $('#botVoiceStatus').textContent=denied?copy().denied:copy().unavailable;
-    if(V.recognitionMode==='realtime'&&!denied&&R.active){
-      /* Respaldo: si el reconocimiento del navegador falla, conserva el
-         push-to-talk WebRTC existente en lugar de dejar al visitante sin voz. */
-      setTimeout(()=>{ if(R.active&&!V.listening) toggleVoiceRecording(); },80);
-    }
-  };
-  r.onend=()=>{
-    const modo=V.recognitionMode;
-    const transcript=V.lastTranscript.trim();
-    const yaEnviado=V.recognitionSent;
-    V.listening=false; V.recognitionMode=''; V.lastTranscript=''; V.recognitionSent=false;
-    $('#botMic').classList.remove('is-listening'); bot.classList.remove('is-listening');
-    syncVoiceControls();
-    if(modo==='realtime'){
-      if(transcript&&!yaEnviado) sendRealtimeText(transcript);
-      else if(R.active&&R.state!=='speaking'&&R.state!=='thinking') setVoiceState('',copy().connected);
-      return;
-    }
-    if(transcript){
-      $('#botInput').value=transcript;
-      $('#botVoiceStatus').textContent=copy().heard;
-      setTimeout(sendFree,120);
-    }
-  };
-  V.recognition=r; return r;
-}
-
-function startRealtimeRecognition(){
-  if(!R.active||R.connecting) return;
-  const r=ensureRecognition();
-  if(!r){ toggleVoiceRecording(); return; }
-  if(V.listening){
-    try{r.stop();}catch(_){}
-    return;
-  }
-  try{
-    if(R.responsePending) R.dc?.send(JSON.stringify({type:'response.cancel'}));
-    if(R.state==='speaking') R.dc?.send(JSON.stringify({type:'output_audio_buffer.clear'}));
-  }catch(_){}
-  V.recognitionMode='realtime'; V.lastTranscript=''; V.recognitionSent=false;
-  r.lang=V.lang;
-  try{r.start();}
-  catch(error){
-    console.warn('Browser speech recognition could not start',error);
-    V.recognitionMode='';
-    toggleVoiceRecording();
-  }
-}
-
-function startBrowserRecognition(message){
-  syncVoiceControls();
-  const r=ensureRecognition();
-  if(!r){$('#botVoiceStatus').textContent=copy().unavailable;return;}
-  if(V.listening){r.stop();return;}
-  V.recognitionMode='fallback'; V.lastTranscript=''; V.recognitionSent=false;
-  r.lang=V.lang;
-  if(message) $('#botVoiceStatus').textContent=message;
-  try{r.start();}catch(_){V.recognitionMode='';$('#botVoiceStatus').textContent=copy().unavailable;}
-}
 $('#botMic').onclick=voiceGate;
 
 syncLanguage();
