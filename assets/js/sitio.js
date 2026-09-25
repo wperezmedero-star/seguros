@@ -743,7 +743,7 @@ const V = { lang:'es-US', output:vozPreferida, recognition:null, listening:false
 const R = { pc:null, dc:null, stream:null, audio:null, timer:null, connecting:false, active:false, generation:0, state:'', sender:null, watch:null, recuperando:false, ultimaRecuperacion:0, greeted:false, responsePending:false, responseWatch:null, sessionWatch:null, recording:false, switching:false, startedAt:0, mode:'', micMuted:false };
 const BOT_COPY = {
   es: {
-    name:BOT_TREE.name, sub:'Asistente virtual con IA', langButton:'ES', langLabel:'Cambiar a inglés',
+    name:'Asistente de William', sub:'Información de seguros · Voz con IA', langButton:'ES', langLabel:'Cambiar a inglés',
     input:'Escribe tu pregunta sobre seguros…', mic:'Hablar por micrófono', listening:'Escuchando… Habla con naturalidad.',
     heard:'Entendido. Preparando tu respuesta…', unavailable:'Tu navegador no permite usar el micrófono aquí. Puedes escribir tu pregunta.',
     denied:'El micrófono está bloqueado. Puedes habilitarlo en los permisos del navegador o escribir tu pregunta.',
@@ -1256,17 +1256,16 @@ function sesionAudio(tipo){
 function configuracionVoz(){
   return {
     type:'realtime',
+    model:'gpt-realtime-2.1-mini',
     instructions:realtimeInstructions(),
     output_modalities:['audio'],
     audio:{
-      output:{voice:'marin'},
+      output:{voice:'coral'},
       input:{
         noise_reduction:{type:'near_field'},
         turn_detection:{
-          type:'server_vad',
-          threshold:.45,
-          prefix_padding_ms:300,
-          silence_duration_ms:700,
+          type:'semantic_vad',
+          eagerness:'auto',
           create_response:true,
           interrupt_response:true
         }
@@ -1319,24 +1318,34 @@ function vigilarEnvio(pc,generation){
 }
 
 function realtimeInstructions(){
-  return `Eres la asistente virtual educativa de William Pérez-Mederos para su sitio de seguros en Florida.
+  return `Eres la asistente virtual pública del sitio web de William Pérez-Mederos, agente de seguros con licencia 2-15 en Florida. Atiendes a cualquier visitante que entre al website para conocer y entender mejor seguros y los servicios que William presenta en su página.
+
+# Tu función
+- Eres una recepcionista y orientadora virtual para visitantes del sitio, no una herramienta interna para William ni para empleados.
+- Ayuda a la persona a entender, con lenguaje sencillo, seguro de vida, cobertura de salud, Medicare, retiro y anualidades.
+- Si pregunta quién es William o cómo contactarlo, explica brevemente que es agente de seguros en Florida y puede atender en español. Puedes indicar el teléfono y WhatsApp publicados en el sitio: (786) 354-8796.
+- Si la persona quiere hablar con William, invítala a usar WhatsApp, llamar o los botones de contacto del website.
+- No inventes aseguradoras, nombramientos, precios, beneficios, disponibilidad de productos ni datos que no estén confirmados.
 
 # Idioma
 - Usa español por defecto.
 - No cambies al inglés por el acento del visitante ni por una palabra aislada en inglés.
-- Cambia a inglés solamente si el visitante lo pide o mantiene la conversación en inglés.
+- Cambia a inglés solamente si el visitante lo pide o mantiene claramente la conversación en inglés.
 
 # Voz, acento y ritmo
-- En español, mantén un timbre femenino, cálido, cercano y profesional.
-- Usa un acento cubano habanero suave y natural, reconocible para una persona de la comunidad cubana de Miami, sin caricaturizarlo.
-- Mantén el acento estable durante toda la respuesta.
-- Ritmo conversado caribeño moderado, entonación melodiosa, vocales claras y dicción fácil de entender.
-- Evita jerga forzada, exageraciones fonéticas y estereotipos.
+- En español usa una voz femenina, cálida, cercana y profesional.
+- Habla con español latino natural y una influencia cubana habanera suave, propia de una conversación cotidiana en Miami, sin caricaturas ni exageraciones.
+- Mantén el acento consistente; evita sonar como locutora automática o lectura de texto.
+- Usa ritmo conversacional, pausas naturales, entonación amable y dicción clara.
 - Responde normalmente en dos o tres frases breves y haz una sola pregunta a la vez.
 
 # Conversación
-Sé proactiva sin ser insistente: inicia con una bienvenida breve y pregunta si la persona desea hablar de seguro de vida, salud, Medicare o retiro y anualidades. Identifica su necesidad con preguntas generales, útiles y no sensibles. Después de explicar, ofrece dos o tres caminos seguros para continuar. Si la consulta es vaga, ayuda a elegir un tema. Resume lo entendido cuando sea útil y cierra con un próximo paso claro, como consultar una fuente oficial, usar una herramienta educativa del sitio o hablar directamente con William. No repitas la presentación ni las advertencias en cada turno.
+- Si es el primer turno, saluda brevemente y pregunta qué desea conocer: seguro de vida, salud o Medicare, o retiro y anualidades.
+- Responde primero la pregunta concreta del visitante. Después, si ayuda, haz una sola pregunta de seguimiento.
+- Si la consulta es vaga, ayúdala a escoger tema en vez de interrogarla.
+- No repitas tu presentación ni advertencias en cada respuesta.
 
+# Límites
 El sitio está en modo educativo. Explica conceptos generales y comparaciones educativas, pero no cotices primas, no recomiendes un producto específico, no prometas cobertura o aprobación, no completes solicitudes y no afirmes representar a una aseguradora ni al gobierno. Cuando una pregunta requiera revisar elegibilidad, costos, cobertura o una póliza concreta, explica qué factores suelen importar e indica que William debe revisarla personalmente. Si una regla, fecha o cifra puede haber cambiado, no la inventes: recomienda verificarla en la fuente oficial correspondiente.
 
 No solicites ni repitas números de Seguro Social, Medicare, cuentas bancarias, tarjetas, contraseñas ni detalles médicos sensibles. Si alguien comparte esos datos, pídele que deje de hacerlo. Para emergencias médicas o peligro inmediato, indica llamar al 911. Aclara cuando corresponda que eres una asistente virtual y que la información es educativa, no asesoría legal, médica o financiera.`;
@@ -1345,11 +1354,14 @@ No solicites ni repitas números de Seguro Social, Medicare, cuentas bancarias, 
 function proactiveGreeting(){
   return V.lang.startsWith('en')
     ? 'Greet the visitor warmly and briefly. Introduce yourself as William’s virtual educational assistant, then ask one concise question offering these choices: life insurance, health coverage or Medicare, or retirement and annuities. Do not add a long disclaimer.'
-    : 'Saluda al visitante con calidez y brevedad. Preséntate como la asistente virtual educativa de William y luego haz una pregunta breve ofreciendo estas opciones: seguro de vida, salud o Medicare, o retiro y anualidades. No añadas una advertencia larga.';
+    : 'Di exactamente una bienvenida breve y natural, con tono cálido: “Hola, soy la asistente virtual de William Pérez-Mederos. Estoy aquí para ayudarte a conocer y entender mejor tus opciones de seguros.” Luego pregunta: “¿Qué te gustaría conocer: seguro de vida, salud o Medicare, o retiro y anualidades?” No añadas una advertencia larga.';
 }
 
 async function startRealtime(){
   const c=copy();
+  V.output=true;
+  try{sessionStorage.setItem('wpVozRespuestas','1');}catch(_){}
+  if(R.audio){ R.audio.muted=false; R.audio.volume=1; }
   if(R.active){toggleRealtimeMic();return;}
   if(R.connecting) return;
   if(!window.RTCPeerConnection||!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
@@ -1369,18 +1381,19 @@ async function startRealtime(){
     const audio=document.createElement('audio');
     audio.autoplay=true; audio.playsInline=true; audio.hidden=true; audio.setAttribute('aria-hidden','true');
     audio.setAttribute('playsinline',''); audio.setAttribute('webkit-playsinline','');
-    audio.muted=!V.output;
+    audio.muted=false; audio.volume=1;
     document.body.appendChild(audio); R.audio=audio;
     /* Se "desbloquea" el reproductor dentro del mismo toque (requisito de iOS) */
     try{ const p=audio.play(); if(p&&p.catch) p.catch(()=>{}); }catch(_){}
     pc.ontrack=e=>{
       audio.srcObject=e.streams[0];
-      audio.play().catch(()=>{
-        /* El navegador bloqueó el sonido: el siguiente toque en el asistente lo activa. */
-        $('#botVoiceStatus').textContent=V.lang.startsWith('en')?'Tap here to hear the assistant.':'Toca aquí para escuchar a la asistente.';
-        const activar=()=>{audio.play().catch(()=>{});};
-        bot.addEventListener('pointerdown',activar,{once:true});
+      audio.muted=false; audio.volume=1;
+      const reproducir=()=>audio.play().catch(()=>{
+        $('#botVoiceStatus').textContent=V.lang.startsWith('en')?'Tap the speaker button to hear the assistant.':'Toca el botón de bocina para escuchar a la asistente.';
       });
+      reproducir();
+      audio.onloadedmetadata=reproducir;
+      audio.oncanplay=reproducir;
     };
     pc.onconnectionstatechange=()=>{
       if(generation!==R.generation) return;
@@ -1459,18 +1472,15 @@ function toggleRealtimeMic(){
 function voiceGate(){
   if(R.active){toggleRealtimeMic();return;}
   if(R.connecting) return;
-  let ok=false;try{ok=sessionStorage.getItem('wpVozOk')==='1';}catch(_){}
-  if(ok){startRealtime();return;}
-  const old=$('#botConsent');if(old){old.querySelector('button').focus();return;}
-  const en=V.lang.startsWith('en');
-  const box=document.createElement('div');box.className='bot__consent';box.id='botConsent';box.setAttribute('role','group');
-  box.innerHTML=en
-    ?'<b>Before you talk</b>Voice chat uses the OpenAI API. Your audio and any question you type while that session is active are sent to OpenAI to generate the response. This site does not save recordings. Please do not share sensitive personal, medical or financial details.<div><button type="button">Accept and talk</button><button type="button">I prefer to type</button></div>'
-    :'<b>Antes de hablar</b>La conversación por voz usa la API de OpenAI. Tu audio y cualquier pregunta que escribas mientras esa sesión esté activa se envían a OpenAI para generar la respuesta. Este sitio no guarda grabaciones. No compartas datos personales, médicos ni financieros sensibles.<div><button type="button">Aceptar y hablar</button><button type="button">Prefiero escribir</button></div>';
-  const btns=box.querySelectorAll('button');
-  btns[0].onclick=()=>{try{sessionStorage.setItem('wpVozOk','1');}catch(_){}box.remove();startRealtime();};
-  btns[1].onclick=()=>{box.remove();$('#botInput').focus();};
-  $('#botOpts').before(box);btns[0].focus();
+  V.output=true;
+  try{
+    sessionStorage.setItem('wpVozOk','1');
+    sessionStorage.setItem('wpVozRespuestas','1');
+  }catch(_){}
+  $('#botVoiceStatus').textContent=V.lang.startsWith('en')
+    ?'Opening the microphone…'
+    :'Abriendo el micrófono…';
+  startRealtime();
 }
 $('#botVoice').onclick=()=>{
   V.output=!V.output;
