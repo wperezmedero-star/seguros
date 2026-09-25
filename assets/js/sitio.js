@@ -308,19 +308,30 @@ function animarCifras(out, antes){
     if (!hasta.length || desde.length !== hasta.length) return;
     tareas.push({ el, final, desde, hasta, muestras });
   });
-  if (!tareas.length) return;
+  if (!tareas.length || document.hidden) return;
   out.setAttribute('aria-busy', 'true');
   const DUR = 700, t0 = performance.now(), ease = t => 1 - Math.pow(1 - t, 3);
+  let listo = false;
+  const terminar = () => {
+    if (listo) return; listo = true;
+    tareas.forEach(tk => { tk.el.textContent = tk.final; });
+    out.removeAttribute('aria-busy');
+  };
+  /* Red de seguridad: si el navegador pausa la animación (pestaña en segundo
+     plano), el resultado final se escribe igual. */
+  setTimeout(terminar, DUR + 200);
   (function paso(ahora){
-    const t = Math.min(1, (ahora - t0) / DUR), k = ease(t);
+    if (listo) return;
+    const t = Math.min(1, Math.max(0, (ahora - t0) / DUR)), k = ease(t);
+    if (t >= 1) { terminar(); return; }
     tareas.forEach(tk => {
       let j = 0;
-      tk.el.textContent = t < 1 ? tk.final.replace(CIFRA, m => {
+      tk.el.textContent = tk.final.replace(CIFRA, () => {
         const v = tk.desde[j] + (tk.hasta[j] - tk.desde[j]) * k;
         return formatoCifra(v, tk.muestras[j++]);
-      }) : tk.final;
+      });
     });
-    if (t < 1) requestAnimationFrame(paso); else out.removeAttribute('aria-busy');
+    requestAnimationFrame(paso);
   })(t0);
 }
 
