@@ -740,7 +740,7 @@ const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechReco
 let vozPreferida = true;
 try { vozPreferida = sessionStorage.getItem('wpVozRespuestas') !== '0'; } catch (_) {}
 const V = { lang:'es-US', output:vozPreferida, recognition:null, listening:false, speechId:0, recognitionMode:'', lastTranscript:'', recognitionSent:false };
-const R = { pc:null, dc:null, stream:null, audio:null, timer:null, connecting:false, active:false, generation:0, state:'', sender:null, watch:null, recuperando:false, ultimaRecuperacion:0, greeted:false, responsePending:false, responseWatch:null, sessionWatch:null, recording:false, switching:false, startedAt:0 };
+const R = { pc:null, dc:null, stream:null, audio:null, timer:null, connecting:false, active:false, generation:0, state:'', sender:null, watch:null, recuperando:false, ultimaRecuperacion:0, greeted:false, responsePending:false, responseWatch:null, sessionWatch:null, recording:false, switching:false, startedAt:0, mode:'', micMuted:false };
 const BOT_COPY = {
   es: {
     name:BOT_TREE.name, sub:'Asistente virtual con IA', langButton:'ES', langLabel:'Cambiar a inglés',
@@ -816,20 +816,13 @@ const FREE_REPLIES = {
 
 function copy(){ return BOT_COPY[V.lang.startsWith('en') ? 'en' : 'es']; }
 function speak(text){
-  if (!V.output || R.active || R.connecting || !('speechSynthesis' in window) || !text) return;
-  const speechId=++V.speechId;
-  speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = V.lang; utterance.rate = .96; utterance.pitch = 1;
-  const voices=speechSynthesis.getVoices();
-  const match=voices.find(v=>v.lang.toLowerCase()==='es-cu')
-    || voices.find(v=>v.lang.toLowerCase()==='es-us')
-    || voices.find(v=>v.lang.toLowerCase().startsWith(V.lang.slice(0,2).toLowerCase()));
-  if (match) utterance.voice = match;
-  utterance.onstart=()=>{if(speechId===V.speechId)bot.classList.add('is-speaking');};
-  const finish=()=>{if(speechId===V.speechId)bot.classList.remove('is-speaking');};
-  utterance.onend=finish; utterance.onerror=finish;
-  speechSynthesis.speak(utterance);
+  /* La voz audible del asistente debe venir únicamente de OpenAI Realtime.
+     No usar SpeechSynthesis del navegador. */
+  if (!V.output || !text) return;
+  if (R.active && R.audio) {
+    R.audio.muted = false;
+    R.audio.play().catch(()=>{});
+  }
 }
 
 let ultimoTexto = '';
@@ -1117,7 +1110,7 @@ function startEnglish(){
 function resetConversation(){
   stopRealtime('');
   V.speechId++; bot.classList.remove('is-speaking','is-listening','is-thinking');
-  if ('speechSynthesis' in window) speechSynthesis.cancel();
+  /* SpeechSynthesis del navegador desactivado. */
   Object.keys(S.data).forEach(k=>delete S.data[k]);
   S.tags.length=0; Object.keys(S.meta).forEach(k=>delete S.meta[k]);
   S.started=false; S.node=null; S.multi=new Set(); S.ended=false;
@@ -1135,7 +1128,13 @@ function syncLanguage(){
 function sendFree(){
   const el = $('#botInput'), text = el.value.trim();
   if (!text) return;
-  say(text, true); el.value = '';
+  el.value = '';
+  if (R.active && R.dc?.readyState==='open') {
+    if (checkInterrupts(text)) { say(text,true); botOpts.innerHTML=''; S.ended=true; return; }
+    sendRealtimeText(text);
+    return;
+  }
+  say(text, true);
   if (checkInterrupts(text)) { botOpts.innerHTML = ''; S.ended = true; return; }
   typing(() => {
     respondTopic(topicFrom(text));
@@ -1156,7 +1155,7 @@ $('#botLang').onclick = () => {
 
 function syncVoiceControls(){
   const c=copy();
-  const micLabel=V.listening?c.stopMic:R.recording?c.stopMic:R.connecting?c.connecting:R.active?c.connected:c.mic;
+  const micLabel=R.active&&R.mode==='voice'?(R.micMuted?c.mic:c.stopMic):R.connecting?c.connecting:c.mic;
   $('#botMic').setAttribute('aria-label',micLabel); $('#botMic').title=micLabel;
   const en=V.lang.startsWith('en');
   const vozLabel=V.output?(en?'Mute spoken answers':'Silenciar respuestas por voz'):(en?'Turn on spoken answers':'Activar respuestas por voz');
@@ -1189,7 +1188,7 @@ function stopRealtime(status){
   const dc=R.dc, pc=R.pc, stream=R.stream, audio=R.audio;
   if(V.recognition&&V.listening){ try{V.recognition.abort();}catch(_){} }
   V.listening=false; V.recognitionMode=''; V.lastTranscript=''; V.recognitionSent=false;
-  R.dc=null; R.pc=null; R.stream=null; R.audio=null; R.timer=null; R.watch=null; R.sender=null; R.responseWatch=null; R.sessionWatch=null; R.greeted=false; R.responsePending=false; R.recording=false; R.switching=false;
+  R.dc=null; R.pc=null; R.stream=null; R.audio=null; R.timer=null; R.watch=null; R.sender=null; R.responseWatch=null; R.sessionWatch=null; R.greeted=false; R.responsePending=false; R.recording=false; R.switching=false; R.mode=''; R.micMuted=false;
   sesionAudio('auto');
   R.active=false; R.connecting=false;
   try{if(dc)dc.close();}catch(_){}
@@ -1209,7 +1208,13 @@ function handleRealtimeEvent(raw,generation){
     R.greeted=true;
     R.dc.send(JSON.stringify({type:'response.create',response:{instructions:proactiveGreeting()}}));
   }
-  else if(event.type==='input_audio_buffer.speech_started'&&R.recording) setVoiceState('listening',c.listening);
+  else if(event.type==='input_audio_buffer.speech_started'){
+    R.recording=true;
+    setVoiceState('listening',c.listening);
+  }
+  else if(event.type==='input_audio_buffer.speech_stopped'){
+    setVoiceState('thinking',c.thinking);
+  }
   else if(event.type==='response.created'){
     R.responsePending=true;
     if(R.responseWatch) clearTimeout(R.responseWatch);
@@ -1223,11 +1228,13 @@ function handleRealtimeEvent(raw,generation){
   }
   else if(event.type==='response.output_audio.delta') setVoiceState('speaking',c.speaking);
   else if(event.type==='output_audio_buffer.stopped'||event.type==='output_audio_buffer.cleared'){
-    if(!R.recording) setVoiceState('',c.connected);
+    if(R.active && R.mode==='voice' && !R.micMuted) setVoiceState('listening',c.listening);
+    else setVoiceState('',c.connected);
   }
   else if(event.type==='response.done'){
     R.responsePending=false;
-    if(R.state==='thinking'&&!R.recording) setVoiceState('',c.connected);
+    if(R.active && R.mode==='voice' && !R.micMuted) setVoiceState('listening',c.listening);
+    else if(R.state==='thinking') setVoiceState('',c.connected);
   }
   else if(event.type==='conversation.item.input_audio_transcription.completed'&&event.transcript&&event.transcript.trim()){
     /* Lo que la asistente entendió aparece en el chat como mensaje del visitante */
@@ -1247,12 +1254,25 @@ function sesionAudio(tipo){
   try{ if(navigator.audioSession) navigator.audioSession.type=tipo; }catch(_){}
 }
 function configuracionVoz(){
-  const en=V.lang.startsWith('en');
-  return {type:'realtime',instructions:realtimeInstructions(),audio:{output:{voice:'marin'},input:{
-    noise_reduction:{type:'near_field'},
-    transcription:{model:'gpt-4o-mini-transcribe',language:en?'en':'es'},
-    turn_detection:null
-  }}};
+  return {
+    type:'realtime',
+    instructions:realtimeInstructions(),
+    output_modalities:['audio'],
+    audio:{
+      output:{voice:'marin'},
+      input:{
+        noise_reduction:{type:'near_field'},
+        turn_detection:{
+          type:'server_vad',
+          threshold:.45,
+          prefix_padding_ms:300,
+          silence_duration_ms:700,
+          create_response:true,
+          interrupt_response:true
+        }
+      }
+    }
+  };
 }
 async function recuperarMic(generation){
   if(generation!==R.generation||!R.sender||R.recuperando) return;
@@ -1330,13 +1350,13 @@ function proactiveGreeting(){
 
 async function startRealtime(){
   const c=copy();
-  if(R.active){toggleVoiceRecording();return;}
+  if(R.active){toggleRealtimeMic();return;}
   if(R.connecting) return;
   if(!window.RTCPeerConnection||!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
-    startBrowserRecognition(c.realtimeError); return;
+    $('#botVoiceStatus').textContent=c.realtimeError; return;
   }
   if(V.recognition&&V.listening) V.recognition.stop();
-  V.speechId++; if('speechSynthesis'in window) speechSynthesis.cancel();
+  V.speechId++;
   R.connecting=true;
   const generation=++R.generation;
   setVoiceState('connecting',c.connecting);
@@ -1376,18 +1396,15 @@ async function startRealtime(){
     dc.onopen=async()=>{
       if(generation!==R.generation) return;
       if(R.timer) clearTimeout(R.timer);
-      R.connecting=false; R.active=true;
-      /* La pista inicial permite negociar WebRTC; durante el saludo la retiramos.
-         Cada pregunta usa una captura nueva iniciada por el toque del visitante. */
-      try{await R.sender.replaceTrack(null);}catch(error){console.warn('Microphone standby',error);}
-      if(generation!==R.generation) return;
-      stream.getTracks().forEach(track=>track.stop()); R.stream=null;
+      R.connecting=false; R.active=true; R.mode='voice'; R.micMuted=false; R.recording=true;
+      /* Mantener el micrófono conectado. OpenAI Realtime recibe la pista WebRTC
+         y server_vad detecta automáticamente cuándo termina la pregunta. */
       dc.send(JSON.stringify({type:'session.update',session:configuracionVoz()}));
       R.sessionWatch=setTimeout(()=>{
         if(generation!==R.generation||R.greeted) return;
         stopRealtime(copy().realtimeError);
       },8000);
-      setVoiceState('thinking',copy().thinking);
+      setVoiceState('listening',copy().listening);
       R.timer=setTimeout(()=>stopRealtime(copy().sessionLimit),CONFIG.voiceMaxMs);
     };
     dc.onclose=()=>{
@@ -1419,46 +1436,27 @@ async function startRealtime(){
   }
 }
 
-async function toggleVoiceRecording(){
-  if(!R.active||R.switching||R.dc?.readyState!=='open') return;
-  const generation=R.generation, c=copy();
-  R.switching=true;
-  if(R.recording){
-    R.recording=false;
-    setVoiceState('thinking',c.heard);
-    /* RTP y eventos viajan por canales distintos; deja llegar el último audio
-       antes de confirmar el turno, conforme al flujo WebRTC de OpenAI. */
-    await new Promise(resolve=>setTimeout(resolve,400));
-    if(generation!==R.generation) return;
-    try{
-      await R.sender.replaceTrack(null);
-      if(generation!==R.generation) return;
-      if(R.stream) R.stream.getTracks().forEach(track=>track.stop());
-      R.stream=null;
-      R.dc.send(JSON.stringify({type:'input_audio_buffer.commit'}));
-      R.dc.send(JSON.stringify({type:'response.create'}));
-    }catch(error){console.warn('Voice turn could not be sent',error);setVoiceState('',c.unavailable);}
-    finally{R.switching=false;syncVoiceControls();}
+function toggleRealtimeMic(){
+  if(!R.active || R.mode!=='voice') return;
+  const track=R.stream&&R.stream.getAudioTracks&&R.stream.getAudioTracks()[0];
+  if(!track){
+    setVoiceState('',copy().unavailable);
     return;
   }
-  try{
-    const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
-    if(generation!==R.generation){stream.getTracks().forEach(track=>track.stop());return;}
-    /* Descartar audio anterior y reproducido durante la bienvenida. */
-    R.dc.send(JSON.stringify({type:'input_audio_buffer.clear'}));
-    if(R.responsePending) R.dc.send(JSON.stringify({type:'response.cancel'}));
-    if(R.state==='speaking') R.dc.send(JSON.stringify({type:'output_audio_buffer.clear'}));
-    try{await R.sender.replaceTrack(stream.getAudioTracks()[0]);}
-    catch(error){stream.getTracks().forEach(track=>track.stop());throw error;}
-    if(generation!==R.generation){stream.getTracks().forEach(track=>track.stop());return;}
-    R.stream=stream; R.recording=true; R.startedAt=Date.now();
-    setVoiceState('listening',V.lang.startsWith('en')?'Listening… Tap the microphone again to send.':'Te escucho… Toca otra vez el micrófono para enviar.');
-  }catch(error){console.warn('Cannot capture voice question',error);setVoiceState('',error?.name==='NotAllowedError'?c.denied:c.unavailable);}
-  finally{R.switching=false;syncVoiceControls();}
+  R.micMuted=!R.micMuted;
+  track.enabled=!R.micMuted;
+  R.recording=!R.micMuted;
+  if(R.micMuted){
+    setVoiceState('',V.lang.startsWith('en')?'Microphone paused. Tap again to continue.':'Micrófono pausado. Toca otra vez para continuar.');
+  }else{
+    setVoiceState('listening',copy().listening);
+  }
+  syncVoiceControls();
 }
 
+
 function voiceGate(){
-  if(R.active){startRealtimeRecognition();return;}
+  if(R.active){toggleRealtimeMic();return;}
   if(R.connecting) return;
   let ok=false;try{ok=sessionStorage.getItem('wpVozOk')==='1';}catch(_){}
   if(ok){startRealtime();return;}
@@ -1466,8 +1464,8 @@ function voiceGate(){
   const en=V.lang.startsWith('en');
   const box=document.createElement('div');box.className='bot__consent';box.id='botConsent';box.setAttribute('role','group');
   box.innerHTML=en
-    ?'<b>Before you talk</b>Voice chat uses artificial intelligence. Your audio is sent to OpenAI to generate spoken answers in real time, and OpenAI may keep it temporarily under its policies. This site does not save recordings. Please do not share sensitive personal, medical or financial details.<div><button type="button">Accept and talk</button><button type="button">I prefer to type</button></div>'
-    :'<b>Antes de hablar</b>La conversación por voz usa inteligencia artificial. Tu audio se envía a OpenAI para generar respuestas habladas en tiempo real, y OpenAI puede conservarlo temporalmente según sus políticas. Este sitio no guarda grabaciones. No compartas datos personales, médicos ni financieros sensibles.<div><button type="button">Aceptar y hablar</button><button type="button">Prefiero escribir</button></div>';
+    ?'<b>Before you talk</b>Voice chat uses the OpenAI API. Your audio and any question you type while that session is active are sent to OpenAI to generate the response. This site does not save recordings. Please do not share sensitive personal, medical or financial details.<div><button type="button">Accept and talk</button><button type="button">I prefer to type</button></div>'
+    :'<b>Antes de hablar</b>La conversación por voz usa la API de OpenAI. Tu audio y cualquier pregunta que escribas mientras esa sesión esté activa se envían a OpenAI para generar la respuesta. Este sitio no guarda grabaciones. No compartas datos personales, médicos ni financieros sensibles.<div><button type="button">Aceptar y hablar</button><button type="button">Prefiero escribir</button></div>';
   const btns=box.querySelectorAll('button');
   btns[0].onclick=()=>{try{sessionStorage.setItem('wpVozOk','1');}catch(_){}box.remove();startRealtime();};
   btns[1].onclick=()=>{box.remove();$('#botInput').focus();};
@@ -1476,15 +1474,11 @@ function voiceGate(){
 $('#botVoice').onclick=()=>{
   V.output=!V.output;
   try{sessionStorage.setItem('wpVozRespuestas',V.output?'1':'0');}catch(_){}
-  if(!V.output){
-    if(R.active||R.connecting) stopRealtime('');
-    V.speechId++; if('speechSynthesis'in window) speechSynthesis.cancel();
-    bot.classList.remove('is-speaking');
-    $('#botVoiceStatus').textContent=copy().voiceOff;
-  }else{
-    $('#botVoiceStatus').textContent=copy().voiceOn;
-    speak(ultimoTexto); /* se lee dentro del toque: así lo permiten iPhone y Chrome */
+  if(R.audio){
+    R.audio.muted=!V.output;
+    if(V.output) R.audio.play().catch(()=>{});
   }
+  $('#botVoiceStatus').textContent=V.output?copy().voiceOn:copy().voiceOff;
   syncVoiceControls();
 };
 
@@ -1621,7 +1615,7 @@ $('#botClose').onclick = () => {
   if (V.recognition && V.listening) V.recognition.stop();
   stopRealtime('');
   V.speechId++; bot.classList.remove('is-speaking','is-listening','is-thinking');
-  if ('speechSynthesis' in window) speechSynthesis.cancel();
+  /* SpeechSynthesis del navegador desactivado. */
 };
 window.addEventListener('pagehide',()=>stopRealtime(''));
 
@@ -1935,7 +1929,7 @@ const LEGAL = {
   privacidad:['Política de Privacidad',
     'Mientras el sitio esté en modo educativo no hay formularios activos. Si escribes por WhatsApp, llamas o envías un correo, usamos lo que compartas únicamente para responderte. Cuando se habilite el formulario, recopilaremos solo nombre, teléfono, correo, estado de residencia, área de interés y preferencia de presupuesto, para preparar tu revisión y contactarte con tu autorización.',
     'No solicitamos ni almacenamos números de Seguro Social, números de Medicare, datos bancarios, diagnósticos ni medicamentos a través de este sitio.',
-    'Asistente virtual con IA: las respuestas escritas se generan en tu navegador y lo que escribes no se envía a terceros. La conversación por voz es opcional y solo empieza cuando la aceptas. Tu audio se envía a OpenAI, que lo procesa para responder en tiempo real y puede conservarlo temporalmente según sus políticas. Este sitio no guarda grabaciones ni transcripciones. Si la voz natural no está disponible, tu navegador puede usar su propio servicio de reconocimiento de voz, como el de Google en Chrome o el de Apple en Safari.',
+    'Asistente virtual con IA: fuera de una sesión de voz, las respuestas escritas básicas se generan en tu navegador. La conversación por voz es opcional y solo empieza cuando la aceptas. Mientras esa sesión está activa, el audio y las preguntas que escribas se envían a la API de OpenAI para generar respuestas en tiempo real. Este sitio no guarda grabaciones. La voz audible de la asistente no usa SpeechSynthesis del navegador; proviene de OpenAI Realtime.',
     'Puedes retirar tu consentimiento y pedir acceso, corrección o eliminación de tus datos escribiendo a wperezmedero@gmail.com. Eliminamos los mensajes y registros que ya no sean necesarios para atenderte.'],
   cookies:['Política de Cookies',
     'Este sitio no instala cookies propias de publicidad ni de medición.',
