@@ -283,7 +283,7 @@ function card(label, big, rows, explanation, disclaimer){
 
 /* ═══ CIFRAS QUE SE TRANSFORMAN AL PRESIONAR "CALCULAR" ═══
    Cada cifra del resultado (la grande y las de cada fila) viaja desde su
-   valor anterior hasta el nuevo en 700 ms con ease-out, en vez de cambiar de
+   valor anterior hasta el nuevo en 1.1 s con ease-out, en vez de cambiar de
    golpe. Solo anima las cifras que cambiaron; respeta el formato ($, comas,
    decimales, "/ mes"). Mientras cuenta, aria-busy evita que los lectores de
    pantalla lean cada paso: al final leen solo el resultado. */
@@ -310,11 +310,12 @@ function animarCifras(out, antes){
   });
   if (!tareas.length || document.hidden) return;
   out.setAttribute('aria-busy', 'true');
-  const DUR = 700, t0 = performance.now(), ease = t => 1 - Math.pow(1 - t, 3);
+  const DUR = 1100, t0 = performance.now(), ease = t => 1 - Math.pow(1 - t, 3);
   let listo = false;
+  tareas.forEach(tk => tk.el.classList.add('cifra-viva'));
   const terminar = () => {
     if (listo) return; listo = true;
-    tareas.forEach(tk => { tk.el.textContent = tk.final; });
+    tareas.forEach(tk => { tk.el.textContent = tk.final; setTimeout(() => tk.el.classList.remove('cifra-viva'), 250); });
     out.removeAttribute('aria-busy');
   };
   /* Red de seguridad: si el navegador pausa la animación (pestaña en segundo
@@ -382,16 +383,16 @@ $$('[data-faq]').forEach(t => t.onclick = () => {
   ['vida','salud','anualidades'].forEach(k => $('#faq-' + k).classList.toggle('is-hidden', k !== t.dataset.faq));
 });
 /* ═══════════ REVELADO AL HACER SCROLL (sistema único) ═══════════
-   · Cada .reveal aparece una sola vez: fade + subida de 24 px en 600 ms (CSS).
+   · Cada .reveal aparece una sola vez: fade + subida de 36 px en 800 ms (CSS).
    · Escalonado por lote: los elementos que entran juntos en pantalla se
-     ordenan de arriba abajo y de izquierda a derecha, con 100 ms entre cada
+     ordenan de arriba abajo y de izquierda a derecha, con 140 ms entre cada
      uno (máx. 5 pasos). Un elemento que entra solo no espera a nadie.
    · Grupos (.metodo, .stats, .reminders): el contenedor queda fijo y sus
-     hijos aparecen uno tras otro, también a 100 ms.
+     hijos aparecen uno tras otro, también a 140 ms.
    · Solo se anima opacity/transform: el espacio final se reserva desde el
      inicio, así que no hay saltos de diseño (CLS = 0).
    · Con "reducir movimiento" o sin IntersectionObserver, todo se ve de inmediato. */
-const REVEAL_STEP = 100, REVEAL_MAX = 5;
+const REVEAL_STEP = 140, REVEAL_MAX = 5;
 $$('.metodo.reveal, .stats.reveal, .reminders.reveal').forEach(g => {
   g.classList.add('reveal--grupo');
   if (g.matches('.metodo, .stats')) g.classList.add('reveal--tiles');
