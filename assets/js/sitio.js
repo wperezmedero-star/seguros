@@ -731,13 +731,15 @@ const bot = $('#bot'), botLog = $('#botLog'), botOpts = $('#botOpts');
 const S = { data:{}, tags:[], meta:{}, started:false, node:null, multi:new Set(), ended:false };
 $('#botName').textContent = BOT_TREE.name;
 
-/* Voz natural por WebRTC. Si no está disponible, se usa la voz del navegador. */
+/* Voz natural por WebRTC para las respuestas. La pregunta hablada usa primero
+   reconocimiento del navegador y se envía como texto al mismo turno Realtime;
+   si no está disponible, se conserva el push-to-talk WebRTC como respaldo. */
 const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
 /* V.output = el visitante quiere oír las respuestas (botón de bocina).
    Encendido por defecto; su elección se recuerda en esta pestaña. */
 let vozPreferida = true;
 try { vozPreferida = sessionStorage.getItem('wpVozRespuestas') !== '0'; } catch (_) {}
-const V = { lang:'es-US', output:vozPreferida, recognition:null, listening:false, speechId:0 };
+const V = { lang:'es-US', output:vozPreferida, recognition:null, listening:false, speechId:0, recognitionMode:'', lastTranscript:'', recognitionSent:false };
 const R = { pc:null, dc:null, stream:null, audio:null, timer:null, connecting:false, active:false, generation:0, state:'', sender:null, watch:null, recuperando:false, ultimaRecuperacion:0, greeted:false, responsePending:false, responseWatch:null, sessionWatch:null, recording:false, switching:false, startedAt:0 };
 const BOT_COPY = {
   es: {
@@ -747,9 +749,9 @@ const BOT_COPY = {
     denied:'El micrófono está bloqueado. Puedes habilitarlo en los permisos del navegador o escribir tu pregunta.',
     voiceOn:'Respuestas por voz activadas.', voiceOff:'Respuestas por voz desactivadas.',
     voiceReady:'Toca el micrófono: la asistente te recibirá y te guiará.', connecting:'Conectando con la asistente…',
-    connected:'Toca el micrófono, pregunta y vuelve a tocarlo para enviar.', thinking:'Pensando…', speaking:'La asistente está hablando…',
+    connected:'Toca el micrófono y habla. Al hacer una pausa, envío tu pregunta automáticamente.', thinking:'Pensando…', speaking:'La asistente está hablando…',
     ended:'Conversación de voz finalizada.', sessionLimit:'La conversación de voz terminó al llegar a 3 minutos.',
-    realtimeError:'No se pudo abrir la voz natural. Puedes escribir tu pregunta.', stopMic:'Enviar pregunta hablada',
+    realtimeError:'No se pudo abrir la voz natural. Puedes escribir tu pregunta.', stopMic:'Detener escucha y enviar',
     foot:'Asistente automático. No cotiza, no determina elegibilidad ni da consejo médico. No envíes SSN, número de Medicare, diagnósticos ni datos bancarios.'
   },
   en: {
@@ -759,9 +761,9 @@ const BOT_COPY = {
     denied:'Microphone access is blocked. You can allow it in your browser settings or type your question.',
     voiceOn:'Voice responses are on.', voiceOff:'Voice responses are off.',
     voiceReady:'Tap the microphone: the assistant will welcome and guide you.', connecting:'Connecting to the assistant…',
-    connected:'Tap the microphone, ask your question, then tap again to send.', thinking:'Thinking…', speaking:'The assistant is speaking…',
+    connected:'Tap the microphone and speak. When you pause, I will send your question automatically.', thinking:'Thinking…', speaking:'The assistant is speaking…',
     ended:'Voice conversation ended.', sessionLimit:'The voice conversation ended after 3 minutes.',
-    realtimeError:'Natural voice could not start. You can type your question.', stopMic:'Send spoken question',
+    realtimeError:'Natural voice could not start. You can type your question.', stopMic:'Stop listening and send',
     foot:'Automated assistant. It does not quote, determine eligibility, or give medical advice. Do not send Social Security, Medicare, medical, or banking information.'
   }
 };
@@ -1154,7 +1156,7 @@ $('#botLang').onclick = () => {
 
 function syncVoiceControls(){
   const c=copy();
-  const micLabel=R.recording?c.stopMic:R.connecting?c.connecting:R.active?c.connected:c.mic;
+  const micLabel=V.listening?c.stopMic:R.recording?c.stopMic:R.connecting?c.connecting:R.active?c.connected:c.mic;
   $('#botMic').setAttribute('aria-label',micLabel); $('#botMic').title=micLabel;
   const en=V.lang.startsWith('en');
   const vozLabel=V.output?(en?'Mute spoken answers':'Silenciar respuestas por voz'):(en?'Turn on spoken answers':'Activar respuestas por voz');
@@ -1185,6 +1187,8 @@ function stopRealtime(status){
   if(R.responseWatch) clearTimeout(R.responseWatch);
   if(R.sessionWatch) clearTimeout(R.sessionWatch);
   const dc=R.dc, pc=R.pc, stream=R.stream, audio=R.audio;
+  if(V.recognition&&V.listening){ try{V.recognition.abort();}catch(_){} }
+  V.listening=false; V.recognitionMode=''; V.lastTranscript=''; V.recognitionSent=false;
   R.dc=null; R.pc=null; R.stream=null; R.audio=null; R.timer=null; R.watch=null; R.sender=null; R.responseWatch=null; R.sessionWatch=null; R.greeted=false; R.responsePending=false; R.recording=false; R.switching=false;
   sesionAudio('auto');
   R.active=false; R.connecting=false;
@@ -1244,7 +1248,7 @@ function sesionAudio(tipo){
 }
 function configuracionVoz(){
   const en=V.lang.startsWith('en');
-  return {type:'realtime',instructions:realtimeInstructions(),audio:{output:{voice:'coral'},input:{
+  return {type:'realtime',instructions:realtimeInstructions(),audio:{output:{voice:'marin'},input:{
     noise_reduction:{type:'near_field'},
     transcription:{model:'gpt-4o-mini-transcribe',language:en?'en':'es'},
     turn_detection:null
@@ -1297,8 +1301,20 @@ function vigilarEnvio(pc,generation){
 function realtimeInstructions(){
   return `Eres la asistente virtual educativa de William Pérez-Mederos para su sitio de seguros en Florida.
 
-Habla en el idioma del visitante; usa español por defecto. En español, habla con una voz femenina cálida, cercana y profesional, con acento cubano habanero suave reconocible en Miami. Mantén el acento estable desde la primera palabra hasta la última: ritmo conversado caribeño, entonación melodiosa y consonantes suaves, con vocales claras y dicción fácil de entender. No cambies al inglés por el acento de quien te habla; cambia solo si lo pide o habla en inglés. No exageres rasgos fonéticos, no imites estereotipos ni uses jerga forzada. Responde de forma breve, clara y sin jerga. Haz una sola pregunta a la vez.
+# Idioma
+- Usa español por defecto.
+- No cambies al inglés por el acento del visitante ni por una palabra aislada en inglés.
+- Cambia a inglés solamente si el visitante lo pide o mantiene la conversación en inglés.
 
+# Voz, acento y ritmo
+- En español, mantén un timbre femenino, cálido, cercano y profesional.
+- Usa un acento cubano habanero suave y natural, reconocible para una persona de la comunidad cubana de Miami, sin caricaturizarlo.
+- Mantén el acento estable durante toda la respuesta.
+- Ritmo conversado caribeño moderado, entonación melodiosa, vocales claras y dicción fácil de entender.
+- Evita jerga forzada, exageraciones fonéticas y estereotipos.
+- Responde normalmente en dos o tres frases breves y haz una sola pregunta a la vez.
+
+# Conversación
 Sé proactiva sin ser insistente: inicia con una bienvenida breve y pregunta si la persona desea hablar de seguro de vida, salud, Medicare o retiro y anualidades. Identifica su necesidad con preguntas generales, útiles y no sensibles. Después de explicar, ofrece dos o tres caminos seguros para continuar. Si la consulta es vaga, ayuda a elegir un tema. Resume lo entendido cuando sea útil y cierra con un próximo paso claro, como consultar una fuente oficial, usar una herramienta educativa del sitio o hablar directamente con William. No repitas la presentación ni las advertencias en cada turno.
 
 El sitio está en modo educativo. Explica conceptos generales y comparaciones educativas, pero no cotices primas, no recomiendes un producto específico, no prometas cobertura o aprobación, no completes solicitudes y no afirmes representar a una aseguradora ni al gobierno. Cuando una pregunta requiera revisar elegibilidad, costos, cobertura o una póliza concreta, explica qué factores suelen importar e indica que William debe revisarla personalmente. Si una regla, fecha o cifra puede haber cambiado, no la inventes: recomienda verificarla en la fuente oficial correspondiente.
@@ -1442,7 +1458,7 @@ async function toggleVoiceRecording(){
 }
 
 function voiceGate(){
-  if(R.active){toggleVoiceRecording();return;}
+  if(R.active){startRealtimeRecognition();return;}
   if(R.connecting) return;
   let ok=false;try{ok=sessionStorage.getItem('wpVozOk')==='1';}catch(_){}
   if(ok){startRealtime();return;}
@@ -1472,32 +1488,115 @@ $('#botVoice').onclick=()=>{
   syncVoiceControls();
 };
 
+function sendRealtimeText(text){
+  const t=String(text||'').trim();
+  if(!t||!R.active||R.dc?.readyState!=='open') return false;
+  try{
+    if(R.responsePending) R.dc.send(JSON.stringify({type:'response.cancel'}));
+    if(R.state==='speaking') R.dc.send(JSON.stringify({type:'output_audio_buffer.clear'}));
+    say(t,true);
+    setVoiceState('thinking',copy().heard);
+    R.dc.send(JSON.stringify({
+      type:'conversation.item.create',
+      item:{type:'message',role:'user',content:[{type:'input_text',text:t}]}
+    }));
+    R.dc.send(JSON.stringify({type:'response.create'}));
+    return true;
+  }catch(error){
+    console.warn('Realtime text turn could not be sent',error);
+    setVoiceState('',copy().realtimeError);
+    return false;
+  }
+}
+
 function ensureRecognition(){
   if (!SpeechRecognitionAPI) return null;
   if (V.recognition) return V.recognition;
   const r = new SpeechRecognitionAPI();
-  r.continuous=false; r.interimResults=false; r.maxAlternatives=1;
-  r.onstart=()=>{V.listening=true;$('#botMic').classList.add('is-listening');bot.classList.add('is-listening');$('#botVoiceStatus').textContent=copy().listening;};
+  r.continuous=false; r.interimResults=true; r.maxAlternatives=1;
+  r.onstart=()=>{
+    V.listening=true;
+    $('#botMic').classList.add('is-listening'); bot.classList.add('is-listening');
+    $('#botVoiceStatus').textContent=copy().listening;
+    syncVoiceControls();
+  };
   r.onresult=e=>{
-    const transcript=e.results[0][0].transcript.trim();
-    $('#botInput').value=transcript; $('#botVoiceStatus').textContent=copy().heard;
-    setTimeout(sendFree,120);
+    let transcript='';
+    for(let i=0;i<e.results.length;i++){
+      const part=e.results[i]?.[0]?.transcript||'';
+      if(part) transcript+=(transcript?' ':'')+part.trim();
+    }
+    transcript=transcript.trim();
+    if(!transcript) return;
+    V.lastTranscript=transcript;
+    if(V.recognitionMode!=='realtime'){
+      $('#botInput').value=transcript;
+      $('#botVoiceStatus').textContent=copy().heard;
+    }
   };
   r.onerror=e=>{
-    if (e.error==='aborted') return;
-    $('#botVoiceStatus').textContent=(e.error==='not-allowed'||e.error==='service-not-allowed')?copy().denied:copy().unavailable;
+    if(e.error==='aborted') return;
+    const denied=e.error==='not-allowed'||e.error==='service-not-allowed';
+    V.lastTranscript='';
+    $('#botVoiceStatus').textContent=denied?copy().denied:copy().unavailable;
+    if(V.recognitionMode==='realtime'&&!denied&&R.active){
+      /* Respaldo: si el reconocimiento del navegador falla, conserva el
+         push-to-talk WebRTC existente en lugar de dejar al visitante sin voz. */
+      setTimeout(()=>{ if(R.active&&!V.listening) toggleVoiceRecording(); },80);
+    }
   };
-  r.onend=()=>{V.listening=false;$('#botMic').classList.remove('is-listening');bot.classList.remove('is-listening');};
+  r.onend=()=>{
+    const modo=V.recognitionMode;
+    const transcript=V.lastTranscript.trim();
+    const yaEnviado=V.recognitionSent;
+    V.listening=false; V.recognitionMode=''; V.lastTranscript=''; V.recognitionSent=false;
+    $('#botMic').classList.remove('is-listening'); bot.classList.remove('is-listening');
+    syncVoiceControls();
+    if(modo==='realtime'){
+      if(transcript&&!yaEnviado) sendRealtimeText(transcript);
+      else if(R.active&&R.state!=='speaking'&&R.state!=='thinking') setVoiceState('',copy().connected);
+      return;
+    }
+    if(transcript){
+      $('#botInput').value=transcript;
+      $('#botVoiceStatus').textContent=copy().heard;
+      setTimeout(sendFree,120);
+    }
+  };
   V.recognition=r; return r;
 }
+
+function startRealtimeRecognition(){
+  if(!R.active||R.connecting) return;
+  const r=ensureRecognition();
+  if(!r){ toggleVoiceRecording(); return; }
+  if(V.listening){
+    try{r.stop();}catch(_){}
+    return;
+  }
+  try{
+    if(R.responsePending) R.dc?.send(JSON.stringify({type:'response.cancel'}));
+    if(R.state==='speaking') R.dc?.send(JSON.stringify({type:'output_audio_buffer.clear'}));
+  }catch(_){}
+  V.recognitionMode='realtime'; V.lastTranscript=''; V.recognitionSent=false;
+  r.lang=V.lang;
+  try{r.start();}
+  catch(error){
+    console.warn('Browser speech recognition could not start',error);
+    V.recognitionMode='';
+    toggleVoiceRecording();
+  }
+}
+
 function startBrowserRecognition(message){
   syncVoiceControls();
   const r=ensureRecognition();
   if(!r){$('#botVoiceStatus').textContent=copy().unavailable;return;}
   if(V.listening){r.stop();return;}
+  V.recognitionMode='fallback'; V.lastTranscript=''; V.recognitionSent=false;
   r.lang=V.lang;
   if(message) $('#botVoiceStatus').textContent=message;
-  try{r.start();}catch(_){$('#botVoiceStatus').textContent=copy().unavailable;}
+  try{r.start();}catch(_){V.recognitionMode='';$('#botVoiceStatus').textContent=copy().unavailable;}
 }
 $('#botMic').onclick=voiceGate;
 
