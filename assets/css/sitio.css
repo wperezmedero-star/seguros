@@ -44,9 +44,11 @@ h1,h2,h3,h4,p{margin:0}
 
 /* ═══ HEADER ═══ */
 .header{position:fixed;inset:0 0 auto;z-index:60;padding-block:1.3rem;
-  transition:background .45s,backdrop-filter .45s,box-shadow .45s,padding .45s}
+  transition:background .3s ease-out,backdrop-filter .3s ease-out,box-shadow .3s ease-out,padding .3s ease-out}
 .header.is-scrolled{background:rgba(10,25,47,.94);backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);box-shadow:0 1px 0 rgba(212,175,55,.18);padding-block:.7rem}
+  -webkit-backdrop-filter:blur(18px);padding-block:.7rem;
+  /* Compacto: filo dorado + sombra suave que lo separa del contenido */
+  box-shadow:0 1px 0 rgba(212,175,55,.18),0 10px 30px -18px rgba(0,0,0,.55)}
 .header__bar{display:flex;align-items:center;justify-content:space-between;gap:1.5rem}
 .brand{display:flex;align-items:center;gap:.7rem;font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:1.1rem}
 .brand__mark{width:34px;height:34px;flex:none}
@@ -342,6 +344,17 @@ dialog::backdrop{background:rgba(4,10,20,.78)}
 .stat b{display:block;font-family:"Fraunces",Georgia,serif;font-size:clamp(2.1rem,1.7rem + 1.6vw,3rem);
   font-weight:600;color:#D4AF37;letter-spacing:-.035em;line-height:1}
 .stat span{display:block;font-size:.85rem;color:#9DB0CC;margin-top:.6rem;line-height:1.45}
+/* Filo dorado que se dibuja sobre cada cifra cuando la fila entra en pantalla,
+   siguiendo el escalonado de las celdas (+250 ms). No ocupa espacio (absolute). */
+.stat{position:relative}
+.stat::before{content:"";position:absolute;left:1.4rem;top:0;width:34px;height:2px;border-radius:2px;
+  background:linear-gradient(90deg,#D4AF37,rgba(212,175,55,.35));
+  transform:scaleX(0);transform-origin:left center;
+  transition:transform .6s cubic-bezier(.22,1,.36,1);
+  transition-delay:calc(var(--rv-delay,0ms) + var(--rv-i,0) * 100ms + 250ms)}
+.stats.is-in .stat::before{transform:scaleX(1)}
+/* Cifras de las calculadoras: ancho fijo por dígito, para que no "bailen" al contar */
+.calc__big,.calc__row b{font-variant-numeric:tabular-nums}
 
 
 /* ═══ CARRUSEL INFINITO ═══ */
@@ -465,10 +478,21 @@ a:focus-visible,button:focus-visible,summary:focus-visible,
 input:focus-visible,select:focus-visible,.pillar:focus-visible,.scard:focus-visible{
   outline:2px solid #D4AF37;outline-offset:3px}
 
-/* Entrada en pantalla: 16 px, ~500 ms, escalonado de 70 ms */
-.reveal{opacity:0;transform:translate3d(0,16px,0);
-  transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1)}
+/* ═══ REVELADO AL HACER SCROLL ═══
+   Fade + subida de 24 px en 600 ms, ease-out suave, una sola vez.
+   --rv-delay lo pone el JS (escalonado de 100 ms por lote). */
+.reveal{opacity:0;transform:translate3d(0,24px,0);
+  transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1);
+  transition-delay:var(--rv-delay,0ms)}
 .reveal.is-in{opacity:1;transform:none}
+/* Grupos: el contenedor queda quieto y sus hijos aparecen uno a uno (100 ms).
+   En las rejillas con líneas finas (.metodo, .stats → .reveal--tiles) la celda
+   se queda sólida y lo que sube es su contenido: así no se ven huecos. */
+.reveal.reveal--grupo{opacity:1;transform:none;transition:none}
+.reveal--grupo:not(.reveal--tiles)>*,.reveal--tiles>*>*{opacity:0;transform:translate3d(0,24px,0);
+  transition:opacity .6s cubic-bezier(.22,1,.36,1),transform .6s cubic-bezier(.22,1,.36,1);
+  transition-delay:calc(var(--rv-delay,0ms) + var(--rv-i,0) * 100ms)}
+.reveal--grupo.is-in:not(.reveal--tiles)>*,.reveal--tiles.is-in>*>*{opacity:1;transform:none}
 
 @media(prefers-reduced-motion:reduce){
   .ico.is-anim *{animation:none !important}
@@ -757,7 +781,7 @@ dialog.legal p{color:#9DB0CC;font-size:.92rem;margin-bottom:1rem}
 
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
-  html{scroll-behavior:auto} .reveal{opacity:1;transform:none}
+  html{scroll-behavior:auto} .reveal,.reveal--grupo>*,.reveal--tiles>*>*{opacity:1;transform:none}
 }
 
 @media(max-width:480px){
@@ -780,7 +804,6 @@ dialog.legal p{color:#9DB0CC;font-size:.92rem;margin-bottom:1rem}
   80%{transform:translateX(610%) skewX(-16deg);opacity:0}
 }
 
-.reveal{transition-delay:var(--motion-delay,0ms)}
 
 .case{
   transition:transform .42s cubic-bezier(.22,1,.36,1),box-shadow .42s cubic-bezier(.22,1,.36,1),border-color .35s ease
@@ -812,7 +835,7 @@ dialog.legal p{color:#9DB0CC;font-size:.92rem;margin-bottom:1rem}
 
 @media (prefers-reduced-motion:reduce){
   .btn--gold::after{display:none!important;animation:none!important}
-  .reveal{transition-delay:0ms!important}
+  .reveal,.reveal--grupo>*,.reveal--tiles>*>*{transition-delay:0ms!important}
   .motion-ready .caso-icono path{stroke-dashoffset:0!important;transition:none!important}
   .hero .method{translate:0 0!important;will-change:auto!important}
   .case{transform:none!important}
@@ -1295,6 +1318,8 @@ body.cliente-mode .cita__lado{padding:2.6rem}
    porque algunas empiezan con secciones claras. */
 .pag-interna .header{background:rgba(10,25,47,.94);backdrop-filter:blur(18px);
   -webkit-backdrop-filter:blur(18px);box-shadow:0 1px 0 rgba(212,175,55,.18)}
+/* Al bajar, también en las páginas internas gana la sombra del modo compacto */
+.pag-interna .header.is-scrolled{box-shadow:0 1px 0 rgba(212,175,55,.18),0 10px 30px -18px rgba(0,0,0,.55)}
 .pag-interna main > section:first-child{padding-top:calc(clamp(4.5rem,9vw,8rem) + 64px)}
 .pag-interna main > section.arq:first-child{padding-top:calc(clamp(4.5rem,9vw,8rem) + 72px)}
 
@@ -1336,3 +1361,27 @@ html.rayo-cubre .rayo__banda{animation:rayo-revela .44s cubic-bezier(.7,0,.3,1) 
 .drawer{counter-reset:menu}
 .drawer a:not(.btn){counter-increment:menu}
 .drawer a .num::before{content:counter(menu,decimal-leading-zero)}
+
+/* ═══════════ ENTRADA DEL HERO (solo index.html) ═══════════
+   Cascada al cargar: titular → subtítulo → botones → foto, 120 ms entre
+   cada paso, 600 ms de fade + subida suave. La clase .hero-entra la pone el
+   <script> del <head>, y nunca se pone con "reducir movimiento".
+   fill-mode "backwards": al terminar, cada elemento vuelve a sus estilos
+   normales, así el rotador del subtítulo sigue funcionando igual. */
+@keyframes hero-in{from{opacity:0;transform:translate3d(0,18px,0)}to{opacity:1;transform:none}}
+.hero-entra .hero .eyebrow,
+.hero-entra .hero .tagline,
+.hero-entra .hero .hero-h1,
+.hero-entra .hero .hero__sub,
+.hero-entra .hero .rot-dots,
+.hero-entra .hero .hero__actions,
+.hero-entra .hero .hero__trust,
+.hero-entra .hero .hero__photo{
+  animation:hero-in .6s cubic-bezier(.22,1,.36,1) backwards;
+  animation-delay:calc(var(--hero-base,0s) + var(--hero-paso,0) * 120ms)}
+.hero-entra .hero .hero__sub,.hero-entra .hero .rot-dots{--hero-paso:1}
+.hero-entra .hero .hero__actions{--hero-paso:2}
+.hero-entra .hero .hero__photo,.hero-entra .hero .hero__trust{--hero-paso:3}
+/* La foto ya no depende del revelado por scroll: la maneja la cascada */
+.hero-entra .hero .hero__photo.reveal{opacity:1;transform:none;transition:none}
+@media(prefers-reduced-motion:reduce){.hero-entra .hero *{animation:none!important}}
