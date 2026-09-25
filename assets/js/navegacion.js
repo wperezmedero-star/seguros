@@ -1,28 +1,32 @@
-/* ═══════════ NAVEGACIÓN ENTRE PÁGINAS · TRANSICIÓN DEL RAYO ═══════════
-   Al tocar un enlace a otra página del sitio, una banda azul marino con el
-   filo dorado en forma de rayo cruza la pantalla y la cubre; la página nueva
-   aparece cuando la banda sigue su camino. Todo dura menos de un segundo.
-   Con "reducir movimiento" activado en el teléfono, se navega sin animación. */
+/* ═══════════ NAVEGACIÓN ENTRE PÁGINAS · TRANSICIONES PREMIUM ═══════════
+   Tres transiciones coherentes con el contenido:
+   · rayo: entrada especial a Protección
+   · cristal: herramientas y calculadoras
+   · suave: navegación informativa y regreso a Inicio
+   No se eligen al azar: cada destino conserva una identidad predecible.
+   Con "reducir movimiento" activado, se navega sin animación. */
 (() => {
   'use strict';
   const PAGINAS = {"index": "./", "proteccion": "proteccion.html", "calculadoras": "calculadoras.html", "sobre-mi": "sobre-mi.html", "preguntas": "preguntas.html"};
   const SECCIONES = {"top": "index", "panel": "index", "pilares": "index", "alcance": "index", "arquitectura": "proteccion", "recursos": "proteccion", "calculadoras": "calculadoras", "cotizar": "calculadoras", "agenda": "calculadoras", "sobre-mi": "sobre-mi", "preguntas": "preguntas"};
   const html = document.documentElement;
   const reducir = matchMedia('(prefers-reduced-motion: reduce)');
+  const CLASES_TRANS = ['trans-rayo','trans-cristal','trans-suave'];
   let saliendo = false, pendiente = null, relojPendiente = 0;
 
-  /* Entrada: el <head> ya puso .rayo-cubre; al terminar de revelar, se limpia. */
-  if (html.classList.contains('rayo-cubre')) {
-    const banda = document.querySelector('.rayo__banda');
-    const limpiar = () => html.classList.remove('rayo-cubre');
-    if (banda) banda.addEventListener('animationend', limpiar, { once: true });
-    setTimeout(limpiar, 1400);
+  function limpiarTransicion(){
+    html.classList.remove('rayo-sale','rayo-cubre',...CLASES_TRANS);
   }
 
-  /* Al volver con el botón "atrás", el navegador puede restaurar la página tal
-     como quedó (con la banda cubriéndola). Se descubre de inmediato. */
+  if (html.classList.contains('rayo-cubre')) {
+    const banda = document.querySelector('.rayo__banda');
+    const limpiar = () => limpiarTransicion();
+    if (banda) banda.addEventListener('animationend', limpiar, { once: true });
+    setTimeout(limpiar, 1300);
+  }
+
   addEventListener('pageshow', e => {
-    if (e.persisted) { html.classList.remove('rayo-sale', 'rayo-cubre'); saliendo = false; }
+    if (e.persisted) { limpiarTransicion(); saliendo = false; }
   });
 
   function vozActiva(){
@@ -37,9 +41,26 @@
       : 'Si cambias de página, la conversación de voz terminará. Toca el enlace otra vez para continuar.';
   }
 
+  function paginaDestino(url){
+    let u;
+    try { u = new URL(url, location.href); } catch (_) { return ''; }
+    let path = u.pathname.replace(/\/+$/,'');
+    if (!path || path.endsWith('/index.html')) return 'index';
+    const ultimo = path.split('/').pop() || '';
+    if (!ultimo || ultimo === 'index.html') return 'index';
+    return ultimo.replace(/\.html$/,'');
+  }
+
+  function tipoTransicion(url){
+    const destino = paginaDestino(url);
+    const actual = document.body.dataset.pagina || '';
+    if (destino === 'proteccion' && actual !== 'proteccion') return 'rayo';
+    if (destino === 'calculadoras') return 'cristal';
+    return 'suave';
+  }
+
   function navegar(url){
     if (saliendo) return true;
-    /* Con la voz activa, el primer toque avisa y el segundo confirma. */
     if (vozActiva() && pendiente !== url) {
       pendiente = url; avisarVoz();
       clearTimeout(relojPendiente);
@@ -49,18 +70,25 @@
     saliendo = true;
     document.body.classList.remove('is-locked');
     if (reducir.matches) { location.href = url; return true; }
-    try { sessionStorage.setItem('wps-rayo', '1'); } catch (_) {}
-    html.classList.remove('rayo-cubre');
-    html.classList.add('rayo-sale');
+
+    const tipo = tipoTransicion(url);
+    try {
+      sessionStorage.setItem('wps-transicion', tipo);
+      sessionStorage.removeItem('wps-rayo');
+    } catch (_) {}
+
+    limpiarTransicion();
+    html.classList.add('trans-' + tipo, 'rayo-sale');
+
     let ido = false;
     const ir = () => { if (!ido) { ido = true; location.href = url; } };
     const banda = document.querySelector('.rayo__banda');
     if (banda) banda.addEventListener('animationend', ir, { once: true });
-    setTimeout(ir, 420);
+    const respaldo = tipo === 'rayo' ? 520 : tipo === 'cristal' ? 500 : 420;
+    setTimeout(ir, respaldo);
     return true;
   }
 
-  /* Recibe "#seccion" y, si esa sección vive en otra página, va hacia allá. */
   function irAPagina(hash){
     let id = String(hash || '').replace(/^#/, '');
     const autorizado = document.body.dataset.modo === 'autorizado';
@@ -89,7 +117,6 @@
     if (!/(\.html|\/)$/.test(u.pathname)) return;
     const misma = u.pathname.replace(/index\.html$/, '') === location.pathname.replace(/index\.html$/, '');
     if (misma && u.search === location.search) {
-      /* Enlace a esta misma página: solo desplazarse. */
       e.preventDefault();
       const el = u.hash ? document.getElementById(u.hash.slice(1)) : null;
       if (el) el.scrollIntoView({ behavior: reducir.matches ? 'auto' : 'smooth', block: 'start' });
