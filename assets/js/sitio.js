@@ -737,7 +737,7 @@ const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechReco
 let vozPreferida = true;
 try { vozPreferida = sessionStorage.getItem('wpVozRespuestas') !== '0'; } catch (_) {}
 const V = { lang:'es-US', output:vozPreferida, recognition:null, listening:false, speechId:0 };
-const R = { pc:null, dc:null, stream:null, audio:null, timer:null, connecting:false, active:false, generation:0, state:'' };
+const R = { pc:null, dc:null, stream:null, audio:null, timer:null, connecting:false, active:false, generation:0, state:'', sender:null, watch:null, micGuard:null, silencio:null, recuperando:false, ultimaRecuperacion:0 };
 const BOT_COPY = {
   es: {
     name:BOT_TREE.name, sub:'Asistente virtual con IA', langButton:'ES', langLabel:'Cambiar a inglés',
@@ -1177,8 +1177,12 @@ function stopRealtime(status){
   const hadSession=R.active||R.connecting||R.pc||R.stream;
   R.generation++;
   if(R.timer) clearTimeout(R.timer);
+  if(R.watch) clearInterval(R.watch);
+  if(R.micGuard) clearTimeout(R.micGuard);
+  if(R.silencio) clearInterval(R.silencio);
   const dc=R.dc, pc=R.pc, stream=R.stream, audio=R.audio;
-  R.dc=null; R.pc=null; R.stream=null; R.audio=null; R.timer=null;
+  R.dc=null; R.pc=null; R.stream=null; R.audio=null; R.timer=null; R.watch=null; R.micGuard=null; R.silencio=null; R.sender=null;
+  sesionAudio('auto');
   R.active=false; R.connecting=false;
   try{if(dc)dc.close();}catch(_){}
   try{if(pc)pc.close();}catch(_){}
@@ -1193,13 +1197,109 @@ function handleRealtimeEvent(raw,generation){
   const c=copy();
   if(event.type==='input_audio_buffer.speech_started') setVoiceState('listening',c.listening);
   else if(event.type==='input_audio_buffer.speech_stopped'||event.type==='response.created') setVoiceState('thinking',c.thinking);
-  else if(event.type==='output_audio_buffer.started'||event.type==='response.output_audio.delta') setVoiceState('speaking',c.speaking);
-  else if(event.type==='output_audio_buffer.stopped'||event.type==='response.done') setVoiceState('listening',c.connected);
+  else if(event.type==='output_audio_buffer.started'){
+    /* Turnos: mientras la asistente habla, el micrófono se silencia. En iPhone
+       y iPad el eco del altavoz se colaba como si fuera la voz del visitante
+       y cortaba o confundía las respuestas. */
+    micAbierto(false); setVoiceState('speaking',c.speaking);
+  }
+  else if(event.type==='response.output_audio.delta') setVoiceState('speaking',c.speaking);
+  else if(event.type==='output_audio_buffer.stopped'||event.type==='output_audio_buffer.cleared'){
+    if(R.micGuard) clearTimeout(R.micGuard);
+    if(R.silencio) clearInterval(R.silencio);
+    R.micGuard=setTimeout(()=>{ micAbierto(true); setVoiceState('listening',copy().connected); },250);
+  }
+  else if(event.type==='response.done'){
+    /* "response.done" llega cuando la respuesta terminó de generarse, pero el
+       audio puede seguir sonando varios segundos. Red de seguridad por si no
+       llega el aviso de fin de audio: se abre el micrófono cuando la voz de la
+       asistente de verdad se calla (o, como máximo, a los 45 s). */
+    esperarSilencio(generation);
+  }
+  else if(event.type==='conversation.item.input_audio_transcription.completed'&&event.transcript&&event.transcript.trim()){
+    /* Lo que la asistente entendió aparece en el chat como mensaje del visitante */
+    say(event.transcript.trim(),true);
+  }
   else if(event.type==='response.output_audio_transcript.done'&&event.transcript) say(event.transcript);
   else if(event.type==='error'){
-    console.error('Realtime API error',event.error||event);
-    stopRealtime(c.unavailable);
+    /* Los errores de un turno no cierran la conversación: si la conexión
+       se cae de verdad, lo detectan dc.onclose y connectionState. */
+    console.warn('Realtime API error',event.error||event);
   }
+}
+
+/* ═══ VOZ EN iPHONE / iPAD: sesión de audio, turnos y micrófono vigilado ═══ */
+function sesionAudio(tipo){
+  try{ if(navigator.audioSession) navigator.audioSession.type=tipo; }catch(_){}
+}
+function esperarSilencio(generation){
+  if(R.silencio) clearInterval(R.silencio);
+  const inicio=Date.now(); let quietos=0;
+  R.silencio=setInterval(async()=>{
+    if(generation!==R.generation||!R.pc){clearInterval(R.silencio);return;}
+    let nivel=null;
+    try{ (await R.pc.getStats()).forEach(r=>{ if(r.type==='inbound-rtp'&&r.kind==='audio'&&typeof r.audioLevel==='number') nivel=r.audioLevel; }); }catch(_){}
+    quietos=(nivel!==null&&nivel<0.01)?quietos+1:0;
+    if(quietos>=4||Date.now()-inicio>45000){
+      clearInterval(R.silencio); R.silencio=null;
+      if(R.stream&&!R.stream.getAudioTracks().some(t=>t.enabled)){ micAbierto(true); setVoiceState('listening',copy().connected); }
+    }
+  },350);
+}
+function micAbierto(on){
+  if(!R.stream) return;
+  R.stream.getAudioTracks().forEach(t=>{ t.enabled=on; });
+}
+function configuracionVoz(){
+  const en=V.lang.startsWith('en');
+  return {type:'realtime',instructions:realtimeInstructions(),audio:{input:{
+    noise_reduction:{type:'near_field'},
+    transcription:{model:'gpt-4o-mini-transcribe',language:en?'en':'es'},
+    turn_detection:{type:'server_vad',threshold:.55,prefix_padding_ms:300,silence_duration_ms:650,create_response:true,interrupt_response:false}
+  }}};
+}
+async function recuperarMic(generation){
+  if(generation!==R.generation||!R.sender||R.recuperando) return;
+  if(Date.now()-(R.ultimaRecuperacion||0)<8000) return;
+  R.recuperando=true; R.ultimaRecuperacion=Date.now();
+  const en=V.lang.startsWith('en');
+  $('#botVoiceStatus').textContent=en?'Reconnecting your microphone…':'Reconectando tu micrófono…';
+  try{
+    const nuevo=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+    if(generation!==R.generation||!R.sender){nuevo.getTracks().forEach(t=>t.stop());return;}
+    const pista=nuevo.getAudioTracks()[0];
+    await R.sender.replaceTrack(pista);
+    if(R.stream) R.stream.getTracks().forEach(t=>t.stop());
+    R.stream=nuevo; vigilarPista(pista,generation);
+    $('#botVoiceStatus').textContent=copy().connected;
+  }catch(err){
+    console.warn('No se pudo recuperar el micrófono',err);
+    $('#botVoiceStatus').textContent=en
+      ?'I cannot hear your microphone. Check that it is allowed for this site and tap the microphone again.'
+      :'No me llega el sonido de tu micrófono. Revisa que esté permitido para este sitio y toca el micrófono otra vez.';
+  }finally{ R.recuperando=false; }
+}
+function vigilarPista(pista,generation){
+  /* iOS puede "silenciar" o cerrar la captura (una llamada, otra app, Siri) */
+  pista.onended=()=>recuperarMic(generation);
+  pista.onmute=()=>{ setTimeout(()=>{ if(pista.muted) recuperarMic(generation); },1500); };
+}
+function vigilarEnvio(pc,generation){
+  /* Si el micrófono está abierto pero deja de enviar audio unos segundos,
+     se intenta reconectar sin cortar la conversación. */
+  let previo=-1, quietos=0;
+  R.watch=setInterval(async()=>{
+    if(generation!==R.generation||!R.active){clearInterval(R.watch);return;}
+    const abierto=R.stream&&R.stream.getAudioTracks().some(t=>t.enabled);
+    if(!abierto){quietos=0;return;}
+    try{
+      let enviados=-1;
+      (await pc.getStats()).forEach(r=>{ if(r.type==='outbound-rtp'&&r.kind==='audio') enviados=r.packetsSent; });
+      if(enviados<0) return;
+      quietos=(enviados===previo)?quietos+1:0; previo=enviados;
+      if(quietos>=3){ quietos=0; recuperarMic(generation); }
+    }catch(_){}
+  },1500);
 }
 
 function realtimeInstructions(){
@@ -1231,12 +1331,18 @@ async function startRealtime(){
   R.connecting=true;
   const generation=++R.generation;
   setVoiceState('connecting',c.connecting);
+  /* iOS 17+: se declara desde el toque que vamos a hablar y escuchar a la vez,
+     así Safari no cambia de modo a mitad de la conversación. */
+  sesionAudio('play-and-record');
 
   try{
     const pc=new RTCPeerConnection(); R.pc=pc;
     const audio=document.createElement('audio');
     audio.autoplay=true; audio.playsInline=true; audio.hidden=true; audio.setAttribute('aria-hidden','true');
+    audio.setAttribute('playsinline',''); audio.setAttribute('webkit-playsinline','');
     document.body.appendChild(audio); R.audio=audio;
+    /* Se "desbloquea" el reproductor dentro del mismo toque (requisito de iOS) */
+    try{ const p=audio.play(); if(p&&p.catch) p.catch(()=>{}); }catch(_){}
     pc.ontrack=e=>{
       audio.srcObject=e.streams[0];
       audio.play().catch(()=>{
@@ -1253,7 +1359,8 @@ async function startRealtime(){
 
     const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
     if(generation!==R.generation){stream.getTracks().forEach(track=>track.stop());return;}
-    R.stream=stream; stream.getAudioTracks().forEach(track=>pc.addTrack(track,stream));
+    R.stream=stream;
+    stream.getAudioTracks().forEach(track=>{ R.sender=pc.addTrack(track,stream); vigilarPista(track,generation); });
 
     const dc=pc.createDataChannel('oai-events'); R.dc=dc;
     dc.onmessage=event=>handleRealtimeEvent(event,generation);
@@ -1261,7 +1368,8 @@ async function startRealtime(){
       if(generation!==R.generation) return;
       if(R.timer) clearTimeout(R.timer);
       R.connecting=false; R.active=true;
-      dc.send(JSON.stringify({type:'session.update',session:{type:'realtime',instructions:realtimeInstructions()}}));
+      dc.send(JSON.stringify({type:'session.update',session:configuracionVoz()}));
+      vigilarEnvio(pc,generation);
       dc.send(JSON.stringify({type:'response.create',response:{instructions:proactiveGreeting()}}));
       setVoiceState('thinking',copy().thinking);
       R.timer=setTimeout(()=>stopRealtime(copy().sessionLimit),CONFIG.voiceMaxMs);
