@@ -1326,37 +1326,58 @@ body.cliente-mode .cita__lado{padding:2.6rem}
 .pag-interna main > section:first-child{padding-top:calc(clamp(4.5rem,9vw,8rem) + 64px)}
 .pag-interna main > section.arq:first-child{padding-top:calc(clamp(4.5rem,9vw,8rem) + 72px)}
 
-/* ═══════════ TRANSICIÓN DEL RAYO ═══════════ */
+/* ═══════════ TRANSICIONES ENTRE PÁGINAS · PREMIUM ═══════════ */
 .rayo{position:fixed;inset:0;z-index:2147483000;pointer-events:none;overflow:hidden;visibility:hidden}
 html.rayo-cubre .rayo,html.rayo-sale .rayo{visibility:visible}
 html.rayo-sale .rayo{pointer-events:auto;cursor:progress}
-.rayo__banda{position:absolute;top:0;bottom:0;left:-30vw;width:160vw;
-  transform:translateX(-100%) skewX(-12deg);will-change:transform}
-/* El borde de la banda es el propio rayo: un zigzag, no una línea recta */
-.rayo__fondo{position:absolute;inset:0;background:#06101F;
+.rayo__banda{position:absolute;will-change:transform,opacity}
+.rayo__fondo{position:absolute;inset:0}
+.rayo__trazo,.rayo__marca{opacity:0}
+.rayo__marca{position:absolute;left:50%;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px}
+
+/* 1 · SUAVE — navegación editorial: fundido marino con una leve subida. */
+html.trans-suave .rayo__banda{inset:0;width:auto;transform:none}
+html.trans-suave .rayo__fondo{background:linear-gradient(180deg,rgba(6,16,31,.96),rgba(10,25,47,.985));clip-path:none}
+@keyframes trans-suave-cubre{from{opacity:0;transform:translate3d(0,10px,0)}to{opacity:1;transform:none}}
+@keyframes trans-suave-revela{from{opacity:1;transform:none}to{opacity:0;transform:translate3d(0,-8px,0)}}
+html.trans-suave.rayo-sale .rayo__banda{animation:trans-suave-cubre .34s cubic-bezier(.22,1,.36,1) both}
+html.trans-suave.rayo-cubre .rayo__banda{animation:trans-suave-revela .46s cubic-bezier(.22,1,.36,1) both}
+
+/* 2 · CRISTAL — herramientas: lámina esmerilada con destello dorado. */
+html.trans-cristal .rayo__banda{top:-8%;bottom:-8%;left:-32vw;width:164vw;transform:translateX(-100%) skewX(-8deg)}
+html.trans-cristal .rayo__fondo{
+  background:linear-gradient(100deg,rgba(5,14,27,.97) 0%,rgba(10,25,47,.92) 42%,rgba(212,175,55,.15) 50%,rgba(10,25,47,.94) 58%,rgba(5,14,27,.98) 100%);
+  border-inline:1px solid rgba(231,205,138,.42);box-shadow:0 0 50px rgba(212,175,55,.12);
+  -webkit-backdrop-filter:blur(16px) saturate(118%);backdrop-filter:blur(16px) saturate(118%)}
+html.trans-cristal .rayo__banda::after{
+  content:"";position:absolute;inset:0 auto 0 48%;width:7%;
+  background:linear-gradient(90deg,transparent,rgba(255,244,204,.42),rgba(212,175,55,.62),transparent);
+  filter:blur(3px);opacity:.85}
+html.trans-cristal .rayo__marca{opacity:0;filter:drop-shadow(0 0 10px rgba(212,175,55,.28))}
+@keyframes trans-cristal-entra{from{transform:translateX(-100%) skewX(-8deg)}to{transform:translateX(0) skewX(-8deg)}}
+@keyframes trans-cristal-revela{from{transform:translateX(0) skewX(-8deg)}to{transform:translateX(100%) skewX(-8deg)}}
+@keyframes trans-marca-suave{from{opacity:0;transform:scale(.92)}to{opacity:.9;transform:none}}
+html.trans-cristal.rayo-sale .rayo__banda{animation:trans-cristal-entra .42s cubic-bezier(.65,0,.35,1) both}
+html.trans-cristal.rayo-cubre .rayo__banda{animation:trans-cristal-revela .52s cubic-bezier(.65,0,.35,1) both}
+html.trans-cristal.rayo-sale .rayo__marca{animation:trans-marca-suave .24s ease .18s both}
+
+/* 3 · RAYO — firma visual: energía dorada, más elegante que eléctrica. */
+html.trans-rayo .rayo__banda{top:0;bottom:0;left:-30vw;width:160vw;transform:translateX(-100%) skewX(-12deg)}
+html.trans-rayo .rayo__fondo{
+  background:linear-gradient(100deg,#06101F 0%,#08172B 46%,#0C203A 52%,#06101F 100%);
   clip-path:polygon(60px 0,100% 0,calc(100% - 52px) 45%,calc(100% - 8px) 52%,calc(100% - 60px) 100%,0 100%,52px 52%,8px 45%)}
-.rayo__trazo{position:absolute;top:0;height:100%;width:80px;overflow:visible}
-.rayo__trazo--der{right:0}
-.rayo__trazo--izq{left:0}
-.rayo__trazo polyline{fill:none;stroke:#D4AF37;stroke-width:2.5;stroke-linejoin:miter;stroke-miterlimit:8;
-  vector-effect:non-scaling-stroke}
-.rayo__trazo polyline.eco{stroke:#E8C86A;stroke-width:1;opacity:.35}
-.rayo__marca{position:absolute;left:50%;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px;opacity:0}
+html.trans-rayo .rayo__trazo{display:block;position:absolute;top:0;height:100%;width:80px;overflow:visible;opacity:1;filter:drop-shadow(0 0 7px rgba(212,175,55,.42))}
+html.trans-rayo .rayo__trazo--der{right:0}
+html.trans-rayo .rayo__trazo--izq{left:0}
+html.trans-rayo .rayo__trazo polyline{fill:none;stroke:#D4AF37;stroke-width:2;stroke-linejoin:miter;stroke-miterlimit:8;vector-effect:non-scaling-stroke}
+html.trans-rayo .rayo__trazo polyline.eco{stroke:#F0D987;stroke-width:.9;opacity:.28}
+@keyframes trans-rayo-entra{from{transform:translateX(-100%) skewX(-12deg)}to{transform:translateX(0) skewX(-12deg)}}
+@keyframes trans-rayo-revela{from{transform:translateX(0) skewX(-12deg)}to{transform:translateX(100%) skewX(-12deg)}}
+html.trans-rayo.rayo-sale .rayo__banda{animation:trans-rayo-entra .38s cubic-bezier(.7,0,.3,1) both}
+html.trans-rayo.rayo-cubre .rayo__banda{animation:trans-rayo-revela .46s cubic-bezier(.7,0,.3,1) both}
+html.trans-rayo.rayo-sale .rayo__marca{animation:trans-marca-suave .24s ease .16s both}
 
-@keyframes rayo-entra{from{transform:translateX(-100%) skewX(-12deg)}to{transform:translateX(0) skewX(-12deg)}}
-@keyframes rayo-revela{from{transform:translateX(0) skewX(-12deg)}to{transform:translateX(100%) skewX(-12deg)}}
-@keyframes rayo-marca{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
-
-/* Salida: la banda entra desde la izquierda y cubre la página */
-html.rayo-sale .rayo__banda{animation:rayo-entra .34s cubic-bezier(.7,0,.3,1) both}
-/* Si la página nueva tarda, aparece el escudo en el centro mientras espera */
-html.rayo-sale .rayo__marca{animation:rayo-marca .3s ease .55s both}
-/* Entrada: la banda sigue hacia la derecha y descubre la página nueva */
-html.rayo-cubre .rayo__banda{animation:rayo-revela .44s cubic-bezier(.7,0,.3,1) both}
-
-@media (prefers-reduced-motion: reduce){
-  .rayo{display:none}
-}
+@media (prefers-reduced-motion: reduce){.rayo{display:none}}
 .pag-interna main > #calculadoras:first-child{padding-top:calc(clamp(2.5rem,5vw,4rem) + 104px)}
 /* El menú móvil cerrado ya no proyecta su sombra sobre el borde derecho de la página */
 .drawer:not(.is-open){box-shadow:none}
