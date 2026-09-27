@@ -8,7 +8,7 @@ const CONFIG = {
                           nombramiento vigente y, cuando aplique,
                           aprobación de publicidad de la aseguradora.
      ─────────────────────────────────────────────────────────────── */
-  modo: "educativo",
+  modo: "autorizado",
 
   whatsapp: "17863548796",
   voiceEndpoint: "https://william-seguros-voz.wperezmedero.workers.dev/session",
