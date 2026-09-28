@@ -54,7 +54,8 @@ await ctx.close();
 // Mock receiver: tests integration contract only; nothing goes to William or any external service.
 for(const scenario of ['accepted','rejected','bad-ack','offline']){
  const c=await browser.newContext({reducedMotion:'reduce'}),page=await c.newPage();
- await page.route('**/assets/js/growth-config.js',r=>r.fulfill({contentType:'text/javascript',body:"window.WPS_GROWTH_CONFIG={leadEndpoint:'/api/leads'}"}));
+ await page.route('**/assets/js/growth-config.js',r=>r.fulfill({contentType:'text/javascript',body:"window.WPS_GROWTH_CONFIG={leadEndpoint:'/api/leads',turnstileSitekey:'qa-only-not-production'}"}));
+ await page.addInitScript(()=>{window.turnstile={render:(el,opts)=>{opts.callback('test-token');return 'test-widget';},reset:()=>{}};});
  await page.route('**/api/leads',async r=>{const data=r.request().postDataJSON();assert.equal(data.nombre,'Prueba QA');assert.equal(data.consentimiento,true);if(scenario==='offline')return r.abort();return r.fulfill({status:scenario==='rejected'?503:200,contentType:'application/json',body:JSON.stringify({accepted:scenario==='accepted'})});});
  await page.goto(base+'/');const f=page.locator('[data-lead-form]');await f.locator('[name=nombre]').fill('Prueba QA');await f.locator('[name=preferencia]').selectOption('email');await f.locator('[name=email]').fill('qa@example.invalid');await f.locator('[name=consentimiento]').check();await f.locator('button[type=submit]').click();
  await page.waitForFunction(()=>!document.querySelector('[data-lead-form] button[type=submit]').disabled);

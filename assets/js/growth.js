@@ -46,10 +46,45 @@
   selectInterest(new URLSearchParams(location.search).get('interes') || pendingInterest || 'familia');
   const endpoint = window.WPS_GROWTH_CONFIG?.leadEndpoint || '';
   const configured = /^https:\/\//.test(endpoint) || /^\/(?!\/)/.test(endpoint);
+  const sitekey = window.WPS_GROWTH_CONFIG?.turnstileSitekey || '';
+  let challengeScript;
+  function loadChallenge() {
+    if (window.turnstile) return Promise.resolve();
+    if (!challengeScript) challengeScript = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+      script.async = true;
+      const timer = setTimeout(() => { script.remove(); reject(new Error('challenge-timeout')); }, 12000);
+      script.onload = () => { clearTimeout(timer); window.turnstile ? resolve() : reject(new Error('challenge-unavailable')); };
+      script.onerror = () => { clearTimeout(timer); script.remove(); reject(new Error('challenge-unavailable')); };
+      document.head.append(script);
+    }).catch(error => { challengeScript = null; throw error; });
+    return challengeScript;
+  }
   forms.forEach(form => {
     const fields = form.elements, status = form.querySelector('[data-form-status]');
     const submit = form.querySelector('button[type="submit"]'), handoff = form.querySelector('[data-handoff]');
-    let started = false, busy = false;
+    let started = false, busy = false, token = '', widget = null, loadingChallenge = false;
+    const challenge = document.createElement('div');
+    challenge.className = 'growth-challenge';
+    challenge.setAttribute('aria-label', 'Verificación contra envíos automáticos');
+    if (configured) submit.before(challenge);
+    async function prepareChallenge() {
+      if (!configured || !sitekey || widget !== null || loadingChallenge) return;
+      loadingChallenge = true;
+      try {
+        await loadChallenge();
+        widget = window.turnstile.render(challenge, {
+          sitekey, action:'lead_contact', theme:'light', size:'flexible', 'response-field':false,
+          callback: value => { token=value; status.textContent='Verificación completada. Puedes enviar tu solicitud.'; },
+          'expired-callback': () => { token=''; status.textContent='La verificación caducó. Vuelve a verificar antes de enviar.'; },
+          'error-callback': () => { token=''; status.textContent='No se pudo verificar la conexión. Inténtalo de nuevo o llama al 786-354-8796.'; },
+          'timeout-callback': () => { token=''; status.textContent='La verificación necesita repetirse.'; }
+        });
+      } catch (_) { status.textContent='No se pudo cargar la verificación. Vuelve a intentarlo o llama al 786-354-8796.'; }
+      finally { loadingChallenge=false; }
+    }
+    form.addEventListener('focusin', prepareChallenge);
     submit.disabled = false;
     if (configured) form.querySelector('[data-delivery]').textContent = 'William recibirá tu solicitud para responderte personalmente.';
     function requirements() {
@@ -95,6 +130,9 @@
         handoff.hidden = false; status.textContent = 'Solicitud preparada. Falta enviarla desde tu correo.'; status.focus();
         track('form_prepared'); return;
       }
+      if (!sitekey) { status.textContent='El envío directo aún no está disponible. Puedes llamar al 786-354-8796.'; status.focus(); return; }
+      if (!token) { await prepareChallenge(); status.textContent='Completa la verificación y vuelve a pulsar Solicitar conversación.'; status.focus(); return; }
+      payload.turnstileToken = token;
       busy = true; submit.disabled = true; status.textContent = 'Enviando tu solicitud…';
       const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 15000);
       try {
@@ -107,7 +145,7 @@
       } catch (_) {
         status.textContent = 'No pudimos confirmar la recepción de tu solicitud. Tus datos siguen aquí. Puedes intentarlo de nuevo o llamar al 786-354-8796.';
         status.focus();
-      } finally { clearTimeout(timeout); busy = false; submit.disabled = false; }
+      } finally { clearTimeout(timeout); busy = false; submit.disabled = false; token=''; if(widget !== null) window.turnstile.reset(widget); }
     });
   });
   // The existing closed mobile menu must not receive keyboard focus.

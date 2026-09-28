@@ -1,8 +1,9 @@
 /* Tarjeta de William Pérez-Mederos · modo sin conexión.
    Solo guarda archivos públicos de esta tarjeta. Cambie VERSION en cada publicación. */
-const VERSION = 'wp-tarjeta-growth-v1-20260928';
+const VERSION = 'wp-tarjeta-growth-v1-brand-20260928';
 const ROOT = new URL('./', self.location.href).href;
 const ASSETS = [
+  '../assets/brand/wp-approved-256.webp', '../assets/brand/wp-approved-768.webp',
   '../assets/css/growth.css', '../assets/js/growth-config.js', '../assets/js/growth.js', './', 'index.html', 'app.css', 'app.js', 'app.webmanifest', 'vendor/qrcode.min.js', 'william-perez-mederos.vcf',
   'assets/foto.webp', 'assets/foto-360.webp', 'assets/avatar-96.webp',
   'assets/fraunces-500.woff2', 'assets/inter-400.woff2', 'assets/inter-600.woff2',

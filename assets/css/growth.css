@@ -45,3 +45,14 @@ body{font-family:Inter,system-ui,sans-serif}
 
 .arq__cita>span:last-child{flex:1;min-width:0}
 @media(max-width:760px){.growth-hero-copy .eyebrow{display:block;font-size:.6875rem;margin-bottom:.8rem}.growth-hero-copy .hero__trust{padding-right:0}}
+
+/* Approved WP artwork: same source, responsive display only. */
+.wp-brand-mark{position:relative;display:inline-block;flex:0 0 54px;width:54px;height:40px;overflow:hidden;border-radius:5px;vertical-align:middle;background:#0A192F}
+.wp-brand-mark img{position:absolute;width:100px;height:100px;max-width:none;left:-22px;top:-12px;object-fit:contain}
+.wp-brand-signature{display:block;width:min(100%,340px);height:auto;aspect-ratio:1;margin:0 0 1.2rem;border-radius:12px}
+.footer .wp-brand-signature+.brand .wp-brand-mark{display:none}
+.foot .wp-brand-signature{margin:0 auto 1.5rem}
+.growth-legal>.wp-brand-mark{display:block;margin-top:2rem}
+@media(max-width:600px){.header .brand{gap:.5rem}.header .wp-brand-mark{flex-basis:44px;width:44px;height:34px}.header .wp-brand-mark img{width:84px;height:84px;left:-19px;top:-10px}}
+
+.growth-challenge{min-width:0;max-width:100%;margin:.75rem 0}

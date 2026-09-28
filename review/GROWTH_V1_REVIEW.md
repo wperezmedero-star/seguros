@@ -6,6 +6,8 @@ Base exacta: `vida-promocional-preparacion-20260926`, commit `347ff5e6ef5904b226
 Rama de entrega: `astra6-growth-v1-20260928`.
 Referencia inspeccionada: `card-v2-premium-lead-engine`, commit `3b0a1ed0a5483c6fc052bcf9012d29bdd1dbb8f3`.
 
+**Actualización posterior:** logo aprobado integrado y receptor de contactos implementado, aún sin activar. Ver [continuidad de marca y recepción](BRAND_AND_CONTACT_HANDOFF.md) para archivos, pruebas y pendientes actualizados.
+
 ## Qué se conserva y qué cambia
 
 Se mantiene el proyecto HTML/CSS/JS original: rutas, imágenes WebP, fotografía real, mapa de Florida, pilares y sus diálogos, las cuatro calculadoras y su motor, preguntas frecuentes, biografía expandible, cierre con tarjeta 3D y asistente. No se instaló ninguna dependencia nueva en producción ni se sustituyó por una plantilla.
