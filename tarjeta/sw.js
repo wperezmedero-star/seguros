@@ -1,9 +1,9 @@
 /* Tarjeta de William Pérez-Mederos · modo sin conexión.
    Solo guarda archivos públicos de esta tarjeta. Cambie VERSION en cada publicación. */
-const VERSION = 'wp-tarjeta-v3-20260916c';
+const VERSION = 'wp-tarjeta-growth-v1-20260928';
 const ROOT = new URL('./', self.location.href).href;
 const ASSETS = [
-  './', 'index.html', 'app.css', 'app.js', 'app.webmanifest', 'vendor/qrcode.min.js', 'william-perez-mederos.vcf',
+  '../assets/css/growth.css', '../assets/js/growth-config.js', '../assets/js/growth.js', './', 'index.html', 'app.css', 'app.js', 'app.webmanifest', 'vendor/qrcode.min.js', 'william-perez-mederos.vcf',
   'assets/foto.webp', 'assets/foto-360.webp', 'assets/avatar-96.webp',
   'assets/fraunces-500.woff2', 'assets/inter-400.woff2', 'assets/inter-600.woff2',
   'assets/icon-192.png', 'assets/icon-512.png', 'assets/favicon-48.png'
@@ -23,7 +23,7 @@ self.addEventListener('activate', e => e.waitUntil((async () => {
 
 self.addEventListener('fetch', e => {
   const req = e.request, url = new URL(req.url);
-  if (req.method !== 'GET' || url.origin !== self.location.origin || !url.href.startsWith(ROOT)) return;
+  if (req.method !== 'GET' || url.origin !== self.location.origin || (!url.href.startsWith(ROOT) && !ASSETS.includes(url.origin + url.pathname))) return;
   const clean = url.origin + url.pathname;
 
   if (req.mode === 'navigate') {
