@@ -13,10 +13,7 @@ const CONFIG = {
   whatsapp: "17863548796",
   voiceEndpoint: "https://william-seguros-voz.wperezmedero.workers.dev/session",
   voiceMaxMs: 180000,
-  crmEndpoint: "",
-  recaptchaKey: "",
-  waFallback: true,
-  panelPin: "2015"
+  // La configuración de contacto está separada en growth-config.js.
 };
 
 /* Varias páginas: si un elemento no existe en la página actual, $() devuelve
@@ -108,6 +105,9 @@ function setMenu(open){
   burger.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
   drawer.classList.toggle('is-open', open);
   drawer.setAttribute('aria-hidden', !open);
+  drawer.inert = !open;
+  if (open) setTimeout(() => drawer.querySelector('a')?.focus(), 0);
+  else burger.focus({preventScroll:true});
   scrim.classList.toggle('is-open', open);
   document.body.classList.toggle('is-locked', open);
 }
@@ -140,7 +140,7 @@ function showRot(i){
 }
 function loopRot(){ rotTimer = setInterval(() => showRot((rotI + 1) % ROT.length), 6000); }
 dots.forEach((d,i) => d.onclick = () => { clearInterval(rotTimer); showRot(i); loopRot(); });
-showRot(0); loopRot();
+if (dots.length) { showRot(0); if (!slow) loopRot(); }
 
 /* ═══════════ MODALES DE PILARES ═══════════ */
 const SHEETS = {
@@ -350,6 +350,7 @@ function runCalc(key, animar){
     }
     out.innerHTML = def.render(IC[def.fn](input));
     animarCifras(out, antes && antes.length ? antes : null);
+    if (animar) window.WPSGrowth?.track('calculator_used', {calculator:key});
   } catch (err) {
     out.innerHTML = '<span class="calc__label">No se pudo calcular</span>' +
       '<p class="calc__err">' + (err && err.message ? err.message : 'Revisa los datos ingresados.') + '</p>' +
@@ -371,6 +372,7 @@ $$('[data-calc]').forEach(t => t.onclick = () => {
 Object.keys(CALC_DEFS).forEach(runCalc);
 
 function prefill(v){
+  if (window.WPSGrowth) { WPSGrowth.selectInterest(v); return; }
   const sel = document.querySelector('#interes');
   if (!sel) { try { sessionStorage.setItem('wps-prefill', v); } catch (_) {} return; }
   if ([...sel.options].some(o => o.value === v)) { sel.value = v; sel.dispatchEvent(new Event('change')); }
@@ -591,140 +593,7 @@ view.addEventListener('keydown', e => {
   $('#showLive').textContent = 'Carrusel desplazado.';
 });
 
-/* ═══════════ FORMULARIO ═══════════ */
-const form = $('#quoteForm'), steps = $$('#quoteForm .step'), bar = $('#bar'),
-      marks = $$('.progress__steps span'), status = $('#status'), sendBtn = $('#send');
-let current = 1;
-
-const RULES = {
-  nombre: v => v.trim().length >= 2 || 'Escribe al menos tu nombre.',
-  telefono: v => v.replace(/\D/g,'').length === 10 || 'El teléfono debe tener 10 dígitos.',
-  correo: v => /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(v.trim()) || 'Revisa el correo: falta el @ o el dominio.',
-  requerido: v => v !== '' || 'Selecciona una opción para continuar.'
-};
-function validate(el){
-  const rule = RULES[el.dataset.rule]; if (!rule) return true;
-  const res = rule(el.value), ok = res === true, field = el.closest('.field');
-  field.classList.toggle('is-invalid', !ok);
-  field.classList.toggle('is-valid', ok && el.value !== '');
-  field.querySelector('[data-err]').textContent = ok ? '' : res;
-  return ok;
-}
-$$('#quoteForm [data-rule]').forEach(el => {
-  el.addEventListener('blur', () => { el.dataset.touched = '1'; validate(el); });
-  el.addEventListener('input', () => { if (el.dataset.touched) validate(el); });
-  el.addEventListener('change', () => { el.dataset.touched = '1'; validate(el); });
-});
-const tel = $('#telefono');
-tel.addEventListener('input', () => {
-  const d = tel.value.replace(/\D/g,'').slice(0,10);
-  tel.value = d.length > 6 ? '(' + d.slice(0,3) + ') ' + d.slice(3,6) + '-' + d.slice(6)
-            : d.length > 3 ? '(' + d.slice(0,3) + ') ' + d.slice(3)
-            : d.length ? '(' + d : '';
-});
-
-const SALUD = ['Cobertura de salud','Medicare'];
-const ANUAL = ['Retiro o anualidades'];
-$('#interes').addEventListener('change', e => {
-  const v = e.target.value, esSalud = SALUD.includes(v), esAnual = ANUAL.includes(v);
-  $('#noticeSalud').hidden = !esSalud;
-  $('#noticeAnual').hidden = !esAnual;
-  if (esSalud) {
-    const est = $('#estado').value || 'tu estado';
-    $('#noticeSaludTxt').textContent = v === 'Medicare'
-      ? 'Medicare tiene períodos de inscripción y reglas de elegibilidad propias, que aplican también en ' + est + '.'
-      : 'En ' + est + ', la cobertura de salud solo puede solicitarse dentro de los períodos de inscripción aplicables.';
-  }
-  if (!esAnual) { $('#anualOk').checked = false; $('#checkWrap').classList.remove('is-invalid'); }
-});
-$('#estado').addEventListener('change', () => $('#interes').dispatchEvent(new Event('change')));
-
-function goTo(n){
-  current = n;
-  steps.forEach(s => s.classList.toggle('is-active', +s.dataset.step === n));
-  bar.style.width = (n / steps.length * 100) + '%';
-  marks.forEach(m => m.classList.toggle('is-active', +m.dataset.s <= n));
-  const first = steps[n-1].querySelector('input,select');
-  if (first) first.focus({ preventScroll:true });
-}
-$$('#quoteForm [data-next]').forEach(b => b.onclick = () => {
-  const fs = [...steps[current-1].querySelectorAll('[data-rule]')];
-  fs.forEach(f => f.dataset.touched = '1');
-  if (fs.map(validate).every(Boolean)) goTo(current + 1);
-});
-$$('#quoteForm [data-back]').forEach(b => b.onclick = () => goTo(current - 1));
-
-form.addEventListener('submit', async e => {
-  e.preventDefault();
-  if (form.website.value) return;
-
-  const all = $$('#quoteForm [data-rule]');
-  all.forEach(f => f.dataset.touched = '1');
-  if (!all.map(validate).every(Boolean)) {
-    status.className = 'form-status bad';
-    status.textContent = 'Faltan datos por completar. Revisa los pasos marcados.';
-    return;
-  }
-  if (!$('#noticeAnual').hidden && !$('#anualOk').checked) {
-    $('#checkWrap').classList.add('is-invalid');
-    status.className = 'form-status bad';
-    status.textContent = 'Para revisar una anualidad debes confirmar que entiendes los períodos de rescate.';
-    return;
-  }
-  if (!$('#consent').checked) {
-    $('#consentWrap').classList.add('is-invalid');
-    status.className = 'form-status bad';
-    status.textContent = 'Necesitamos tu autorización para poder contactarte.';
-    return;
-  }
-  $('#checkWrap').classList.remove('is-invalid');
-  $('#consentWrap').classList.remove('is-invalid');
-
-  sendBtn.disabled = true;
-  status.className = 'form-status'; status.textContent = 'Enviando…';
-
-  const p = new URLSearchParams(location.search);
-  const payload = {
-    nombre: form.nombre.value.trim(), telefono: form.telefono.value,
-    correo: form.correo.value.trim(), estado: form.estado.value,
-    interes: form.interes.value, presupuesto: form.presupuesto.value,
-    consentimiento: 'otorgado',
-    aviso_anualidad: $('#anualOk').checked ? 'aceptado' : 'no aplica',
-    origen: location.href,
-    utm_source: p.get('utm_source') || 'directo',
-    utm_medium: p.get('utm_medium') || '',
-    utm_campaign: p.get('utm_campaign') || '',
-    enviado: new Date().toISOString()
-  };
-
-  if (CONFIG.recaptchaKey && window.grecaptcha) {
-    try {
-      payload.recaptcha = await new Promise(res =>
-        grecaptcha.ready(() => grecaptcha.execute(CONFIG.recaptchaKey, { action:'solicitud' }).then(res)));
-    } catch(_){}
-  }
-
-  try {
-    if (CONFIG.crmEndpoint) {
-      const r = await fetch(CONFIG.crmEndpoint, {
-        method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
-      if (!r.ok) throw new Error(r.status);
-    } else if (CONFIG.waFallback) {
-      const t = 'Nueva solicitud%0A%0ANombre: ' + payload.nombre + '%0ATeléfono: ' + payload.telefono +
-                '%0ACorreo: ' + payload.correo + '%0AEstado: ' + payload.estado +
-                '%0AInterés: ' + payload.interes + '%0APresupuesto: ' + payload.presupuesto;
-      window.open('https://wa.me/' + CONFIG.whatsapp + '?text=' + t, '_blank', 'noopener');
-    } else throw new Error('sin endpoint');
-
-    addLead(payload);
-    $('#doneName').textContent = payload.nombre.split(' ')[0];
-    form.hidden = true; $('#progress').hidden = true; $('#done').hidden = false;
-  } catch(err) {
-    sendBtn.disabled = false;
-    status.className = 'form-status bad';
-    status.textContent = 'No se pudo enviar. Escríbenos por WhatsApp y lo resolvemos.';
-  }
-});
+/* El contacto inicial se gestiona en growth.js. */
 
 /* ═══════════ ASISTENTE (intérprete del árbol) ═══════════ */
 const bot = $('#bot'), botLog = $('#botLog'), botOpts = $('#botOpts');
@@ -1541,64 +1410,6 @@ $('#botClose').onclick = () => {
 };
 window.addEventListener('pagehide',()=>stopRealtime(''));
 
-/* ═══════════ PANEL ═══════════ */
-const LEADS = [
-  { n:'M. Fernández', t:'(305) 555-0119', r:'vida',  d:'Reemplazo de ingreso', e:'Esperando documentos' },
-  { n:'J. Álvarez',   t:'(786) 555-0142', r:'vida',  d:'Hipoteca y educación', e:'Revisión agendada' },
-  { n:'Familia B.',   t:'(954) 555-0177', r:'salud', d:'Comparación de red',   e:'3 opciones' },
-  { n:'C. Ruiz',      t:'(305) 555-0163', r:'salud', d:'Medicare',             e:'Agente certificado' },
-  { n:'L. Sarmiento', t:'(786) 555-0188', r:'anual', d:'Liquidez y plazo',     e:'Ilustración pendiente' }
-];
-const MAP = { 'Seguro de vida':'vida','Ahorro universitario':'vida','Cobertura de salud':'salud',
-  'Medicare':'salud','Retiro o anualidades':'anual' };
-
-function addLead(p){
-  LEADS.unshift({ n:p.nombre, t:p.telefono, r:MAP[p.interes] || 'vida', d:p.interes, e:'Nuevo · sin contactar' });
-  if (!$('#board').hidden) renderBoard();
-}
-function renderBoard(){
-  ['vida','salud','anual'].forEach(k => {
-    const list = LEADS.filter(l => l.r === k);
-    $('#n-' + k).textContent = list.length;
-    $('#c-' + k).innerHTML = list.map((l,i) =>
-      '<div class="lead-card"><b>' + l.n + '</b><span>' + l.t + '</span>' +
-      '<div class="meta"><span>' + l.d + '</span><span>' + l.e + '</span></div>' +
-      '<div class="acts"><button data-mv="' + k + '|' + i + '">Mover</button>' +
-      '<button data-cl="' + k + '|' + i + '">Cerrar</button></div></div>'
-    ).join('') || '<p style="color:#5A6D84;font-size:.84rem">Sin solicitudes en esta etapa.</p>';
-  });
-  $$('[data-mv]').forEach(b => b.onclick = () => {
-    const [k,i] = b.dataset.mv.split('|');
-    const l = LEADS.filter(x => x.r === k)[+i];
-    l.r = k === 'vida' ? 'salud' : k === 'salud' ? 'anual' : 'vida';
-    renderBoard();
-  });
-  $$('[data-cl]').forEach(b => b.onclick = () => {
-    const [k,i] = b.dataset.cl.split('|');
-    const l = LEADS.filter(x => x.r === k)[+i];
-    LEADS.splice(LEADS.indexOf(l), 1);
-    renderBoard();
-  });
-}
-function checkPanel(){
-  const on = location.hash === '#panel-agente' || new URLSearchParams(location.search).get('panel') === '1';
-  $('#panel').classList.toggle('is-on', on);
-  document.body.classList.toggle('panel-mode', on);
-}
-$('#pinGo').onclick = () => {
-  if ($('#pin').value === CONFIG.panelPin) { $('#gate').hidden = true; $('#board').hidden = false; renderBoard(); }
-  else { $('#pin').value = ''; $('#pin').placeholder = 'Clave incorrecta'; }
-};
-$('#pin').addEventListener('keydown', e => { if (e.key === 'Enter') $('#pinGo').click(); });
-/* Salir del panel: hay que limpiar tanto el hash (#panel-agente) como el
-   parámetro (?panel=1), porque cualquiera de los dos vuelve a abrirlo. */
-$('#exitPanel').onclick = () => {
-  const url = new URL(location.href);
-  url.searchParams.delete('panel');
-  url.hash = 'top';
-  location.href = url.toString();
-};
-
 /* ═══════════ ARQUITECTURA DE LA PROTECCIÓN ═══════════
    Un solo IntersectionObserver activa toda la sección: añade .is-in y el
    CSS se encarga del resto (capas, anillos, tarjetas) mediante delays.
@@ -1642,220 +1453,16 @@ $('#exitPanel').onclick = () => {
   obs.observe(sec);
 })();
 
-/* ═══════════ ACCESO DISCRETO AL PANEL ═══════════
-   Tres toques seguidos en el logo del encabezado abren el panel interno.
-   No hay enlace visible: un visitante no descubre la puerta por accidente
-   y el sitio público no anuncia que existe un espacio privado. */
-(function accesoPanel(){
-  const logo = document.querySelector('.header .brand');
-  if (!logo) return;
-  let toques = 0, reloj = null;
-  logo.addEventListener('click', e => {
-    toques++;
-    if (toques === 1) { reloj = setTimeout(() => { toques = 0; }, 1200); }
-    if (toques >= 3) {
-      e.preventDefault();
-      clearTimeout(reloj); toques = 0;
-      const url = new URL('./', location.href);
-      url.searchParams.set('panel', '1');
-      location.href = url.toString();
-    }
-  });
-})();
-
-/* ═══════════ CITA EN CURSO ═══════════
-   Guía de conversación para usar frente al cliente. Cada pregunta está
-   escrita como se dice en voz alta, no como una etiqueta de formulario.
-   Nada se guarda: vive solo mientras dura la cita. */
-(function citaEnCurso(){
-  const CE = window.InsuranceCalculators;
-  if (!CE) return;
-
-  const GUIAS = {
-    vida: {
-      titulo: 'Proteger a la familia',
-      preguntas: [
-        { k:'annualIncome',     di:'¿Cuánto gana al año, más o menos?',            ayuda:'Un aproximado basta.', v:60000 },
-        { k:'replacementYears', di:'¿Por cuántos años querría que su familia siga recibiendo ese ingreso?', ayuda:'Hasta que los hijos terminen estudios suele ser el punto de partida.', v:10 },
-        { k:'mortgageBalance',  di:'¿Cuánto debe todavía de la casa?',             ayuda:'Si renta, déjelo en cero.', v:0 },
-        { k:'otherDebts',       di:'¿Tiene otras deudas? Carro, tarjetas…',        ayuda:'', v:0 },
-        { k:'educationGoal',    di:'¿Quisiera dejar algo para los estudios de sus hijos?', ayuda:'', v:0 },
-        { k:'finalExpenses',    di:'¿Y para los gastos finales?',                   ayuda:'Un funeral en Florida ronda los $10,000–$15,000.', v:15000 },
-        { k:'existingCoverage', di:'¿Tiene ya algún seguro de vida?',               ayuda:'Cuente también el del trabajo.', v:0 },
-        { k:'liquidAssets',     di:'¿Cuánto tiene ahorrado que podría usarse?',     ayuda:'', v:0 },
-        { k:'otherGoals',       di:'¿Alguna otra meta que quiera cubrir?',          ayuda:'', v:0 }
-      ],
-      fn:'lifeInsuranceNeed',
-      leer: r => ({
-        cifra: r.estimatedNeed,
-        rotulo: 'Protección que faltaría',
-        frase: r.estimatedNeed > 0
-          ? 'Con lo que me contó, faltarían alrededor de esta cantidad para que su familia mantenga su nivel de vida.'
-          : 'Con lo que me contó, sus recursos actuales ya cubrirían lo que conversamos.'
-      })
-    },
-    salud: {
-      titulo: 'Cobertura médica',
-      preguntas: [
-        { k:'monthlyPremium',          di:'¿Cuánto paga al mes por su plan?', ayuda:'Si no tiene, pruebe con un estimado.', v:180 },
-        { k:'expectedAllowedCharges',  di:'¿Cuánto cree que usaría de médico en el año?', ayuda:'Consultas, exámenes, terapias.', v:6000 },
-        { k:'deductible',              di:'¿Cuál es su deducible?', ayuda:'Lo que paga antes de que el plan empiece a cubrir.', v:3000 },
-        { k:'coinsuranceRate',         di:'¿Qué porcentaje le toca después del deducible?', ayuda:'Normalmente 20% o 30%.', v:20 },
-        { k:'annualCopays',            di:'¿Cuánto suma en copagos al año?', ayuda:'', v:400 },
-        { k:'outOfPocketMaximum',      di:'¿Cuál es su máximo de bolsillo?', ayuda:'El tope que puede llegar a pagar en el año.', v:9200 },
-        { k:'nonCoveredCosts',         di:'¿Gastos que el plan no cubre?', ayuda:'', v:0 },
-        { k:'outOfNetworkCosts',       di:'¿Gastos con médicos fuera de la red?', ayuda:'', v:0 }
-      ],
-      fn:'annualHealthCost',
-      leer: r => ({
-        cifra: r.results.estimatedTotalAnnualCost,
-        rotulo: 'Costo anual estimado',
-        frase: 'Sumando lo que paga de prima y lo que pondría de su bolsillo, el año le costaría cerca de esto.'
-      })
-    },
-    retiro: {
-      titulo: 'Retiro',
-      preguntas: [
-        { k:'currentAge',           di:'¿Qué edad tiene?', ayuda:'', v:45 },
-        { k:'retirementAge',        di:'¿A qué edad le gustaría retirarse?', ayuda:'', v:65 },
-        { k:'currentSavings',       di:'¿Cuánto tiene ahorrado para el retiro?', ayuda:'Cuente 401k, IRA, ahorros.', v:0 },
-        { k:'monthlyContribution',  di:'¿Cuánto puede apartar al mes?', ayuda:'', v:400 },
-        { k:'annualReturn',         di:'¿Qué rendimiento anual suponemos?', ayuda:'5% es un punto de partida conservador.', v:5 },
-        { k:'annualInflation',      di:'¿Y qué inflación?', ayuda:'2.5% es lo habitual.', v:2.5 },
-        { k:'withdrawalRate',       di:'¿Qué porcentaje retiraría cada año?', ayuda:'La regla del 4% es una hipótesis, no una garantía.', v:4 },
-        { k:'planningAge',          di:'¿Hasta qué edad planificamos?', ayuda:'90 años es lo prudente.', v:90 }
-      ],
-      fn:'retirementProjection',
-      leer: r => ({
-        cifra: r.results.monthlyPlanningIncome,
-        rotulo: 'Ingreso mensual al retirarse',
-        frase: 'Si sigue así, al retirarse podría contar con este ingreso mensual aproximado.'
-      })
-    }
-  };
-
-  let guia = null, datos = {}, tocados = new Set(), modoCliente = false;
-
-  // El motor espera los porcentajes como decimales (20% → 0.20), igual que
-  // hacen las calculadoras públicas del sitio.
-  const PCT = { retiro:['annualReturn','annualInflation','withdrawalRate'], salud:['coinsuranceRate'], vida:[] };
-
-  const num = v => { const n = Number(String(v).replace(/[^0-9.\-]/g,'')); return Number.isFinite(n) ? n : 0; };
-
-  function paraMotor(){
-    const pcts = PCT[guia.tema] || [];
-    const out = {};
-    for (const k in datos) out[k] = pcts.includes(k) ? datos[k]/100 : datos[k];
-    return out;
-  }
-
-  function pintarPreguntas(){
-    $('#citaPreguntas').innerHTML = guia.preguntas.map((p,i) => `
-      <div class="preg${tocados.has(p.k)?' is-ok':''}" data-k="${p.k}">
-        <div class="preg__n">${i+1}</div>
-        <div class="preg__c">
-          <label for="q-${p.k}">${p.di}</label>
-          ${p.ayuda ? `<small>${p.ayuda}</small>` : ''}
-          <input id="q-${p.k}" type="text" inputmode="decimal" value="${datos[p.k] ?? p.v}">
-        </div>
-      </div>`).join('');
-
-    $$('#citaPreguntas input').forEach(inp => {
-      inp.addEventListener('input', () => {
-        const k = inp.closest('.preg').dataset.k;
-        datos[k] = num(inp.value);
-        tocados.add(k);
-        inp.closest('.preg').classList.add('is-ok');
-        calcular();
-      });
-    });
-  }
-
-  function calcular(){
-    let r;
-    try {
-      r = CE[guia.fn](paraMotor());
-    } catch(err) {
-      // El motor valida rangos (p. ej. edad entre 18 y 100). Mientras el
-      // agente escribe puede quedar un valor fuera de rango un instante;
-      // se avisa en lugar de dejar una cifra congelada sin explicación.
-      $('#citaEstado').textContent = 'Revisa un dato';
-      $('#citaEstado').className = 'is-pend';
-      $('#citaResultado').innerHTML =
-        `<p class="cifra__falta">${(err && err.message) || 'Hay un dato fuera del rango esperado.'}</p>`;
-      return;
-    }
-    const { cifra, rotulo, frase } = guia.leer(r);
-    const faltan = guia.preguntas.length - tocados.size;
-
-    $('#citaEstado').textContent = faltan > 0
-      ? `Faltan ${faltan} por confirmar`
-      : 'Todo confirmado';
-    $('#citaEstado').className = faltan > 0 ? 'is-pend' : 'is-ok';
-
-    $('#citaResultado').innerHTML = `
-      <div class="cifra${modoCliente?' is-big':''}">
-        <small>${rotulo}</small>
-        <strong>${USD.format(Math.max(0, cifra))}</strong>
-      </div>
-      <p class="cifra__frase">${frase}</p>
-      ${!modoCliente && faltan > 0 ? `<p class="cifra__falta">Aún no ha confirmado ${faltan} dato(s). La cifra cambiará.</p>` : ''}`;
-  }
-
-  $$('#citaTemas .tema').forEach(b => b.onclick = () => {
-    guia = GUIAS[b.dataset.tema];
-    guia.tema = b.dataset.tema;
-    datos = {}; tocados = new Set();
-    guia.preguntas.forEach(p => datos[p.k] = p.v);
-    $('#citaTitulo').textContent = guia.titulo;
-    $('#citaTemas').hidden = true;
-    $('#citaPreguntas').hidden = false;
-    $('#citaLado').hidden = false;
-    $('#citaReset').hidden = false;
-    pintarPreguntas();
-    calcular();
-  });
-
-  $('#citaReset').onclick = () => {
-    guia = null; datos = {}; tocados = new Set(); modoCliente = false;
-    $('#citaTitulo').textContent = '¿De qué van a hablar hoy?';
-    $('#citaTemas').hidden = false;
-    $('#citaPreguntas').hidden = true;
-    $('#citaLado').hidden = true;
-    $('#citaReset').hidden = true;
-    document.body.classList.remove('cliente-mode');
-  };
-
-  $('#citaModo').onclick = () => {
-    modoCliente = !modoCliente;
-    $('#citaModo').setAttribute('aria-pressed', String(modoCliente));
-    $('#citaModo').textContent = modoCliente ? 'Volver a mi vista' : 'Mostrar al cliente';
-    document.body.classList.toggle('cliente-mode', modoCliente);
-    if (guia) calcular();
-  };
-
-  // Pestañas del panel
-  $$('.office-tabs button').forEach(t => t.onclick = () => {
-    $$('.office-tabs button').forEach(o => { o.classList.remove('is-on'); o.setAttribute('aria-selected','false'); });
-    t.classList.add('is-on'); t.setAttribute('aria-selected','true');
-    const cita = t.id === 'tab-cita';
-    $('#pane-cita').hidden = !cita;
-    $('#pane-solicitudes').hidden = cita;
-  });
-})();
-addEventListener('hashchange', checkPanel);
-checkPanel();
-
 /* ═══════════ LEGALES ═══════════ */
 const LEGAL = {
   privacidad:['Política de Privacidad',
-    'Mientras el sitio esté en modo educativo no hay formularios activos. Si escribes por WhatsApp, llamas o envías un correo, usamos lo que compartas únicamente para responderte. Cuando se habilite el formulario, recopilaremos solo nombre, teléfono, correo, estado de residencia, área de interés y preferencia de presupuesto, para preparar tu revisión y contactarte con tu autorización.',
+    'El formulario inicial pide nombre, un medio de contacto, interés, horario y código postal opcional. Se usa para responder a tu solicitud. Sin recepción directa configurada, se prepara un correo en tu dispositivo y tú decides enviarlo. No guardamos tus datos de contacto en el navegador.',
     'No solicitamos ni almacenamos números de Seguro Social, números de Medicare, datos bancarios, diagnósticos ni medicamentos a través de este sitio.',
     'Asistente virtual con IA: fuera de una sesión de voz, las respuestas escritas básicas se generan en tu navegador. La conversación por voz es opcional y solo empieza cuando la aceptas. Mientras esa sesión está activa, el audio y las preguntas que escribas se envían a la API de OpenAI para generar respuestas en tiempo real. Este sitio no guarda grabaciones. La voz audible de la asistente no usa SpeechSynthesis del navegador; proviene de OpenAI Realtime.',
     'Puedes retirar tu consentimiento y pedir acceso, corrección o eliminación de tus datos escribiendo a wperezmedero@gmail.com. Eliminamos los mensajes y registros que ya no sean necesarios para atenderte.'],
   cookies:['Política de Cookies',
     'Este sitio no instala cookies propias de publicidad ni de medición.',
-    'Las tipografías se cargan desde Google Fonts, que recibe datos técnicos como tu dirección IP para entregarlas. Si aceptas el aviso de voz, tu navegador recuerda esa decisión solo mientras dure la sesión, sin usar cookies.',
+    'Las tipografías se sirven desde este mismo sitio. La medición interna de interacciones no incluye los datos del formulario ni las cifras de las calculadoras. Si aceptas el aviso de voz, tu navegador recuerda esa decisión solo mientras dure la sesión, sin usar cookies.',
     'Los enlaces a WhatsApp, YouTube, Apple Music o Amazon te llevan a servicios externos que aplican sus propias políticas y cookies.'],
   terminos:['Términos y Condiciones',
     'El contenido de este sitio es educativo y no constituye una oferta contractual ni asesoramiento legal, fiscal, médico o de inversión.',

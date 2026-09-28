@@ -8,7 +8,7 @@
 (() => {
   'use strict';
   const PAGINAS = {"index": "./", "proteccion": "proteccion.html", "calculadoras": "calculadoras.html", "sobre-mi": "sobre-mi.html", "preguntas": "preguntas.html"};
-  const SECCIONES = {"top": "index", "panel": "index", "pilares": "index", "alcance": "index", "arquitectura": "proteccion", "recursos": "proteccion", "calculadoras": "calculadoras", "cotizar": "calculadoras", "agenda": "calculadoras", "sobre-mi": "sobre-mi", "preguntas": "preguntas"};
+  const SECCIONES = {"top": "index", "conversacion": "index", "necesidades": "index", "vida": "index", "pilares": "index", "alcance": "index", "arquitectura": "proteccion", "recursos": "proteccion", "calculadoras": "calculadoras", "cotizar": "calculadoras", "agenda": "calculadoras", "sobre-mi": "sobre-mi", "preguntas": "preguntas"};
   const html = document.documentElement;
   const reducir = matchMedia('(prefers-reduced-motion: reduce)');
   const CLASES_TRANS = ['trans-rayo','trans-cristal','trans-suave'];
@@ -54,7 +54,9 @@
   function tipoTransicion(url){
     const destino = paginaDestino(url);
     const actual = document.body.dataset.pagina || '';
-    if (destino === 'proteccion' && actual !== 'proteccion') return 'rayo';
+    if (destino === 'proteccion' && actual !== 'proteccion') {
+      try { if (!sessionStorage.getItem('wps-firma-vista')) { sessionStorage.setItem('wps-firma-vista','1'); return 'rayo'; } } catch (_) {}
+    }
     if (destino === 'calculadoras') return 'cristal';
     return 'suave';
   }
