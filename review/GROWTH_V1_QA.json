@@ -1,0 +1,282 @@
+{
+  "screens": [
+    {
+      "width": 360,
+      "route": "index.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 360,
+      "route": "proteccion.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 360,
+      "route": "calculadoras.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 360,
+      "route": "sobre-mi.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 360,
+      "route": "preguntas.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 360,
+      "route": "tarjeta/",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 360,
+      "route": "privacidad.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 390,
+      "route": "index.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1,
+      "accessibility": []
+    },
+    {
+      "width": 390,
+      "route": "proteccion.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1,
+      "accessibility": []
+    },
+    {
+      "width": 390,
+      "route": "calculadoras.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1,
+      "accessibility": []
+    },
+    {
+      "width": 390,
+      "route": "sobre-mi.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1,
+      "accessibility": []
+    },
+    {
+      "width": 390,
+      "route": "preguntas.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1,
+      "accessibility": []
+    },
+    {
+      "width": 390,
+      "route": "tarjeta/",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1,
+      "accessibility": []
+    },
+    {
+      "width": 390,
+      "route": "privacidad.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1,
+      "accessibility": []
+    },
+    {
+      "width": 768,
+      "route": "index.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 768,
+      "route": "proteccion.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 768,
+      "route": "calculadoras.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 768,
+      "route": "sobre-mi.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 768,
+      "route": "preguntas.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 768,
+      "route": "tarjeta/",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 768,
+      "route": "privacidad.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 1024,
+      "route": "index.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 1024,
+      "route": "proteccion.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 1024,
+      "route": "calculadoras.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 1024,
+      "route": "sobre-mi.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 1024,
+      "route": "preguntas.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 1024,
+      "route": "tarjeta/",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 1024,
+      "route": "privacidad.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1
+    },
+    {
+      "width": 1440,
+      "route": "index.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1,
+      "accessibility": []
+    },
+    {
+      "width": 1440,
+      "route": "proteccion.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1,
+      "accessibility": []
+    },
+    {
+      "width": 1440,
+      "route": "calculadoras.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1,
+      "accessibility": []
+    },
+    {
+      "width": 1440,
+      "route": "sobre-mi.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1,
+      "accessibility": []
+    },
+    {
+      "width": 1440,
+      "route": "preguntas.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1,
+      "accessibility": []
+    },
+    {
+      "width": 1440,
+      "route": "tarjeta/",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1,
+      "accessibility": []
+    },
+    {
+      "width": 1440,
+      "route": "privacidad.html",
+      "overflow": false,
+      "brokenImages": [],
+      "h1": 1,
+      "accessibility": []
+    }
+  ],
+  "flows": [
+    "Self-identification explains and prefills without product recommendation",
+    "Mobile navigation opens, focuses, closes with Escape",
+    "Validation, consent, email fallback, invalidation after edits; no false sent event",
+    "DIME default result $870,000; negative input rejected",
+    "FAQs expand and tabs work",
+    "Biography disclosure retained",
+    "3D flip works; QR decoded: https://williamperezseguros.com/tarjeta/?src=qr&interes=vida",
+    "vCard download and contact event; no street address",
+    "Card DIME and contact handoff; no amounts in form",
+    "Share fallback and QR dialog",
+    "Analytics omit form data and calculator amounts",
+    "Receiver contract accepted",
+    "Receiver contract rejected",
+    "Receiver contract bad-ack",
+    "Receiver contract offline"
+  ],
+  "errors": [],
+  "externalRequests": []
+}

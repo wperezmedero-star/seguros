@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "First Protection navigation uses signature lightning; overlay clears",
+    "Repeated Protection navigation uses soft transition",
+    "Calculator navigation uses crystal transition",
+    "Offline card loads shared Growth assets, vCard link, form and DIME",
+    "JavaScript disabled: no accidental GET submission or contact data in URL",
+    "Final form configuration stays in truthful mailto handoff mode",
+    "Final mobile / desktop screenshots; primary CTA inside first mobile viewport"
+  ],
+  "errors": []
+}
