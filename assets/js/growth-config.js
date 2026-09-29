@@ -1,4 +1,8 @@
-/* Direct contact: activate both values only after the receiver and real delivery are verified.
-   The Turnstile sitekey is public. Its secret belongs only in the separate Worker.
-   No new external requests while leadEndpoint is empty. See services/leads/README.md. */
-window.WPS_GROWTH_CONFIG = Object.freeze({ leadEndpoint: '', turnstileSitekey: '' });
+/* Formspree endpoint created for Solicitudes Web - William Perez Seguros.
+   Keep the exact https://formspree.io/f/<form-id> endpoint from William's dashboard.
+   Never put an account password, API key or private submission key here. */
+window.WPS_GROWTH_CONFIG = Object.freeze({
+  leadProvider: 'formspree',
+  leadEndpoint: 'https://formspree.io/f/xkjgywrr',
+  turnstileSitekey: ''
+});
