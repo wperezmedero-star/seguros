@@ -17,11 +17,11 @@ La captura de la cuenta de Cloudflare mostró que Email Sending requiere Workers
 - Gmail recibió en Recibidos el aviso «New submission from Solicitudes Web - William Perez Seguros» con todos los campos de la prueba.
 - William guardó la restricción del proyecto a `williamperezseguros.com`; el valor persistió tras recargar el panel. El formulario y el archivo de envíos están habilitados; Formshield está activo y CAPTCHA desactivado.
 - En «Flujo de trabajo» se ve una acción de correo por cada envío dirigida a la cuenta `wperezmed...`; la recepción de la prueba en Gmail confirma el destinatario.
+- Se revisaron el consentimiento obligatorio en ambas superficies y la política de privacidad; la rama describe ahora el envío directo con Formspree en tiempo presente.
 
 ## Pendiente antes de publicar
 
 1. Probar desde el dominio final una solicitud no sensible, la confirmación visible, el panel Formspree y el correo recibido. Probar también error y red interrumpida. La restricción por dominio usa el encabezado Referer y no sustituye una autenticación real.
-2. Revisar una vez más la política de privacidad y el consentimiento contra el servicio configurado.
-3. Obtener aprobación final de William antes de publicar Growth v1.
+2. Presentar la versión Growth v1 para aprobación final de William antes de publicarla.
 
 Fuentes oficiales consultadas: https://formspree.io/plans/ ; https://help.formspree.io/articles/building-your-form/building-an-html-form ; https://help.formspree.io/articles/form-and-project-settings/restrict-to-domain ; https://help.formspree.io/articles/form-and-project-settings/protecting-your-forms-with-cloudflare-turnstile .
