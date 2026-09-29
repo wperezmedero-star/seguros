@@ -1,6 +1,6 @@
 # Growth v1 — opción de recepción con Formspree (29 septiembre 2026)
 
-La captura de la cuenta de Cloudflare mostró que Email Sending requiere Workers Paid. William eligió preparar la alternativa gratuita de Formspree. Esta rama **no está publicada** y el envío automático **no está activado**: `assets/js/growth-config.js` mantiene `leadProvider: 'manual'` y el endpoint vacío. En producción se conserva el correo manual.
+La captura de la cuenta de Cloudflare mostró que Email Sending requiere Workers Paid. William eligió la alternativa gratuita de Formspree. Esta rama **no está publicada**. El envío automático está activado únicamente en la rama con `leadProvider: 'formspree'` y el endpoint público `https://formspree.io/f/xkjgywrr`. En producción se conserva el correo manual hasta la aprobación y publicación de Growth v1.
 
 ## Qué se preparó
 
@@ -9,12 +9,18 @@ La captura de la cuenta de Cloudflare mostró que Email Sending requiere Workers
 - No carga Turnstile de Cloudflare en esta opción. La protección anti-spam se configura en el panel Formspree. El Worker de voz no se modifica; el receptor Cloudflare preparado sigue aislado e inactivo.
 - La página de privacidad explica el tercero y el historial de 30 días del plan gratuito. La aceptación del servicio no garantiza entrega del aviso al buzón.
 
-## Para activar después de verificar la cuenta
+## Verificación completada
 
-1. William crea o accede a su cuenta Formspree y verifica su email. No compartir contraseña ni códigos. Seleccionar plan Free; no contratar un plan pago.
-2. Crear un formulario «Solicitudes William Pérez Seguros» con destino `wperezmedero@gmail.com`. En **Integration**, copiar únicamente el endpoint público del formulario. No copiar ninguna clave de API o URL de lectura de envíos.
-3. En ajustes del proyecto, restringir a `williamperezseguros.com` sin `www` (cubre ambos hostnames); revisar la protección anti-spam. Esto usa el encabezado Referer y no sustituye una autenticación real.
-4. Configurar en `assets/js/growth-config.js` `leadProvider: 'formspree'` y `leadEndpoint` con el endpoint real. Antes de publicar, probar una solicitud no sensible desde el dominio final, revisar la confirmación, el panel Formspree, el correo recibido y spam. Probar también error y red interrumpida. La prueba consume una de las 50 solicitudes mensuales del plan Free.
-5. Solo entonces aprobar y publicar Growth v1; revisar la política de privacidad y el consentimiento del formulario de nuevo contra el servicio efectivamente configurado. No prometer respuesta inmediata ni afirmar entrega solo por un HTTP 2xx.
+- Cuenta Free creada y `wperezmedero@gmail.com` verificado como destinatario.
+- Formulario «Solicitudes Web - William Perez Seguros» creado con el endpoint configurado en la rama.
+- El 29 de septiembre de 2026 a las 12:57 UTC, una solicitud con datos ficticios recibió HTTP 200 y `{"ok":true}`.
+- Gmail recibió en Recibidos el aviso «New submission from Solicitudes Web - William Perez Seguros» con todos los campos de la prueba.
+
+## Pendiente antes de publicar
+
+1. En ajustes del proyecto, restringir a `williamperezseguros.com` sin `www` (cubre ambos hostnames) y revisar la protección anti-spam. Esto usa el encabezado Referer y no sustituye una autenticación real.
+2. Probar desde el dominio final una solicitud no sensible, la confirmación visible, el panel Formspree y el correo recibido. Probar también error y red interrumpida.
+3. Revisar una vez más la política de privacidad y el consentimiento contra el servicio configurado.
+4. Obtener aprobación final de William antes de publicar Growth v1.
 
 Fuentes oficiales consultadas: https://formspree.io/plans/ ; https://help.formspree.io/articles/building-your-form/building-an-html-form ; https://help.formspree.io/articles/form-and-project-settings/restrict-to-domain ; https://help.formspree.io/articles/form-and-project-settings/protecting-your-forms-with-cloudflare-turnstile .
