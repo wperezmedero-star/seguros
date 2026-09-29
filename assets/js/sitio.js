@@ -1456,7 +1456,7 @@ window.addEventListener('pagehide',()=>stopRealtime(''));
 /* ═══════════ LEGALES ═══════════ */
 const LEGAL = {
   privacidad:['Política de Privacidad',
-    'El formulario inicial pide nombre, un medio de contacto, interés, horario y código postal opcional. Se usa para responder a tu solicitud. Sin recepción directa configurada, se prepara un correo en tu dispositivo y tú decides enviarlo. No guardamos tus datos de contacto en el navegador.',
+    'El formulario pide nombre, un medio de contacto, interés, horario y código postal opcional. Formspree recibe y conserva la solicitud en la cuenta del formulario y notifica a William por correo para responderte. El sitio no guarda tus datos de contacto en el navegador. Puedes leer más en williamperezseguros.com/privacidad.html.',
     'No solicitamos ni almacenamos números de Seguro Social, números de Medicare, datos bancarios, diagnósticos ni medicamentos a través de este sitio.',
     'Asistente virtual con IA: fuera de una sesión de voz, las respuestas escritas básicas se generan en tu navegador. La conversación por voz es opcional y solo empieza cuando la aceptas. Mientras esa sesión está activa, el audio y las preguntas que escribas se envían a la API de OpenAI para generar respuestas en tiempo real. Este sitio no guarda grabaciones. La voz audible de la asistente no usa SpeechSynthesis del navegador; proviene de OpenAI Realtime.',
     'Puedes retirar tu consentimiento y pedir acceso, corrección o eliminación de tus datos escribiendo a wperezmedero@gmail.com. Eliminamos los mensajes y registros que ya no sean necesarios para atenderte.'],
