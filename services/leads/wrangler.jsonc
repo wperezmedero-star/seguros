@@ -1,0 +1,21 @@
+{
+  "name": "william-seguros-leads",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-09-28",
+  "workers_dev": false,
+  "preview_urls": false,
+  "observability": { "enabled": false },
+  "vars": {
+    "LEADS_ENABLED": "false",
+    "LEAD_FROM": ""
+  },
+  "send_email": [{ "name": "EMAIL", "destination_address": "wperezmedero@gmail.com" }],
+  "ratelimits": [{
+    "name": "LEAD_LIMITER",
+    // Locally chosen namespace: verify it is unused in the target account before activation.
+    "namespace_id": "2026092801",
+    "simple": { "limit": 60, "period": 60 }
+  }]
+  // No account IDs, secrets, routes or automatic deployment.
+  // Add a verified route for /api/leads only after human approval; preserve voice routes.
+}

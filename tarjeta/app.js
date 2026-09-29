@@ -38,6 +38,8 @@ function track(event, extra = {}) {
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push(detail);
   document.dispatchEvent(new CustomEvent('card:analytics', { detail }));
+  const events = {share_card:'card_shared',save_contact:'contact_saved',calculator_complete:'calculator_used'};
+  if (events[event]) window.WPSGrowth?.track(events[event], event === 'calculator_complete' ? {calculator:'dime'} : extra);
 }
 /* Cloudflare Web Analytics opcional: se activa solo si hay token en <meta name="cf-beacon-token"> */
 const cfToken = ($('meta[name="cf-beacon-token"]')?.content || '').trim();
@@ -63,14 +65,14 @@ const S = {
   retiro: { name: 'Retiro', label: 'Retiro y anualidades', title: 'Su próximo capítulo empieza con claridad.', text: 'Conversemos sobre sus objetivos para el retiro y sobre cómo funcionan las anualidades y sus condiciones.', note: 'Primero sus objetivos. Después, las opciones.', cta: 'Hablar sobre Retiro', msg: 'Hola William. Vi su tarjeta digital y quisiera conversar sobre opciones para mi retiro.' },
   accidentes: { name: 'Accidentes', label: 'Protección ante accidentes', title: 'Si algo pasa, que no le tome desprevenido.', text: 'Revisemos la protección ante accidentes según su trabajo, su día a día y su familia.', note: 'Primero entender su rutina. Después, las opciones.', cta: 'Hablar sobre Accidentes', msg: 'Hola William. Vi su tarjeta digital y quisiera información sobre protección ante accidentes.' }
 };
-let selected = Object.hasOwn(S, params.get('interes')) ? params.get('interes') : 'orientacion';
+let selected = Object.hasOwn(S, params.get('interes')) ? params.get('interes') : 'vida';
 
 function updateWA() {
   const svc = S[selected];
   $$('[data-wa="context"]').forEach(a => { a.href = waURL(svc.msg); a.dataset.service = selected; });
-  $('#pWaLabel').textContent = svc.cta;
+  $('#pWaLabel').textContent = selected === 'vida' ? 'Revisar mi protección' : 'Conversar con William';
   $('#dockContext').textContent = selected === 'orientacion' ? 'Hablemos' : 'Sobre ' + svc.name;
-  $('#cbTopic').value = selected;
+  window.WPSGrowth?.selectInterest(selected);
 }
 function selectService(key, fromUser) {
   selected = key;
@@ -201,7 +203,7 @@ if (matchMedia('(min-width:1180px)').matches) addEventListener('load', () => dra
 
 /* ---------- Guardar contacto (archivo .vcf estático con foto) ---------- */
 $('#guardar').addEventListener('click', () => {
-  track('save_contact', { method: 'vcf' });
+  track('save_contact', { method: 'vcard' });
   if (!isIOS) setTimeout(() => toast('Si no se abre solo, abra el archivo desde Descargas para guardar el contacto.'), 900);
 });
 
@@ -296,7 +298,7 @@ function gResult() {
   const names = [...t].filter(k => k !== 'orientacion').map(k => S[k].name);
   const joined = names.length > 1 ? names.slice(0, -1).join(', ') + ' y ' + names.at(-1) : names[0];
   const msg = names.length ? `Hola William. Hice la guía de su tarjeta digital y me gustaría conversar sobre: ${joined}.` : 'Hola William. Hice la guía de su tarjeta digital y me gustaría que me oriente sobre por dónde empezar.';
-  $('#gWa').href = waURL(msg); $('#gWa').dataset.placement = 'guia';
+  $('#gWa').href = '#conversacion'; $('#gWa').dataset.placement = 'guia';
   const first = [...t][0]; if (first !== 'orientacion') selectService(first, false);
   track('guide_complete', { topics: [...t].join(',') });
 }
@@ -323,7 +325,9 @@ function calculate(emit) {
     legend.children[k].innerHTML = '<span></span><b></b>';
     legend.children[k].firstChild.textContent = label; legend.children[k].lastChild.textContent = money(v);
   });
-  $('#cWa').href = waURL(`Hola William. Usé la calculadora DIME de su tarjeta y el estimado educativo fue de ${money(total)}. Quiero revisar este resultado y entender mis opciones.`);
+  $('#cWa').href = '#conversacion';
+  $('#cWa').hidden = !ok;
+  if (!ok) $('#cTotal').textContent = 'Revisa las cifras';
   $('#cWa').dataset.service = 'vida'; $('#cWa').dataset.placement = 'calculadora';
   if (emit) { clearTimeout(calcTimer); calcTimer = setTimeout(() => track('calculator_complete', { method: 'dime' }), 900); }
 }
@@ -355,21 +359,15 @@ if (SR) {
 }
 $('#calc').addEventListener('close', () => rec?.abort());
 
-/* ---------- Prefiero que me llame ---------- */
-$$('[data-callback]').forEach(b => b.addEventListener('click', () => { $('#cbTopic').value = selected; $('#cbError').textContent = ''; openSheet('callback'); track('callback_open', { service: selected }); }));
-$('#cbForm').addEventListener('submit', e => {
-  e.preventDefault();
-  const name = $('#cbName').value.trim().replace(/\s+/g, ' ');
-  if (name.length < 2) { $('#cbError').textContent = 'Escriba su nombre para saber a quién llamo.'; $('#cbName').setAttribute('aria-invalid', 'true'); $('#cbName').focus(); return; }
-  $('#cbName').removeAttribute('aria-invalid'); $('#cbError').textContent = '';
-  const f = new FormData(e.target), topic = f.get('tema');
-  const tema = topic === 'orientacion' ? 'mis opciones de seguro' : S[topic].name;
-  const msg = `Hola William, soy ${name}. Vi su tarjeta digital y prefiero que me contacte por ${f.get('medio')} ${f.get('horario')} para conversar sobre ${tema}.`;
-  const via = e.submitter?.value === 'sms' ? 'sms' : 'wa';
-  track('callback_submit', { service: topic, channel: via });
-  location.href = via === 'sms' ? smsURL(msg) : waURL(msg);
-  setTimeout(() => { $('#callback').close(); toast(via === 'sms' ? 'Se abrió su app de mensajes. Solo falta pulsar Enviar.' : 'Se abrió WhatsApp. Solo falta pulsar Enviar.', 6000); }, 600);
-});
+/* ---------- Conversación: continuidad sin enviar cifras ni respuestas ---------- */
+function contactFromCard(topic) {
+  document.querySelectorAll('dialog[open]').forEach(d => d.close());
+  window.WPSGrowth?.selectInterest(topic || selected);
+  document.getElementById('conversacion').scrollIntoView({behavior:reduced?'auto':'smooth'});
+  document.getElementById('card-nombre').focus({preventScroll:true});
+}
+$$('[data-callback]').forEach(b => b.addEventListener('click', () => contactFromCard()));
+['pWa','gWa','cWa'].forEach(id => $('#' + id).addEventListener('click', e => { e.preventDefault(); contactFromCard(id === 'cWa' ? 'estimado' : selected); }));
 
 /* ---------- Saludo según la hora ---------- */
 (() => { const h = new Date().getHours(); $('#greeting').textContent = (h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches') + ' · Hablemos'; })();

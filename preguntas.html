@@ -22,21 +22,21 @@
 <meta property="og:image:alt" content="William Pérez-Mederos, agente de seguros licenciado en Florida.">
 <meta name="twitter:card" content="summary_large_image">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap"></noscript>
+
 <script>
 /* Si se llega desde otra página del sitio, conserva desde el primer pintado la transición elegida por el destino. */
 try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps-rayo')==='1'?'rayo':'');sessionStorage.removeItem('wps-transicion');sessionStorage.removeItem('wps-rayo');if(T&&!matchMedia('(prefers-reduced-motion: reduce)').matches){if(!/^(suave|cristal|rayo)$/.test(T))T='suave';document.documentElement.classList.add('trans-'+T,'rayo-cubre')}}catch(e){}
 </script>
 <link rel="stylesheet" href="assets/css/sitio.css">
+<link rel="stylesheet" href="assets/css/growth.css">
+<link rel="preload" href="tarjeta/assets/fraunces-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="tarjeta/assets/favicon-48.png">
 <script type="speculationrules">
 {"prefetch":[{"source":"document","where":{"href_matches":["/","/*.html"]},"eagerness":"moderate"}]}
 </script>
 </head>
 
-<body class="pag-interna" data-pagina="preguntas">
+<body data-modo="autorizado" class="pag-interna" data-pagina="preguntas">
 <div class="rayo" aria-hidden="true">
   <div class="rayo__banda">
     <div class="rayo__fondo"></div>
@@ -45,27 +45,22 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
   </div>
   <svg class="rayo__marca" viewBox="0 0 40 40" fill="none" focusable="false"><path d="M20 3l14 6v11c0 9.4-5.9 15.4-14 17-8.1-1.6-14-7.6-14-17V9l14-6z" stroke="#D4AF37" stroke-width="1.6"/><path d="M13.5 20.5l4.5 4.5 9-9.5" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
 </div>
-<a class="sr-only" href="#top">Saltar al contenido</a>
+<a class="sr-only growth-skip" href="#top">Saltar al contenido</a>
 
 <header class="header" id="header">
   <div class="wrap header__bar">
     <a class="brand" href="./" aria-label="Inicio">
-      <svg class="brand__mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-        <path d="M20 3l14 6v11c0 9.4-5.9 15.4-14 17-8.1-1.6-14-7.6-14-17V9l14-6z" stroke="#D4AF37" stroke-width="1.6"/>
-        <path d="M13.5 20.5l4.5 4.5 9-9.5" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+      <span class="wp-brand-mark" aria-hidden="true"><img src="assets/brand/wp-approved-256.webp" alt="" width="256" height="256" decoding="async"></span>
       <span>William Pérez-Mederos<small>Vida · Salud · Anualidades</small></span>
     </a>
     <nav class="nav" aria-label="Principal">
       <a href="./">Inicio</a>
       <a href="proteccion.html">Protección</a>
       <a href="calculadoras.html">Calculadoras</a>
-      <a href="calculadoras.html#cotizar" class="solo-autorizado">Revisión</a>
-      <a href="calculadoras.html#agenda" class="solo-autorizado">Agendar</a>
       <a href="sobre-mi.html">Sobre mí</a>
       <a href="preguntas.html" aria-current="page">Preguntas</a>
     </nav>
-    <a class="btn btn--gold header__cta solo-autorizado" href="calculadoras.html#cotizar">Solicitar revisión</a><a class="btn btn--gold header__cta solo-educativo" href="calculadoras.html">Usar las calculadoras</a>
+    <a class="btn btn--gold header__cta solo-autorizado" href="./#conversacion">Revisar mi protección</a><a class="btn btn--gold header__cta solo-educativo" href="calculadoras.html">Usar las calculadoras</a>
     <button class="burger" id="burger" aria-expanded="false" aria-controls="drawer" aria-label="Abrir menú">
       <span></span><span></span><span></span>
     </button>
@@ -74,15 +69,13 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
 
 <div class="scrim" id="scrim"></div>
 
-<nav class="drawer" id="drawer" aria-label="Menú móvil" aria-hidden="true">
+<nav class="drawer" id="drawer" aria-label="Menú móvil" aria-hidden="true" inert>
   <a href="./">Inicio <span class="num"></span></a>
   <a href="proteccion.html">Protección <span class="num"></span></a>
   <a href="calculadoras.html">Calculadoras <span class="num"></span></a>
-  <a href="calculadoras.html#cotizar" class="solo-autorizado">Revisión <span class="num"></span></a>
-  <a href="calculadoras.html#agenda" class="solo-autorizado">Agendar <span class="num"></span></a>
   <a href="sobre-mi.html">Sobre mí <span class="num"></span></a>
   <a href="./" aria-current="page">Preguntas <span class="num"></span></a>
-  <a class="btn btn--gold solo-autorizado" href="calculadoras.html#cotizar">Solicitar revisión</a><a class="btn btn--gold solo-educativo" href="calculadoras.html">Usar las calculadoras</a>
+  <a class="btn btn--gold solo-autorizado" href="./#conversacion">Revisar mi protección</a><a class="btn btn--gold solo-educativo" href="calculadoras.html">Usar las calculadoras</a>
 </nav>
 
 <main id="top">
@@ -229,14 +222,12 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
   <div class="wrap">
     <div class="footer__grid">
       <div>
+        <img class="wp-brand-signature" src="assets/brand/wp-approved-768.webp" alt="William Pérez-Mederos, agente de seguros licenciado. Vida, salud y retiro. Protección para tu familia. Confianza para tu futuro." width="768" height="768" loading="lazy" decoding="async">
         <a class="brand" href="./" style="margin-bottom:1rem">
-          <svg class="brand__mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-            <path d="M20 3l14 6v11c0 9.4-5.9 15.4-14 17-8.1-1.6-14-7.6-14-17V9l14-6z" stroke="#D4AF37" stroke-width="1.6"/>
-            <path d="M13.5 20.5l4.5 4.5 9-9.5" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <span class="wp-brand-mark" aria-hidden="true"><img src="assets/brand/wp-approved-256.webp" alt="" width="256" height="256" decoding="async"></span>
           <span>William Pérez-Mederos<small>Vida · Salud · Anualidades</small></span>
         </a>
-        <p style="color:#65798F;font-size:.89rem;max-width:34ch">Orientación en español para familias de Florida en vida, salud y retiro.</p>
+        <p style="color:#A7B5C8;font-size:.89rem;max-width:34ch">Orientación en español para familias de Florida en vida, salud y retiro.</p>
       </div>
       <div><h4>Áreas</h4><ul>
         <li><a href="./#pilares">Seguro de vida</a></li>
@@ -247,8 +238,8 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
       <div><h4>Contacto</h4><ul>
         <li><a href="tel:+17863548796">(786) 354-8796</a></li>
         <li><a href="mailto:wperezmedero@gmail.com">wperezmedero@gmail.com</a></li>
-        <li><a href="calculadoras.html#agenda">Agendar una revisión</a></li>
-        <li><a href="calculadoras.html#cotizar">Solicitar contacto</a></li>
+        <li><a href="./#conversacion">Agendar una revisión</a></li>
+        <li><a href="./#conversacion">Solicitar contacto</a></li>
       </ul></div>
       <div><h4>Legal</h4><ul>
         <li><a href="#" data-legal="privacidad">Política de Privacidad</a></li>
@@ -259,7 +250,7 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
     </div>
 
     <p class="footer__disclaimer">
-      William Pérez-Mederos es una agencia o práctica de seguros independiente. No es una compañía aseguradora, Medicare, CMS, HealthCare.gov ni una agencia gubernamental. La información de este sitio es educativa y no constituye asesoramiento legal, fiscal, médico o de inversión. La disponibilidad de productos, la elegibilidad, las primas, los beneficios y las garantías dependen de la aseguradora emisora, el contrato aplicable, la residencia y la evaluación correspondiente. No envíe información médica, financiera o identificadores gubernamentales por formularios no seguros. <span class="solo-autorizado">Licencia de Florida n.º G369134, clase 0215 (Life, Health &amp; Variable Contracts Insurance Agent), emitida el 17 de agosto de 2026.</span><span class="solo-educativo">Licencia de Florida n.º G369134, clase 0215, emitida el 17 de agosto de 2026. Conforme a la ley de Florida, un licenciado solo puede transar seguros con un nombramiento activo de una aseguradora elegible. Mientras no exista ese nombramiento, este sitio no solicita, negocia ni vende seguros, y no representa a ninguna aseguradora.</span> Atendemos en todo el estado de Florida.
+      William Pérez-Mederos es agente de seguros licenciado en Florida. No es una compañía aseguradora, Medicare, CMS, HealthCare.gov ni una agencia gubernamental. La información de este sitio es educativa y no constituye asesoramiento legal, fiscal, médico o de inversión. La disponibilidad de productos, la elegibilidad, las primas, los beneficios y las garantías dependen de la aseguradora emisora, el contrato aplicable, la residencia y la evaluación correspondiente. No envíe información médica, financiera o identificadores gubernamentales por formularios no seguros. <span class="solo-autorizado">Licencia de Florida n.º G369134, clase 0215 (Life, Health &amp; Variable Contracts Insurance Agent), emitida el 17 de agosto de 2026.</span> Atendemos en todo el estado de Florida.
     </p>
     <div class="footer__legal">
       <span>© <span id="year">2026</span> William Pérez-Mederos. Todos los derechos reservados.</span>
@@ -316,7 +307,7 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
   <div class="sheet__body" id="sheetBody"></div>
   <div class="sheet__foot">
     <small id="sheetNote"></small>
-    <a class="btn btn--gold btn--sm" href="calculadoras.html#cotizar" id="sheetCta">Solicitar revisión</a>
+    <a class="btn btn--gold btn--sm" href="./#conversacion" id="sheetCta">Revisar mi protección</a>
   </div>
 </dialog>
 
@@ -326,9 +317,11 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
   <button class="btn btn--gold" id="legalClose">Cerrar</button>
 </dialog>
 
+<script src="assets/js/growth-config.js"></script>
+<script src="assets/js/growth.js"></script>
 <script src="assets/js/navegacion.js"></script>
 <script src="assets/js/motor-calculadoras.js"></script>
 <script src="assets/js/asistente-arbol.js"></script>
-<script src="assets/js/sitio.js?v=20260925-voz4"></script>
+<script src="assets/js/sitio.js?v=growth-v1"></script>
 </body>
 </html>
