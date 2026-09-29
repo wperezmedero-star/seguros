@@ -2,6 +2,8 @@
 
 Estado: rama preparada para revisión humana. **No desplegada. No fusionada a main.**
 
+> **Actualización del 29 de septiembre de 2026.** Este informe conserva las pruebas históricas del modo de correo manual. La rama actual usa Formspree y el endpoint verificado; destinatario, restricción al dominio y correo de prueba figuran en [FORMSPREE_HANDOFF.md](FORMSPREE_HANDOFF.md). Los scripts `growth-qa.cjs`, `growth-final-checks.cjs` y `brand-leads-browser.cjs` aún contienen expectativas del receptor anterior y no son evidencia de QA del envío actual. La ejecución local de QA visual está bloqueada por dependencias/navegador ausentes. El asistente de voz heredado no ha sido corregido ni verificado en iPad. William autorizó publicar **solo si todo, incluida la reestructuración y configuración, está listo en perfecto estado**; esa condición aún no está demostrada. [PR #2](https://github.com/wperezmedero-star/seguros/pull/2) permanece en borrador.
+
 Base exacta: `vida-promocional-preparacion-20260926`, commit `347ff5e6ef5904b2266b6b2133536d84836a138e`.
 Rama de entrega: `astra6-growth-v1-20260928`.
 Referencia inspeccionada: `card-v2-premium-lead-engine`, commit `3b0a1ed0a5483c6fc052bcf9012d29bdd1dbb8f3`.
