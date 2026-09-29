@@ -26,6 +26,8 @@
 <script>
 /* Si se llega desde otra página del sitio, conserva desde el primer pintado la transición elegida por el destino. */
 try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps-rayo')==='1'?'rayo':'');sessionStorage.removeItem('wps-transicion');sessionStorage.removeItem('wps-rayo');if(T&&!matchMedia('(prefers-reduced-motion: reduce)').matches){if(!/^(suave|cristal|rayo)$/.test(T))T='suave';document.documentElement.classList.add('trans-'+T,'rayo-cubre')}}catch(e){}
+/* Primera entrada de marca; no compite con las transiciones internas. */
+try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.documentElement.classList.contains('rayo-cubre')&&!sessionStorage.getItem('wps-brand-entrance-v1')){document.documentElement.classList.add('brand-entrance-active');sessionStorage.setItem('wps-brand-entrance-v1','1')}}catch(e){}
 </script>
 <link rel="stylesheet" href="assets/css/sitio.css">
 <link rel="stylesheet" href="assets/css/growth.css">
@@ -37,6 +39,25 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
 </head>
 
 <body data-modo="autorizado" class="pag-interna" data-pagina="calculadoras">
+<div class="brand-entrance" aria-hidden="true">
+  <div class="brand-entrance__lockup">
+    <div class="brand-entrance__symbol">
+      <img class="brand-entrance__guide" src="assets/brand/wp-approved-768.webp" alt="" width="768" height="768" decoding="async">
+      <svg class="brand-entrance__outline" viewBox="0 0 768 390" aria-hidden="true" focusable="false">
+        <path pathLength="1" d="M374.5,109 392,108.5 393,111.5 402,110.5 419,112.5 468,112.5 497,110.5 518,113.5 538,121.5 551.5,132 551,133.5 548,131.5 541,131.5 539.5,133 536.5,137 538,146.5 559,143.5 567.5,153 576.5,177 578.5,201 572.5,228 562.5,246 548,260.5 527,271.5 513,274.5 483.5,275 484.5,356 488.5,365 496,372.5 511,379.5 414,379.5 413.5,378 423,376.5 433,367.5 437,367.5 444.5,357 447.5,346 446.5,248 447.5,242 449.5,241 449.5,235 447.5,234 447.5,187 442.5,175 497.5,175 487.5,182 484.5,189 484.5,196 482.5,197 483.5,270 491,270.5 506,263.5 520.5,251 529.5,238 535.5,225 540.5,203 540.5,185 537.5,170 529.5,151 521.5,140 509,128.5 499,122.5 487,118.5 485,115.5 404,115.5 394.5,118 395.5,140 403,140.5 405.5,146 400.5,147 400.5,153 408.5,153 413.5,169 417.5,174 417.5,178 423.5,188 425.5,197 428.5,200 431.5,211 433.5,212 439.5,226 439.5,267 434.5,268 434.5,274 439.5,284 439.5,334 438,334.5 353.5,136 345.5,121 339,114.5 329.5,111 345,109.5 374,110.5 374.5,109Z"/>
+        <path pathLength="1" d="M222.5,141 265,140.5 270.5,143 267,143.5 261.5,152 261.5,164 275.5,192 277.5,202 318.5,300 325,300.5 329.5,294 329.5,286 334.5,285 301,359.5 255.5,254 212.5,161 201,148.5 187.5,143 188,141.5 222.5,141Z"/>
+        <path pathLength="1" d="M369.5,228 372.5,228 378.5,241 407.5,311 414.5,312 409.5,326 389,367.5 385.5,365 349.5,282 347.5,272 340.5,271 343.5,261 346.5,259 350.5,253 350.5,250 352.5,249 352.5,246 354.5,245 354.5,240 356.5,239 357,243.5 363.5,243 363.5,236 358,235.5 358.5,233 366,234.5 369.5,228Z"/>
+      </svg>
+      <span class="brand-entrance__part brand-entrance__part--w"><img src="assets/brand/wp-approved-768.webp" alt="" width="768" height="768" decoding="async"></span>
+      <span class="brand-entrance__part brand-entrance__part--join"><img src="assets/brand/wp-approved-768.webp" alt="" width="768" height="768" decoding="async"></span>
+      <span class="brand-entrance__part brand-entrance__part--p"><img src="assets/brand/wp-approved-768.webp" alt="" width="768" height="768" decoding="async"></span>
+      <img class="brand-entrance__final" src="assets/brand/wp-approved-768.webp" alt="" width="768" height="768" decoding="async">
+      <span class="brand-entrance__glint"></span>
+    </div>
+    <span class="brand-entrance__name">William Pérez-Mederos</span>
+    <span class="brand-entrance__descriptor">Vida · Salud · Anualidades</span>
+  </div>
+</div>
 <div class="rayo" aria-hidden="true">
   <div class="rayo__banda">
     <div class="rayo__fondo"></div>
