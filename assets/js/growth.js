@@ -44,8 +44,11 @@
   let pendingInterest = '';
   try { pendingInterest = sessionStorage.getItem('wps-interest') || ''; if (forms.length) sessionStorage.removeItem('wps-interest'); } catch (_) {}
   selectInterest(new URLSearchParams(location.search).get('interes') || pendingInterest || 'familia');
+  const provider = window.WPS_GROWTH_CONFIG?.leadProvider || 'manual';
   const endpoint = window.WPS_GROWTH_CONFIG?.leadEndpoint || '';
-  const configured = /^https:\/\//.test(endpoint) || /^\/(?!\/)/.test(endpoint);
+  const formspree = provider === 'formspree' && /^https:\/\/formspree\.io\/f\/[A-Za-z0-9]+$/.test(endpoint);
+  const cloudflare = provider === 'cloudflare' && /^\/api\/leads$/.test(endpoint);
+  const configured = formspree || cloudflare;
   const sitekey = window.WPS_GROWTH_CONFIG?.turnstileSitekey || '';
   let challengeScript;
   function loadChallenge() {
@@ -68,9 +71,9 @@
     const challenge = document.createElement('div');
     challenge.className = 'growth-challenge';
     challenge.setAttribute('aria-label', 'Verificación contra envíos automáticos');
-    if (configured) submit.before(challenge);
+    if (cloudflare) submit.before(challenge);
     async function prepareChallenge() {
-      if (!configured || !sitekey || widget !== null || loadingChallenge) return;
+      if (!cloudflare || !sitekey || widget !== null || loadingChallenge) return;
       loadingChallenge = true;
       try {
         await loadChallenge();
@@ -86,7 +89,9 @@
     }
     form.addEventListener('focusin', prepareChallenge);
     submit.disabled = false;
-    if (configured) form.querySelector('[data-delivery]').textContent = 'William recibirá tu solicitud para responderte personalmente.';
+    if (configured) form.querySelector('[data-delivery]').textContent = formspree
+      ? 'Formspree procesará tu solicitud y notificará a William por correo. Consulta cómo se usan tus datos.'
+      : 'William recibirá tu solicitud para responderte personalmente.';
     function requirements() {
       const email = fields.preferencia.value === 'email';
       fields.email.required = email; fields.telefono.required = !email;
@@ -130,17 +135,25 @@
         handoff.hidden = false; status.textContent = 'Solicitud preparada. Falta enviarla desde tu correo.'; status.focus();
         track('form_prepared'); return;
       }
-      if (!sitekey) { status.textContent='El envío directo aún no está disponible. Puedes llamar al 786-354-8796.'; status.focus(); return; }
-      if (!token) { await prepareChallenge(); status.textContent='Completa la verificación y vuelve a pulsar Solicitar conversación.'; status.focus(); return; }
-      payload.turnstileToken = token;
+      if (cloudflare && !sitekey) { status.textContent='El envío directo aún no está disponible. Puedes llamar al 786-354-8796.'; status.focus(); return; }
+      if (cloudflare && !token) { await prepareChallenge(); status.textContent='Completa la verificación y vuelve a pulsar Solicitar conversación.'; status.focus(); return; }
+      if (cloudflare) payload.turnstileToken = token;
       busy = true; submit.disabled = true; status.textContent = 'Enviando tu solicitud…';
       const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 15000);
       try {
-        const response = await fetch(endpoint, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload), signal:controller.signal, credentials:'omit', cache:'no-store'});
-        const ack = await response.json();
-        if (!response.ok || ack.accepted !== true) throw new Error('not-accepted');
+        let body;
+        if (formspree) {
+          body = new FormData();
+          for (const [key, value] of Object.entries(payload)) body.set(key, String(value));
+          body.set('subject', 'Nueva solicitud de conversación — seguros');
+        }
+        const response = await fetch(endpoint, formspree
+          ? {method:'POST', headers:{Accept:'application/json'}, body, signal:controller.signal, credentials:'omit', cache:'no-store'}
+          : {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload), signal:controller.signal, credentials:'omit', cache:'no-store'});
+        if (!response.ok) throw new Error('not-accepted');
+        if (cloudflare && (await response.json()).accepted !== true) throw new Error('not-accepted');
         form.reset(); requirements(); handoff.hidden = true;
-        status.textContent = 'Gracias. William revisará tu solicitud y se pondrá en contacto contigo.';
+        status.textContent = 'Gracias. El servicio registró tu solicitud. William la revisará y se pondrá en contacto contigo.';
         track('form_submitted'); status.focus();
       } catch (_) {
         status.textContent = 'No pudimos confirmar la recepción de tu solicitud. Tus datos siguen aquí. Puedes intentarlo de nuevo o llamar al 786-354-8796.';
