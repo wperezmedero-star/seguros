@@ -1,0 +1,18 @@
+{
+  "date": "2026-09-30",
+  "browser": "Chromium desktop",
+  "script": "nav-recovery-20260930",
+  "routes": [
+    "Sobre mí → Calculadoras",
+    "Calculadoras → Preguntas",
+    "Atrás → Calculadoras",
+    "Atrás → Sobre mí",
+    "Sobre mí → Protección"
+  ],
+  "result": "Todos los destinos se mostraron y la capa de transición quedó oculta al terminar.",
+  "unit_cases": 6,
+  "limits": [
+    "Safari/iPad físico no comprobado",
+    "No se reprodujo persistentemente el fallo intermitente original"
+  ]
+}
