@@ -31,11 +31,11 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
    Si la página llega tapada por el rayo, la cascada espera a que se descubra. */
 try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){var H=document.documentElement;H.classList.add('hero-entra');if(H.classList.contains('rayo-cubre'))H.style.setProperty('--hero-base','.22s')}}catch(e){}
 /* Primera entrada de marca; no compite con las transiciones internas. */
-try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.documentElement.classList.contains('rayo-cubre')&&!sessionStorage.getItem('wps-brand-entrance-v2')){document.documentElement.classList.add('brand-entrance-active');document.documentElement.style.setProperty('--hero-base','2.9s');sessionStorage.setItem('wps-brand-entrance-v2','1')}}catch(e){}
+try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.documentElement.classList.contains('rayo-cubre')&&!sessionStorage.getItem('wps-brand-entrance-v3')){document.documentElement.classList.add('brand-entrance-active');document.documentElement.style.setProperty('--hero-base','2.9s');sessionStorage.setItem('wps-brand-entrance-v3','1')}}catch(e){}
 </script>
 <link rel="preload" href="assets/brand/wp-approved-768.webp" as="image">
 <link rel="stylesheet" href="assets/css/sitio.css">
-<link rel="stylesheet" href="assets/css/growth.css?v=wp-logo-natural-v2">
+<link rel="stylesheet" href="assets/css/growth.css?v=wp-logo-natural-v3">
 <link rel="preload" href="tarjeta/assets/fraunces-500.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="tarjeta/assets/favicon-48.png">
 <script type="application/ld+json">
