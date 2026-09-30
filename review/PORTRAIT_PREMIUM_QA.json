@@ -1,0 +1,10 @@
+{
+  "checks": [
+    "Fotografía idéntica al original del repositorio (comparación byte a byte)",
+    "Marco arqueado eliminado del estilo Growth",
+    "Nombre colocado fuera de la foto mediante posicionamiento estático",
+    "Esquinas móviles específicas de 14 px",
+    "Vista previa independiente con foto, logo y fuentes incrustados"
+  ],
+  "visual_browser_check": "No realizado: política del navegador bloquea protocolo file. No se intentó eludirla."
+}
