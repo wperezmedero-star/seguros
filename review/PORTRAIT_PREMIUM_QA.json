@@ -6,5 +6,8 @@
     "Esquinas móviles específicas de 14 px",
     "Vista previa independiente con foto, logo y fuentes incrustados"
   ],
-  "visual_browser_check": "No realizado: política del navegador bloquea protocolo file. No se intentó eludirla."
+  "visual_browser_check": "Comprobado en Chromium desktop sobre la URL pública después de la publicación autorizada: foto cargada, radio 22 px, caption static bajo la foto, sin overflow horizontal.",
+  "limits": [
+    "Safari físico y móvil no comprobados"
+  ]
 }

@@ -7,3 +7,7 @@ Se conserva intacto `img/hero-william.webp`: sin regenerar rostro ni modificar e
 Para Astra y futuros colaboradores: cambios limitados a `assets/css/growth.css` e `index.html`. Rama de revisión `retrato-premium-20260930`; no fusionar ni desplegar automáticamente según la instrucción vigente del proyecto.
 
 Verificación: diff sin errores de formato; reglas específicas de portada comprobadas para marco desktop, firma estática y esquinas móviles. Navegador rechazó la URL local por política de protocolo; no hay verificación visual responsive ni Safari. No publicar como si estuviera visualmente validado.
+
+## Publicación y validación posterior
+
+William autorizó publicar el ajuste el 30 septiembre 2026 a las 16:24 ET. PR #9 fusionada mediante squash, commit d9bf8bb2634f002ecfb3744a5f514df862287fb8. Comprobación visual realizada en la URL pública: marco de 22 px, fotografía cargada, firma debajo y sin desbordamiento horizontal. Safari físico y móvil no comprobados. Captura: `screenshots/portrait-premium-live.jpg`.
