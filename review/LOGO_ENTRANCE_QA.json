@@ -9,10 +9,12 @@
     "Observed W opacity increasing before central join and P",
     "Final original composition reaches opacity 1",
     "Curtain becomes hidden and hero reaches opacity 1",
-    "No horizontal overflow"
+    "No horizontal overflow",
+    "Live v3 CSS: pieces 1.15s, ease-in-out, complete fade 1.2s, total 3.75s"
   ],
   "limits": [
     "Physical iPhone/iPad Safari not tested"
   ],
-  "screenshot": "screenshots/logo-entrance-v2.jpg"
+  "screenshot": "screenshots/logo-entrance-v3.jpg",
+  "version": "v3"
 }
