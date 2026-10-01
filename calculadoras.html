@@ -27,11 +27,11 @@
 /* Si se llega desde otra página del sitio, conserva desde el primer pintado la transición elegida por el destino. */
 try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps-rayo')==='1'?'rayo':'');sessionStorage.removeItem('wps-transicion');sessionStorage.removeItem('wps-rayo');if(T&&!matchMedia('(prefers-reduced-motion: reduce)').matches){if(!/^(suave|cristal|rayo)$/.test(T))T='suave';document.documentElement.classList.add('trans-'+T,'rayo-cubre');setTimeout(function(){if(document.documentElement.classList.contains('rayo-cubre'))document.documentElement.classList.remove('rayo-cubre','trans-suave','trans-cristal','trans-rayo')},1300)}}catch(e){}
 /* Primera entrada de marca; no compite con las transiciones internas. */
-try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.documentElement.classList.contains('rayo-cubre')&&!sessionStorage.getItem('wps-brand-entrance-v4')){document.documentElement.classList.add('brand-entrance-active');document.documentElement.style.setProperty('--hero-base','2.9s');sessionStorage.setItem('wps-brand-entrance-v4','1')}}catch(e){}
+try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.documentElement.classList.contains('rayo-cubre')&&!sessionStorage.getItem('wps-brand-entrance-v5')){document.documentElement.classList.add('brand-entrance-active');document.documentElement.style.setProperty('--hero-base','2.4s');setTimeout(function(){document.documentElement.classList.remove('brand-entrance-active')},3300);sessionStorage.setItem('wps-brand-entrance-v5','1')}}catch(e){}
 </script>
 <link rel="preload" href="assets/brand/wp-card-transparent-768.webp" as="image">
 <link rel="stylesheet" href="assets/css/sitio.css?v=20261001-vida">
-<link rel="stylesheet" href="assets/css/growth.css?v=header-transparent-v5">
+<link rel="stylesheet" href="assets/css/growth.css?v=logo-exploded-v5">
 <link rel="preload" href="tarjeta/assets/fraunces-500.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="tarjeta/assets/favicon-48.png">
 <script type="speculationrules">
