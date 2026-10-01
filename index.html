@@ -34,7 +34,7 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
    Si la página llega tapada por el rayo, la cascada espera a que se descubra. */
 try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){var H=document.documentElement;H.classList.add('hero-entra');if(H.classList.contains('rayo-cubre'))H.style.setProperty('--hero-base','.22s')}}catch(e){}
 </script>
-<link rel="stylesheet" href="assets/css/sitio.css">
+<link rel="stylesheet" href="assets/css/sitio.css?v=20261001-vida">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
 {"@type":"WebSite","@id":"https://williamperezseguros.com/#sitio","url":"https://williamperezseguros.com/","name":"William Pérez-Mederos · Vida, salud y retiro","inLanguage":"es-US","publisher":{"@id":"https://williamperezseguros.com/#william"}},
@@ -117,8 +117,10 @@ try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){var H=document.d
         <a class="btn btn--ghost solo-autorizado" href="calculadoras.html#calculadoras">Explorar las calculadoras</a>
         <a class="btn btn--ghost solo-educativo" href="preguntas.html#preguntas">Preparar mis preguntas</a>
       </div>
-      <div class="cta-life-meta solo-autorizado" aria-label="Información sobre la cotización"><span>Cotización en línea</span><i aria-hidden="true"></i><span>Atención en español</span><i aria-hidden="true"></i><span>Licensed in: FL.</span></div>
-      <p class="cta-life-destination solo-autorizado">Acceso a mi página personal de agente en Ethos.</p>
+      <div class="cta-life-trust solo-autorizado">
+        <p class="cta-life-meta"><span>Cotización en línea</span><i aria-hidden="true"></i><span class="sr-only">, </span><span>Atención en español</span><i aria-hidden="true"></i><span class="sr-only">, </span><span>Licensed in: FL.</span></p>
+        <p class="cta-life-destination">Acceso a mi página personal de agente en Ethos.</p>
+      </div>
       <p class="hero__trust">Orientación educativa de un agente autorizado. La disponibilidad, elegibilidad, primas, beneficios y garantías dependen de la aseguradora, del contrato y de la situación individual.</p>
     </div>
 
@@ -510,17 +512,16 @@ try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches){var H=document.d
   <button class="btn btn--gold" id="legalClose">Cerrar</button>
 </dialog>
 
-<script src="assets/js/navegacion.js"></script>
-<script src="assets/js/motor-calculadoras.js"></script>
-<script src="assets/js/asistente-arbol.js"></script>
-<script src="assets/js/sitio.js?v=20260925-voz4"></script>
-
-<!-- CTA de conversión VIDA · enlace personal de agente Ethos -->
-<div class="life-sticky-cta solo-autorizado" aria-label="Cotización de seguro de vida">
+<!-- CTA de conversión VIDA · enlace personal de agente Ethos (móvil). Se muestra/oculta desde sitio.js -->
+<div class="life-sticky-cta solo-autorizado">
   <a class="btn btn--gold" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos">
     <span>Cotiza tu seguro de vida</span><span class="life-sticky-cta__arrow" aria-hidden="true">→</span>
   </a>
 </div>
 
+<script src="assets/js/navegacion.js"></script>
+<script src="assets/js/motor-calculadoras.js"></script>
+<script src="assets/js/asistente-arbol.js"></script>
+<script src="assets/js/sitio.js?v=20261001-vida"></script>
 </body>
 </html>

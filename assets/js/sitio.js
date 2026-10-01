@@ -11,6 +11,9 @@ const CONFIG = {
   modo: "autorizado",
 
   whatsapp: "17863548796",
+  /* Página personal de agente de William en Ethos (cotización de VIDA).
+     Solo para seguro de vida y solo en modo autorizado. No añadir parámetros. */
+  ethosVida: "https://agents.ethoslife.com/invite/4a3e3",
   voiceEndpoint: "https://william-seguros-voz.wperezmedero.workers.dev/session",
   voiceMaxMs: 180000,
   crmEndpoint: "",
@@ -108,9 +111,11 @@ function setMenu(open){
   burger.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
   drawer.classList.toggle('is-open', open);
   drawer.setAttribute('aria-hidden', !open);
+  drawer.inert = !open;   // cerrado: sus enlaces (incluido el CTA de vida) salen del orden de tabulación
   scrim.classList.toggle('is-open', open);
   document.body.classList.toggle('is-locked', open);
 }
+drawer.inert = true;
 burger.onclick = () => setMenu(burger.getAttribute('aria-expanded') !== 'true');
 scrim.onclick = () => setMenu(false);
 drawer.addEventListener('click', e => { if (e.target.tagName === 'A') setMenu(false); });
@@ -204,20 +209,35 @@ function openSheet(k){
   $('#sheetSub').textContent = d.sub;
   $('#sheetNote').textContent = d.note;
   $('#sheetCta').dataset.prefill = d.cta;
+  ctaDelPanel(k);
   $('#sheetBody').innerHTML = d.items.map(i =>
     '<details class="acc"><summary>' + i.h + '</summary><div class="acc__in"><p>' + i.p +
     '</p><ul>' + i.l.map(x => '<li>' + x + '</li>').join('') + '</ul></div></details>').join('');
   openDialog(sheet);
 }
 $('#sheetClose').onclick = () => closeDialog(sheet);
-$('#sheetCta').onclick = e => {
-  const interes = $('#sheetCta').dataset.prefill;
-  if (AUTORIZADO && interes === 'Seguro de vida') {
-    e.preventDefault();
-    closeDialog(sheet);
-    location.href = 'https://agents.ethoslife.com/invite/4a3e3';
-    return;
+/* El panel de VIDA lleva a la cotización en Ethos (enlace real, misma pestaña).
+   Salud y Anualidades conservan su recorrido de siempre (#cotizar o, en modo
+   educativo, las calculadoras). */
+const SHEET_CTA_BASE = { href: $('#sheetCta').getAttribute('href'), texto: $('#sheetCta').textContent };
+function ctaDelPanel(k){
+  const cta = document.querySelector('#sheetCta');
+  if (!cta) return;
+  if (AUTORIZADO && k === 'vida') {
+    cta.setAttribute('href', CONFIG.ethosVida);
+    cta.setAttribute('data-life-quote-cta', '');
+    cta.setAttribute('aria-label', 'Cotiza tu seguro de vida en mi página personal de agente en Ethos');
+    cta.innerHTML = 'Cotiza tu seguro de vida <span aria-hidden="true">→</span>';
+  } else {
+    cta.setAttribute('href', SHEET_CTA_BASE.href);
+    cta.removeAttribute('data-life-quote-cta');
+    cta.removeAttribute('aria-label');
+    cta.textContent = SHEET_CTA_BASE.texto;
   }
+}
+$('#sheetCta').onclick = () => {
+  if ($('#sheetCta').hasAttribute('data-life-quote-cta')) { closeDialog(sheet); return; }   // navegación normal a Ethos
+  const interes = $('#sheetCta').dataset.prefill;
   prefill(interes);
   closeDialog(sheet);
   irASeccion('#cotizar');
@@ -1944,6 +1964,38 @@ try {
     $('#botOpen').setAttribute('aria-expanded', true);
   }
   requestAnimationFrame(() => { botLog.scrollTop = botLog.scrollHeight; });
+})();
+
+
+/* ═══ CTA VIDA · BARRA FIJA MÓVIL ═══
+   Aparece solo cuando hace falta: se oculta mientras otro CTA de vida está en
+   pantalla (hero, Protección, puente de la calculadora), mientras se escribe
+   en un formulario (teclado abierto) y con el menú, un diálogo o el asistente
+   abiertos. Sin JS o sin IntersectionObserver queda visible (CSS). */
+(() => {
+  const barra = document.querySelector('.life-sticky-cta');
+  if (!barra || !AUTORIZADO || !('IntersectionObserver' in window)) return;
+  const enLinea = $$('[data-life-quote-cta]').filter(a => !a.closest('.life-sticky-cta, .header, .drawer, dialog'));
+  const visibles = new Set();
+  let escribiendo = false;
+  const actualizar = () => {
+    const b = document.body.classList;
+    const ocultar = visibles.size > 0 || escribiendo || b.contains('is-locked') || b.contains('bot-open') || !!document.querySelector('dialog[open]');
+    barra.classList.toggle('is-hidden', ocultar);
+  };
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => e.isIntersecting ? visibles.add(e.target) : visibles.delete(e.target));
+    actualizar();
+  });
+  enLinea.forEach(a => io.observe(a));
+  const esCampo = t => t && t.matches && t.matches('input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea');
+  document.addEventListener('focusin', e => { if (esCampo(e.target)) { escribiendo = true; actualizar(); } });
+  document.addEventListener('focusout', e => { if (esCampo(e.target)) { escribiendo = false; setTimeout(actualizar, 120); } });
+  new MutationObserver(actualizar).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  $$('dialog').forEach(d => new MutationObserver(actualizar).observe(d, { attributes: true, attributeFilter: ['open'] }));
+  barra.classList.add('is-hidden');   // estado inicial; el observador decide en su primera lectura
+  if (!enLinea.length) actualizar();
+  addEventListener('pageshow', actualizar);
 })();
 
 

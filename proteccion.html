@@ -30,7 +30,7 @@
 /* Si se llega desde otra página del sitio, conserva desde el primer pintado la transición elegida por el destino. */
 try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps-rayo')==='1'?'rayo':'');sessionStorage.removeItem('wps-transicion');sessionStorage.removeItem('wps-rayo');if(T&&!matchMedia('(prefers-reduced-motion: reduce)').matches){if(!/^(suave|cristal|rayo)$/.test(T))T='suave';document.documentElement.classList.add('trans-'+T,'rayo-cubre')}}catch(e){}
 </script>
-<link rel="stylesheet" href="assets/css/sitio.css">
+<link rel="stylesheet" href="assets/css/sitio.css?v=20261001-vida">
 <script type="speculationrules">
 {"prefetch":[{"source":"document","where":{"href_matches":["/","/*.html"]},"eagerness":"moderate"}]}
 </script>
@@ -195,16 +195,19 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
     <!-- CTA -->
     <div class="arq__cta">
       <div>
+        <span class="cta-life-eyebrow solo-autorizado">Ahora puedes conocer tus opciones</span>
         <h3>Da el siguiente paso para proteger a tu familia</h3>
         <p>Si quieres conocer opciones de seguro de vida, puedes iniciar una cotización en línea desde mi página personal de agente.</p>
       </div>
       <div class="arq__cta-btns">
-        <a class="btn btn--gold cta-life-primary solo-autorizado" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos"><span>Cotiza tu seguro de vida</span><i aria-hidden="true">→</i></a>
+        <a class="btn btn--gold cta-life-primary solo-autorizado" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos"><span>Cotiza tu seguro de vida</span><i class="cta-life-arrow" aria-hidden="true">→</i></a>
         <a class="btn btn--gold solo-educativo" href="calculadoras.html#calculadoras">Calcular mi necesidad <i aria-hidden="true">→</i></a>
         <a class="btn btn--ghost" href="./#pilares">Conocer mis opciones <i aria-hidden="true">→</i></a>
       </div>
-      <div class="cta-life-meta solo-autorizado" aria-label="Información sobre la cotización"><span>Cotización en línea</span><i aria-hidden="true"></i><span>Atención en español</span><i aria-hidden="true"></i><span>Licensed in: FL.</span></div>
-      <p class="cta-life-destination solo-autorizado">Acceso a mi página personal de agente en Ethos.</p>
+      <div class="cta-life-trust solo-autorizado">
+        <p class="cta-life-meta"><span>Cotización en línea</span><i aria-hidden="true"></i><span class="sr-only">, </span><span>Atención en español</span><i aria-hidden="true"></i><span class="sr-only">, </span><span>Licensed in: FL.</span></p>
+        <p class="cta-life-destination">Acceso a mi página personal de agente en Ethos.</p>
+      </div>
     </div>
 
     <p class="arq__legal">Contenido educativo. La información presentada no constituye asesoramiento fiscal, legal, médico ni de inversión. La disponibilidad, elegibilidad, beneficios y características de los productos dependen de cada aseguradora y situación individual.</p>
@@ -381,15 +384,16 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
   <button class="btn btn--gold" id="legalClose">Cerrar</button>
 </dialog>
 
-<script src="assets/js/navegacion.js"></script>
-<script src="assets/js/motor-calculadoras.js"></script>
-<script src="assets/js/asistente-arbol.js"></script>
-<script src="assets/js/sitio.js?v=20260925-voz4"></script>
-
-<div class="life-sticky-cta solo-autorizado" aria-label="Cotización de seguro de vida">
+<!-- CTA de conversión VIDA · enlace personal de agente Ethos (móvil). Se muestra/oculta desde sitio.js -->
+<div class="life-sticky-cta solo-autorizado">
   <a class="btn btn--gold" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos">
     <span>Cotiza tu seguro de vida</span><span class="life-sticky-cta__arrow" aria-hidden="true">→</span>
   </a>
 </div>
+
+<script src="assets/js/navegacion.js"></script>
+<script src="assets/js/motor-calculadoras.js"></script>
+<script src="assets/js/asistente-arbol.js"></script>
+<script src="assets/js/sitio.js?v=20261001-vida"></script>
 </body>
 </html>
