@@ -1448,7 +1448,7 @@ html.trans-rayo.rayo-sale .rayo__marca{animation:trans-marca-suave .24s ease .16
 
 .life-sticky-cta{display:none}
 @media(max-width:760px){
-  body[data-modo="autorizado"].pag-inicio{padding-bottom:76px}
+  body[data-modo="autorizado"].pag-inicio,body[data-modo="autorizado"][data-pagina="proteccion"],body[data-modo="autorizado"][data-pagina="calculadoras"]{padding-bottom:76px}
   .life-sticky-cta{
     position:fixed;left:12px;right:84px;bottom:max(12px,env(safe-area-inset-bottom));
     z-index:54;display:block
@@ -1475,3 +1475,16 @@ html.trans-rayo.rayo-sale .rayo__marca{animation:trans-marca-suave .24s ease .16
   .cta-life-primary:hover,.cta-life-primary:focus-visible{transform:none}
   .cta-life-primary::before{display:none}
 }
+
+
+/* Puente de conversión tras la calculadora de VIDA */
+.calc-life-bridge{
+  margin-top:1rem;padding:1.05rem;border-radius:16px;
+  border:1px solid rgba(212,175,55,.24);
+  background:linear-gradient(180deg,rgba(212,175,55,.08),rgba(212,175,55,.035));
+  box-shadow:0 14px 34px -26px rgba(10,25,47,.5)
+}
+.calc-life-bridge p{font-size:.88rem;color:#4A5B75;line-height:1.55;margin-bottom:.85rem}
+.calc-life-bridge p strong{color:#0A192F;font-weight:700}
+.calc-life-bridge .btn{min-height:50px}
+.calc-life-bridge small{display:block;margin-top:.62rem;color:#6B7B90;font-size:.7rem;line-height:1.45;text-align:center}
