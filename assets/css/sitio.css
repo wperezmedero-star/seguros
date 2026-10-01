@@ -1411,3 +1411,67 @@ html.trans-rayo.rayo-sale .rayo__marca{animation:trans-marca-suave .24s ease .16
 /* La foto ya no depende del revelado por scroll: la maneja la cascada */
 .hero-entra .hero .hero__photo.reveal{opacity:1;transform:none;transition:none}
 @media(prefers-reduced-motion:reduce){.hero-entra .hero *{animation:none!important}}
+
+
+/* ═══ CTA VIDA · ETHOS ═══
+   CTA de conversión principal. Sin sonido; microinteracciones visuales sobrias. */
+.cta-life-primary{
+  position:relative;isolation:isolate;overflow:hidden;min-height:58px;padding:1rem 2rem;
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 16px 38px -14px rgba(212,175,55,.78),0 0 0 1px rgba(212,175,55,.08);
+  will-change:transform
+}
+.cta-life-primary::before{
+  content:"";position:absolute;inset:-50% auto -50% -35%;width:28%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.28),transparent);
+  transform:translateX(-240%) skewX(-18deg);transition:transform .72s cubic-bezier(.22,1,.36,1);
+  pointer-events:none;z-index:-1
+}
+.cta-life-primary:hover::before,.cta-life-primary:focus-visible::before{transform:translateX(620%) skewX(-18deg)}
+.cta-life-primary:hover,.cta-life-primary:focus-visible{
+  transform:translateY(-3px);
+  box-shadow:0 20px 46px -14px rgba(212,175,55,.85),0 0 0 1px rgba(232,200,106,.18)
+}
+.cta-life-primary:active{transform:translateY(-1px) scale(.985)}
+.cta-life-primary__arrow{flex:none;transition:transform .35s cubic-bezier(.22,1,.36,1)}
+.cta-life-primary:hover .cta-life-primary__arrow,.cta-life-primary:focus-visible .cta-life-primary__arrow{transform:translateX(5px)}
+.cta-life-meta{
+  margin-top:.85rem;display:flex;align-items:center;flex-wrap:wrap;gap:.45rem .65rem;
+  color:#B8C7DB;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;
+  letter-spacing:.04em
+}
+.cta-life-meta i{width:3px;height:3px;border-radius:50%;background:#D4AF37;opacity:.8}
+.cta-life-destination{margin-top:.4rem;color:#7E93AE;font-size:.76rem;line-height:1.55}
+.cta-life-header{white-space:nowrap;box-shadow:0 10px 26px -14px rgba(212,175,55,.8)}
+.cta-life-header span,.cta-life-drawer span{transition:transform .3s cubic-bezier(.22,1,.36,1)}
+.cta-life-header:hover span,.cta-life-drawer:hover span{transform:translateX(3px)}
+
+.life-sticky-cta{display:none}
+@media(max-width:760px){
+  body[data-modo="autorizado"].pag-inicio{padding-bottom:76px}
+  .life-sticky-cta{
+    position:fixed;left:12px;right:84px;bottom:max(12px,env(safe-area-inset-bottom));
+    z-index:54;display:block
+  }
+  .life-sticky-cta .btn{
+    width:100%;min-height:54px;padding:.82rem 1rem;border-radius:16px;
+    justify-content:space-between;font-size:.91rem;
+    box-shadow:0 14px 34px -13px rgba(212,175,55,.9),0 7px 18px rgba(4,10,20,.35);
+    border:1px solid rgba(255,255,255,.14);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)
+  }
+  .life-sticky-cta__arrow{font-size:1.2rem;line-height:1;transition:transform .3s cubic-bezier(.22,1,.36,1)}
+  .life-sticky-cta .btn:active{transform:scale(.985)}
+  .life-sticky-cta .btn:hover .life-sticky-cta__arrow,
+  .life-sticky-cta .btn:focus-visible .life-sticky-cta__arrow{transform:translateX(4px)}
+}
+@media(max-width:390px){
+  .life-sticky-cta{right:80px}
+  .life-sticky-cta .btn{font-size:.84rem;padding-inline:.85rem}
+}
+@media(prefers-reduced-motion:reduce){
+  .cta-life-primary,.cta-life-primary::before,.cta-life-primary__arrow,
+  .cta-life-header span,.cta-life-drawer span,.life-sticky-cta__arrow{transition:none!important}
+  .cta-life-primary:hover,.cta-life-primary:focus-visible{transform:none}
+  .cta-life-primary::before{display:none}
+}
