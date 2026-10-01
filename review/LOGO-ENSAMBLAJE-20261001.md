@@ -1,6 +1,6 @@
 # Logo WP — ensamblaje suave
 Fecha: 2026-10-01
-Estado: propuesta en rama separada; no publicada.
+Estado: publicación autorizada por William el 2026-10-01 con «Adelante tienes la aprobación». Revisión visual completada antes de integrar.
 
 ## Decisión aprobada por William
 Conservar el WP dorado original. Al abrir la web, mostrar sus piezas ligeramente separadas y ensamblarlas suavemente hasta recuperar la imagen exacta. Fondo navy #0A192F, sin rectángulo blanco y sin sonido.
@@ -18,5 +18,7 @@ Conservar el WP dorado original. Al abrir la web, mostrar sus piezas ligeramente
 
 ## Validación y límite pendiente
 Pasaron las comprobaciones del script de entrada en las cinco páginas: primera visita, visita repetida, reducir movimiento, llegada por transición interna y almacenamiento de sesión no disponible; también la retirada de seguridad.
-Pendiente: revisión visual real en navegador en móvil y escritorio. Playwright no tiene Chromium instalado; el navegador remoto no admite la vista previa local ni URLs data. No afirmar que esa revisión visual está completada.
-Antes de integrar, comprobar ensamblaje, ausencia de costuras perceptibles, pausa y desvanecimiento.
+Revisión visual completada con Chromium 153 y Playwright: escritorio 1365 × 900 y móvil 390 × 844. Imagen original decodificada; inspeccionadas capturas de piezas separadas y logo completo. A 2.8 s la pantalla tiene opacidad 0, visibility hidden y pointer-events none. La retirada de seguridad de la clase fue comprobada en ambos tamaños. Con reducir movimiento la entrada está oculta.
+Capturas: review/screenshots/logo-exploded-mobile-assembly.png, logo-exploded-mobile-complete.png y logo-exploded-desktop-assembly.png.
+Se resolvió la limitación inicial del navegador mediante Chromium procedente del paquete npm @sparticuz/chromium.
+Límite: no se ha probado en Safari de un iPad o iPhone físico.
