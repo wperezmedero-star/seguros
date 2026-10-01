@@ -1,0 +1,96 @@
+{
+  "checks": [
+    {
+      "name": "desktop",
+      "properties": {
+        "box": {
+          "x": 545,
+          "y": 305,
+          "width": 350,
+          "height": 350
+        },
+        "border": "0px",
+        "background": "rgba(0, 0, 0, 0)",
+        "duration": 350,
+        "delay": 2900,
+        "src": "assets/brand/wp-card-transparent-768.webp",
+        "finalOpacity": "1",
+        "parts": [
+          "0",
+          "0",
+          "0"
+        ]
+      },
+      "fade": [
+        {
+          "time": 2900,
+          "opacity": 1,
+          "visibility": "visible",
+          "pointerEvents": "none"
+        },
+        {
+          "time": 3075,
+          "opacity": 0.224439,
+          "visibility": "visible",
+          "pointerEvents": "none"
+        },
+        {
+          "time": 3250,
+          "opacity": 0,
+          "visibility": "hidden",
+          "pointerEvents": "none"
+        }
+      ],
+      "content": "visible after fade"
+    },
+    {
+      "name": "mobile",
+      "properties": {
+        "box": {
+          "x": 42.90625,
+          "y": 253.0262451171875,
+          "width": 304.1875,
+          "height": 304.1875
+        },
+        "border": "0px",
+        "background": "rgba(0, 0, 0, 0)",
+        "duration": 350,
+        "delay": 2900,
+        "src": "assets/brand/wp-card-transparent-768.webp",
+        "finalOpacity": "1",
+        "parts": [
+          "0",
+          "0",
+          "0"
+        ]
+      },
+      "fade": [
+        {
+          "time": 2900,
+          "opacity": 1,
+          "visibility": "visible",
+          "pointerEvents": "none"
+        },
+        {
+          "time": 3075,
+          "opacity": 0.224439,
+          "visibility": "visible",
+          "pointerEvents": "none"
+        },
+        {
+          "time": 3250,
+          "opacity": 0,
+          "visibility": "hidden",
+          "pointerEvents": "none"
+        }
+      ],
+      "content": "visible after fade"
+    },
+    "Reduced motion: splash hidden, content available"
+  ],
+  "errors": [],
+  "screenshots": [
+    "review/screenshots/logo-transparent-desktop.png",
+    "review/screenshots/logo-transparent-mobile.png"
+  ]
+}
