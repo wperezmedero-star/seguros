@@ -27,11 +27,12 @@
 /* Si se llega desde otra página del sitio, conserva desde el primer pintado la transición elegida por el destino. */
 try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps-rayo')==='1'?'rayo':'');sessionStorage.removeItem('wps-transicion');sessionStorage.removeItem('wps-rayo');if(T&&!matchMedia('(prefers-reduced-motion: reduce)').matches){if(!/^(suave|cristal|rayo)$/.test(T))T='suave';document.documentElement.classList.add('trans-'+T,'rayo-cubre');setTimeout(function(){if(document.documentElement.classList.contains('rayo-cubre'))document.documentElement.classList.remove('rayo-cubre','trans-suave','trans-cristal','trans-rayo')},1300)}}catch(e){}
 /* Primera entrada de marca; no compite con las transiciones internas. */
-try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.documentElement.classList.contains('rayo-cubre')&&!sessionStorage.getItem('wps-brand-entrance-v5')){document.documentElement.classList.add('brand-entrance-active');document.documentElement.style.setProperty('--hero-base','2.4s');setTimeout(function(){document.documentElement.classList.remove('brand-entrance-active')},3300);sessionStorage.setItem('wps-brand-entrance-v5','1')}}catch(e){}
+try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.documentElement.classList.contains('rayo-cubre')&&!sessionStorage.getItem('wps-brand-entrance-v6')){document.documentElement.classList.add('brand-entrance-active');document.documentElement.style.setProperty('--hero-base','3.3s');setTimeout(function(){document.documentElement.classList.remove('brand-entrance-active')},5200);sessionStorage.setItem('wps-brand-entrance-v6','1')}}catch(e){}
 </script>
 <link rel="preload" href="assets/brand/wp-card-transparent-768.webp" as="image">
+<link rel="preload" href="assets/brand/wp-piezas.webp" as="image">
 <link rel="stylesheet" href="assets/css/sitio.css?v=20261001-vida">
-<link rel="stylesheet" href="assets/css/growth.css?v=logo-exploded-v5">
+<link rel="stylesheet" href="assets/css/growth.css?v=logo-precision-v6">
 <link rel="preload" href="tarjeta/assets/fraunces-500.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="tarjeta/assets/favicon-48.png">
 <script type="speculationrules">
@@ -41,15 +42,16 @@ try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.docume
 
 <body data-modo="autorizado" class="pag-interna" data-pagina="preguntas">
 <div class="brand-entrance" aria-hidden="true">
+  <div class="brand-entrance__bg"></div>
   <div class="brand-entrance__lockup">
     <div class="brand-entrance__symbol">
-      <span class="brand-entrance__part brand-entrance__part--w"><img src="assets/brand/wp-card-transparent-768.webp" alt="" width="768" height="768" decoding="async"></span>
-      <span class="brand-entrance__part brand-entrance__part--join"><img src="assets/brand/wp-card-transparent-768.webp" alt="" width="768" height="768" decoding="async"></span>
-      <span class="brand-entrance__part brand-entrance__part--p"><img src="assets/brand/wp-card-transparent-768.webp" alt="" width="768" height="768" decoding="async"></span>
       <img class="brand-entrance__final" src="assets/brand/wp-card-transparent-768.webp" alt="" width="768" height="768" decoding="async">
     </div>
+    <p class="brand-entrance__name">William Pérez <span>Seguros</span></p>
+    <p class="brand-entrance__tag">Protege a quienes dependen de ti</p>
   </div>
 </div>
+<script src="assets/js/entrada-marca.js?v=6"></script>
 <div class="rayo" aria-hidden="true">
   <div class="rayo__banda">
     <div class="rayo__fondo"></div>
