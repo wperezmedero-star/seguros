@@ -65,7 +65,7 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
       <a href="sobre-mi.html">Sobre mí</a>
       <a href="preguntas.html">Preguntas</a>
     </nav>
-    <a class="btn btn--gold header__cta solo-autorizado" href="#cotizar">Solicitar revisión</a><a class="btn btn--gold header__cta solo-educativo" href="#calculadoras">Usar las calculadoras</a>
+    <a class="btn btn--gold header__cta solo-autorizado cta-life-header" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos">Cotiza tu seguro de vida <span aria-hidden="true">→</span></a><a class="btn btn--gold header__cta solo-educativo" href="#calculadoras">Usar las calculadoras</a>
     <button class="burger" id="burger" aria-expanded="false" aria-controls="drawer" aria-label="Abrir menú">
       <span></span><span></span><span></span>
     </button>
@@ -82,7 +82,7 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
   <a href="#agenda" class="solo-autorizado">Agendar <span class="num"></span></a>
   <a href="sobre-mi.html">Sobre mí <span class="num"></span></a>
   <a href="preguntas.html">Preguntas <span class="num"></span></a>
-  <a class="btn btn--gold solo-autorizado" href="#cotizar">Solicitar revisión</a><a class="btn btn--gold solo-educativo" href="#calculadoras">Usar las calculadoras</a>
+  <a class="btn btn--gold solo-autorizado cta-life-drawer" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos">Cotiza tu seguro de vida <span aria-hidden="true">→</span></a><a class="btn btn--gold solo-educativo" href="#calculadoras">Usar las calculadoras</a>
 </nav>
 
 <main id="top">
@@ -121,10 +121,17 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
         <div class="calc__acts">
           <button class="btn btn--gold btn--sm" data-run="vida">Calcular</button>
           <button class="btn btn--ghost btn--sm" data-reset="vida">Limpiar</button>
-          <a class="btn btn--ghost btn--sm" href="#cotizar" data-prefill="Seguro de vida" data-cta-modo>Hablar con un agente</a>
+          <a class="btn btn--gold btn--sm solo-autorizado" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos">Cotiza tu seguro de vida <span aria-hidden="true">→</span></a><a class="btn btn--ghost btn--sm solo-educativo" href="preguntas.html#preguntas">Preparar mis preguntas</a>
         </div>
       </div>
-      <div class="calc__out" id="out-vida" aria-live="polite"></div>
+      <div>
+        <div class="calc__out" id="out-vida" aria-live="polite"></div>
+        <div class="calc-life-bridge solo-autorizado">
+          <p><strong>¿Quieres pasar de la estimación a una cotización real?</strong><br>Continúa en mi página personal de agente en Ethos.</p>
+          <a class="btn btn--gold btn--block" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta aria-label="Continuar a cotizar seguro de vida en mi página personal de agente en Ethos">Cotiza tu seguro de vida <span aria-hidden="true">→</span></a>
+          <small>Cotización en línea · Atención en español · Licensed in: FL.</small>
+        </div>
+      </div>
     </div>
 
     <!-- Retiro -->
@@ -495,5 +502,11 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
 <script src="assets/js/motor-calculadoras.js"></script>
 <script src="assets/js/asistente-arbol.js"></script>
 <script src="assets/js/sitio.js?v=20260925-voz4"></script>
+
+<div class="life-sticky-cta solo-autorizado" aria-label="Cotización de seguro de vida">
+  <a class="btn btn--gold" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos">
+    <span>Cotiza tu seguro de vida</span><span class="life-sticky-cta__arrow" aria-hidden="true">→</span>
+  </a>
+</div>
 </body>
 </html>
