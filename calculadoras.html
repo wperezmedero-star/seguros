@@ -30,7 +30,7 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
 try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.documentElement.classList.contains('rayo-cubre')&&!sessionStorage.getItem('wps-brand-entrance-v4')){document.documentElement.classList.add('brand-entrance-active');document.documentElement.style.setProperty('--hero-base','2.9s');sessionStorage.setItem('wps-brand-entrance-v4','1')}}catch(e){}
 </script>
 <link rel="preload" href="assets/brand/wp-card-transparent-768.webp" as="image">
-<link rel="stylesheet" href="assets/css/sitio.css">
+<link rel="stylesheet" href="assets/css/sitio.css?v=20261001-vida">
 <link rel="stylesheet" href="assets/css/growth.css?v=header-transparent-v5">
 <link rel="preload" href="tarjeta/assets/fraunces-500.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="tarjeta/assets/favicon-48.png">
@@ -73,7 +73,7 @@ try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.docume
       <a href="sobre-mi.html">Sobre mí</a>
       <a href="preguntas.html">Preguntas</a>
     </nav>
-    <a class="btn btn--gold header__cta solo-autorizado" href="#cotizar">Revisar mi protección</a><a class="btn btn--gold header__cta solo-educativo" href="#calculadoras">Usar las calculadoras</a>
+    <a class="btn btn--gold header__cta solo-autorizado cta-life-header" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta data-growth-event="ethos_quote" aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos">Cotiza tu seguro de vida <span aria-hidden="true">→</span></a><a class="btn btn--gold header__cta solo-educativo" href="#calculadoras">Usar las calculadoras</a>
     <button class="burger" id="burger" aria-expanded="false" aria-controls="drawer" aria-label="Abrir menú">
       <span></span><span></span><span></span>
     </button>
@@ -88,7 +88,7 @@ try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.docume
   <a href="./" aria-current="page">Calculadoras <span class="num"></span></a>
   <a href="sobre-mi.html">Sobre mí <span class="num"></span></a>
   <a href="preguntas.html">Preguntas <span class="num"></span></a>
-  <a class="btn btn--gold solo-autorizado" href="#cotizar">Revisar mi protección</a><a class="btn btn--gold solo-educativo" href="#calculadoras">Usar las calculadoras</a>
+  <a class="btn btn--gold solo-autorizado cta-life-drawer" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta data-growth-event="ethos_quote" aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos">Cotiza tu seguro de vida <span aria-hidden="true">→</span></a><a class="btn btn--ghost solo-autorizado drawer-secondary" href="#cotizar" data-growth-event="review_protection">Revisar mi protección</a><a class="btn btn--gold solo-educativo" href="#calculadoras">Usar las calculadoras</a>
 </nav>
 
 <main id="top">
@@ -131,7 +131,16 @@ try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.docume
           <a class="btn btn--ghost btn--sm" href="#cotizar" data-prefill="Seguro de vida" data-cta-modo>Revisar mi estimado</a>
         </div>
       </div>
-      <div><div class="calc__out" id="out-vida" aria-live="polite"></div><div class="growth-calc-next"><p>¿Quieres revisar este resultado conmigo?</p><a class="btn btn--gold" href="#cotizar" data-need-link="estimado" data-growth-event="review_protection">Revisar mi estimado</a></div></div>
+      <div class="calc__side">
+        <div class="calc__out" id="out-vida" aria-live="polite"></div>
+        <div class="calc-life-bridge solo-autorizado" role="group" aria-labelledby="calc-life-bridge-t">
+          <span class="cta-life-eyebrow">Siguiente paso</span>
+          <p><strong id="calc-life-bridge-t">¿Quieres pasar de la estimación a una cotización real?</strong>Continúa en mi página personal de agente en Ethos.</p>
+          <a class="btn btn--gold btn--block cta-life-primary" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta data-growth-event="ethos_quote" aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos"><span>Cotiza tu seguro de vida</span><span class="cta-life-arrow" aria-hidden="true">→</span></a>
+          <small>Cotización en línea · Atención en español · Licensed in: FL.</small>
+          <a class="calc-life-alt" href="#cotizar" data-need-link="estimado" data-growth-event="review_protection">¿Prefieres revisar este resultado conmigo? <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
     </div>
 
     <!-- Retiro -->
@@ -385,11 +394,18 @@ try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.docume
   <button class="btn btn--gold" id="legalClose">Cerrar</button>
 </dialog>
 
+<!-- CTA de conversión VIDA · enlace personal de agente Ethos (móvil). Se muestra/oculta desde sitio.js -->
+<div class="life-sticky-cta solo-autorizado">
+  <a class="btn btn--gold" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta data-growth-event="ethos_quote" aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos">
+    <span>Cotiza tu seguro de vida</span><span class="life-sticky-cta__arrow" aria-hidden="true">→</span>
+  </a>
+</div>
+
 <script src="assets/js/growth-config.js"></script>
 <script src="assets/js/growth.js"></script>
 <script src="assets/js/navegacion.js?v=nav-recovery-20260930"></script>
 <script src="assets/js/motor-calculadoras.js"></script>
 <script src="assets/js/asistente-arbol.js"></script>
-<script src="assets/js/sitio.js?v=growth-v1-privacy1"></script>
+<script src="assets/js/sitio.js?v=20261001-vida"></script>
 </body>
 </html>
