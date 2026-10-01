@@ -8,11 +8,23 @@
 (() => {
   'use strict';
   const PAGINAS = {"index": "./", "proteccion": "proteccion.html", "calculadoras": "calculadoras.html", "sobre-mi": "sobre-mi.html", "preguntas": "preguntas.html"};
-  const SECCIONES = {"top": "index", "panel": "index", "pilares": "index", "alcance": "index", "arquitectura": "proteccion", "recursos": "proteccion", "calculadoras": "calculadoras", "cotizar": "calculadoras", "agenda": "calculadoras", "sobre-mi": "sobre-mi", "preguntas": "preguntas"};
+  const SECCIONES = {"top": "index", "conversacion": "index", "necesidades": "index", "vida": "index", "pilares": "index", "alcance": "index", "arquitectura": "proteccion", "recursos": "proteccion", "calculadoras": "calculadoras", "cotizar": "calculadoras", "agenda": "calculadoras", "sobre-mi": "sobre-mi", "preguntas": "preguntas"};
   const html = document.documentElement;
   const reducir = matchMedia('(prefers-reduced-motion: reduce)');
   const CLASES_TRANS = ['trans-rayo','trans-cristal','trans-suave'];
   let saliendo = false, pendiente = null, relojPendiente = 0;
+  let relojSalida = 0, relojRecuperacion = 0, bandaSalida = null, finSalida = null;
+
+  function cancelarSalida(){
+    clearTimeout(relojSalida); clearTimeout(relojRecuperacion);
+    if (bandaSalida && finSalida) bandaSalida.removeEventListener('animationend', finSalida);
+    bandaSalida = null; finSalida = null;
+  }
+  function recuperar(){
+    cancelarSalida(); limpiarTransicion(); saliendo = false;
+    clearTimeout(relojPendiente); pendiente = null;
+    try { sessionStorage.removeItem('wps-transicion'); sessionStorage.removeItem('wps-rayo'); } catch (_) {}
+  }
 
   function limpiarTransicion(){
     html.classList.remove('rayo-sale','rayo-cubre',...CLASES_TRANS);
@@ -20,14 +32,13 @@
 
   if (html.classList.contains('rayo-cubre')) {
     const banda = document.querySelector('.rayo__banda');
-    const limpiar = () => limpiarTransicion();
-    if (banda) banda.addEventListener('animationend', limpiar, { once: true });
+    const limpiar = () => { if (html.classList.contains('rayo-cubre')) limpiarTransicion(); };
+    if (banda) banda.addEventListener('animationend', e => { if (e.target === banda) limpiar(); });
     setTimeout(limpiar, 1300);
   }
 
-  addEventListener('pageshow', e => {
-    if (e.persisted) { limpiarTransicion(); saliendo = false; }
-  });
+  addEventListener('pageshow', e => { if (e.persisted) recuperar(); });
+  addEventListener('pagehide', cancelarSalida);
 
   function vozActiva(){
     try { return typeof R !== 'undefined' && (R.active || R.connecting); } catch (_) { return false; }
@@ -54,7 +65,9 @@
   function tipoTransicion(url){
     const destino = paginaDestino(url);
     const actual = document.body.dataset.pagina || '';
-    if (destino === 'proteccion' && actual !== 'proteccion') return 'rayo';
+    if (destino === 'proteccion' && actual !== 'proteccion') {
+      try { if (!sessionStorage.getItem('wps-firma-vista')) { sessionStorage.setItem('wps-firma-vista','1'); return 'rayo'; } } catch (_) {}
+    }
     if (destino === 'calculadoras') return 'cristal';
     return 'suave';
   }
@@ -69,7 +82,7 @@
     }
     saliendo = true;
     document.body.classList.remove('is-locked');
-    if (reducir.matches) { location.href = url; return true; }
+    if (reducir.matches) { saliendo = false; location.href = url; return true; }
 
     const tipo = tipoTransicion(url);
     try {
@@ -81,11 +94,22 @@
     html.classList.add('trans-' + tipo, 'rayo-sale');
 
     let ido = false;
-    const ir = () => { if (!ido) { ido = true; location.href = url; } };
+    const ir = () => {
+      if (ido) return;
+      ido = true; clearTimeout(relojSalida);
+      if (bandaSalida && finSalida) bandaSalida.removeEventListener('animationend', finSalida);
+      try { location.href = url; } catch (_) { recuperar(); }
+    };
     const banda = document.querySelector('.rayo__banda');
-    if (banda) banda.addEventListener('animationend', ir, { once: true });
+    if (banda) {
+      bandaSalida = banda;
+      finSalida = e => { if (e.target === banda) ir(); };
+      banda.addEventListener('animationend', finSalida);
+    }
     const respaldo = tipo === 'rayo' ? 520 : tipo === 'cristal' ? 500 : 420;
-    setTimeout(ir, respaldo);
+    relojSalida = setTimeout(ir, respaldo);
+    // If the next document has not replaced this one, never leave a frozen curtain.
+    relojRecuperacion = setTimeout(recuperar, 1800);
     return true;
   }
 

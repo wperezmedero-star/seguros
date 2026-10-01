@@ -1,0 +1,13 @@
+{
+  "checks": [
+    "Fotografía idéntica al original del repositorio (comparación byte a byte)",
+    "Marco arqueado eliminado del estilo Growth",
+    "Nombre colocado fuera de la foto mediante posicionamiento estático",
+    "Esquinas móviles específicas de 14 px",
+    "Vista previa independiente con foto, logo y fuentes incrustados"
+  ],
+  "visual_browser_check": "Comprobado en Chromium desktop sobre la URL pública después de la publicación autorizada: foto cargada, radio 22 px, caption static bajo la foto, sin overflow horizontal.",
+  "limits": [
+    "Safari físico y móvil no comprobados"
+  ]
+}

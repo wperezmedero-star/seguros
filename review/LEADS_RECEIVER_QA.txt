@@ -1,0 +1,34 @@
+✔ accepts only after fixed recipient email provider acknowledgement (10.858378ms)
+✔ email contact preference and safe reply address (1.023532ms)
+✔ rejects missing consent (0.855374ms)
+✔ rejects wrong consent version (0.496554ms)
+✔ rejects sensitive extra field (0.868944ms)
+✔ rejects attacker recipient (1.488931ms)
+✔ rejects empty name (0.408945ms)
+✔ rejects header injection (0.350749ms)
+✔ rejects invalid phone (0.469574ms)
+✔ rejects invalid zip (0.518977ms)
+✔ rejects unknown interest (0.288066ms)
+✔ rejects unknown schedule (0.270209ms)
+✔ rejects arbitrary origin path (0.271441ms)
+✔ rejects missing token (0.214908ms)
+✔ rejects oversized token (0.213956ms)
+✔ rejects invalid email preference (0.265202ms)
+✔ rejects client timestamp invalid (0.284981ms)
+✔ rejects prototype key as interest (3.044489ms)
+✔ rejects excessive streamed body even without length header (0.424087ms)
+✔ rejects malformed JSON (0.466709ms)
+✔ rejects foreign / missing origins (0.375825ms)
+✔ preflight is scoped; no GET, form encoding or other route (0.535191ms)
+✔ fails closed if any required account configuration is absent (0.449454ms)
+✔ rate limit prevents downstream sends (0.319963ms)
+✔ rejects failed, replayed, wrong hostname or wrong action challenge (3.666379ms)
+✔ email failure and missing acknowledgement never produce accepted (1.020519ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 115.426506

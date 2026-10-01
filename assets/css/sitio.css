@@ -1480,24 +1480,15 @@ html.trans-rayo.rayo-sale .rayo__marca{animation:trans-marca-suave .24s ease .16
   min-height:56px;padding-block:.9rem;white-space:nowrap
 }
 .drawer a.cta-life-drawer span{font-family:inherit;font-size:1.05em;color:inherit}
+.drawer a.drawer-secondary{margin-top:.75rem;font-family:inherit;font-size:.95rem;font-weight:600;justify-content:center;min-height:52px}
+/* Enlace telefónico bajo el bloque de confianza del hero */
+.hero__trust a{white-space:nowrap;color:#E8C86A;text-decoration:underline;text-decoration-color:rgba(232,200,106,.45);text-underline-offset:3px}
+.hero__trust a:hover{text-decoration-color:#E8C86A}
 
-/* Tablet (761–1179 px): el header muestra el CTA junto al menú.
-   1040–1179 px: la navegación completa + CTA no caben sin partir la marca,
-   así que se usa el menú; desde 1180 px vuelve la navegación completa. */
-@media(min-width:761px) and (max-width:1179px){
+/* Tablet (761–1039 px): el header muestra el CTA junto al menú */
+@media(min-width:761px) and (max-width:1039px){
   .header__bar{gap:.9rem}
   .header__cta{display:inline-flex;margin-left:auto}
-}
-@media(min-width:1040px) and (max-width:1179px){
-  .nav{display:none}
-  .burger{display:grid}
-}
-@media(min-width:1180px) and (max-width:1279px){
-  .header__bar{gap:1.1rem}
-  .brand{white-space:nowrap}
-  .nav{gap:1.25rem}
-  .nav a{font-size:.88rem;white-space:nowrap}
-  .header .header__cta{padding-inline:1.1rem;font-size:.84rem}
 }
 
 /* ── CTA fijo móvil ──
@@ -1568,6 +1559,11 @@ html.trans-rayo.rayo-sale .rayo__marca{animation:trans-marca-suave .24s ease .16
 .calc-life-bridge .btn{min-height:52px;white-space:nowrap}
 .calc-life-bridge .btn:focus-visible{outline-color:#0A192F}
 .calc-life-bridge small{display:block;margin-top:.65rem;color:#5E6F85;font-size:.7rem;line-height:1.45;text-align:center}
+/* Alternativa humana bajo el puente: revisar el resultado con William (formulario) */
+.calc-life-alt{display:block;margin-top:.75rem;padding-top:.7rem;border-top:1px solid rgba(10,25,47,.08);
+  text-align:center;font-size:.82rem;font-weight:600;color:#0A192F;text-decoration:underline;text-decoration-color:rgba(212,175,55,.7);text-underline-offset:3px}
+.calc-life-alt:hover{text-decoration-color:#0A192F}
+.calc-life-alt:focus-visible{outline-color:#0A192F}
 @media(max-width:380px){.calc-life-bridge{padding-inline:1rem}.calc-life-bridge .btn{font-size:.94rem;padding-inline:1.1rem}}
 
 @media(prefers-reduced-motion:reduce){

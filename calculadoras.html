@@ -22,21 +22,34 @@
 <meta property="og:image:alt" content="William Pérez-Mederos, agente de seguros licenciado en Florida.">
 <meta name="twitter:card" content="summary_large_image">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap"></noscript>
+
 <script>
 /* Si se llega desde otra página del sitio, conserva desde el primer pintado la transición elegida por el destino. */
-try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps-rayo')==='1'?'rayo':'');sessionStorage.removeItem('wps-transicion');sessionStorage.removeItem('wps-rayo');if(T&&!matchMedia('(prefers-reduced-motion: reduce)').matches){if(!/^(suave|cristal|rayo)$/.test(T))T='suave';document.documentElement.classList.add('trans-'+T,'rayo-cubre')}}catch(e){}
+try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps-rayo')==='1'?'rayo':'');sessionStorage.removeItem('wps-transicion');sessionStorage.removeItem('wps-rayo');if(T&&!matchMedia('(prefers-reduced-motion: reduce)').matches){if(!/^(suave|cristal|rayo)$/.test(T))T='suave';document.documentElement.classList.add('trans-'+T,'rayo-cubre');setTimeout(function(){if(document.documentElement.classList.contains('rayo-cubre'))document.documentElement.classList.remove('rayo-cubre','trans-suave','trans-cristal','trans-rayo')},1300)}}catch(e){}
+/* Primera entrada de marca; no compite con las transiciones internas. */
+try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!document.documentElement.classList.contains('rayo-cubre')&&!sessionStorage.getItem('wps-brand-entrance-v4')){document.documentElement.classList.add('brand-entrance-active');document.documentElement.style.setProperty('--hero-base','2.9s');sessionStorage.setItem('wps-brand-entrance-v4','1')}}catch(e){}
 </script>
+<link rel="preload" href="assets/brand/wp-card-transparent-768.webp" as="image">
 <link rel="stylesheet" href="assets/css/sitio.css?v=20261001-vida">
+<link rel="stylesheet" href="assets/css/growth.css?v=header-transparent-v5">
+<link rel="preload" href="tarjeta/assets/fraunces-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="icon" href="tarjeta/assets/favicon-48.png">
 <script type="speculationrules">
 {"prefetch":[{"source":"document","where":{"href_matches":["/","/*.html"]},"eagerness":"moderate"}]}
 </script>
 </head>
 
-<body class="pag-interna" data-pagina="calculadoras">
+<body data-modo="autorizado" class="pag-interna" data-pagina="calculadoras">
+<div class="brand-entrance" aria-hidden="true">
+  <div class="brand-entrance__lockup">
+    <div class="brand-entrance__symbol">
+      <span class="brand-entrance__part brand-entrance__part--w"><img src="assets/brand/wp-card-transparent-768.webp" alt="" width="768" height="768" decoding="async"></span>
+      <span class="brand-entrance__part brand-entrance__part--join"><img src="assets/brand/wp-card-transparent-768.webp" alt="" width="768" height="768" decoding="async"></span>
+      <span class="brand-entrance__part brand-entrance__part--p"><img src="assets/brand/wp-card-transparent-768.webp" alt="" width="768" height="768" decoding="async"></span>
+      <img class="brand-entrance__final" src="assets/brand/wp-card-transparent-768.webp" alt="" width="768" height="768" decoding="async">
+    </div>
+  </div>
+</div>
 <div class="rayo" aria-hidden="true">
   <div class="rayo__banda">
     <div class="rayo__fondo"></div>
@@ -45,27 +58,22 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
   </div>
   <svg class="rayo__marca" viewBox="0 0 40 40" fill="none" focusable="false"><path d="M20 3l14 6v11c0 9.4-5.9 15.4-14 17-8.1-1.6-14-7.6-14-17V9l14-6z" stroke="#D4AF37" stroke-width="1.6"/><path d="M13.5 20.5l4.5 4.5 9-9.5" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
 </div>
-<a class="sr-only" href="#top">Saltar al contenido</a>
+<a class="sr-only growth-skip" href="#top">Saltar al contenido</a>
 
 <header class="header" id="header">
   <div class="wrap header__bar">
     <a class="brand" href="./" aria-label="Inicio">
-      <svg class="brand__mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-        <path d="M20 3l14 6v11c0 9.4-5.9 15.4-14 17-8.1-1.6-14-7.6-14-17V9l14-6z" stroke="#D4AF37" stroke-width="1.6"/>
-        <path d="M13.5 20.5l4.5 4.5 9-9.5" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+      <span class="wp-brand-mark" aria-hidden="true"><img src="assets/brand/wp-card-transparent-768.webp" alt="" width="768" height="768" decoding="async"></span>
       <span>William Pérez-Mederos<small>Vida · Salud · Anualidades</small></span>
     </a>
     <nav class="nav" aria-label="Principal">
       <a href="./">Inicio</a>
       <a href="proteccion.html">Protección</a>
       <a href="calculadoras.html" aria-current="page">Calculadoras</a>
-      <a href="#cotizar" class="solo-autorizado">Revisión</a>
-      <a href="#agenda" class="solo-autorizado">Agendar</a>
       <a href="sobre-mi.html">Sobre mí</a>
       <a href="preguntas.html">Preguntas</a>
     </nav>
-    <a class="btn btn--gold header__cta solo-autorizado cta-life-header" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos">Cotiza tu seguro de vida <span aria-hidden="true">→</span></a><a class="btn btn--gold header__cta solo-educativo" href="#calculadoras">Usar las calculadoras</a>
+    <a class="btn btn--gold header__cta solo-autorizado cta-life-header" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta data-growth-event="ethos_quote" aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos">Cotiza tu seguro de vida <span aria-hidden="true">→</span></a><a class="btn btn--gold header__cta solo-educativo" href="#calculadoras">Usar las calculadoras</a>
     <button class="burger" id="burger" aria-expanded="false" aria-controls="drawer" aria-label="Abrir menú">
       <span></span><span></span><span></span>
     </button>
@@ -74,15 +82,13 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
 
 <div class="scrim" id="scrim"></div>
 
-<nav class="drawer" id="drawer" aria-label="Menú móvil" aria-hidden="true">
+<nav class="drawer" id="drawer" aria-label="Menú móvil" aria-hidden="true" inert>
   <a href="./">Inicio <span class="num"></span></a>
   <a href="proteccion.html">Protección <span class="num"></span></a>
   <a href="./" aria-current="page">Calculadoras <span class="num"></span></a>
-  <a href="#cotizar" class="solo-autorizado">Revisión <span class="num"></span></a>
-  <a href="#agenda" class="solo-autorizado">Agendar <span class="num"></span></a>
   <a href="sobre-mi.html">Sobre mí <span class="num"></span></a>
   <a href="preguntas.html">Preguntas <span class="num"></span></a>
-  <a class="btn btn--gold solo-autorizado cta-life-drawer" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos">Cotiza tu seguro de vida <span aria-hidden="true">→</span></a><a class="btn btn--gold solo-educativo" href="#calculadoras">Usar las calculadoras</a>
+  <a class="btn btn--gold solo-autorizado cta-life-drawer" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta data-growth-event="ethos_quote" aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos">Cotiza tu seguro de vida <span aria-hidden="true">→</span></a><a class="btn btn--ghost solo-autorizado drawer-secondary" href="#cotizar" data-growth-event="review_protection">Revisar mi protección</a><a class="btn btn--gold solo-educativo" href="#calculadoras">Usar las calculadoras</a>
 </nav>
 
 <main id="top">
@@ -102,6 +108,7 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
     </div>
 
     <!-- Vida -->
+<p class="growth-calculator-label">Estimación educativa de necesidad de cobertura.</p>
     <div class="calc is-active" id="calc-vida">
       <div>
         <h3>¿Qué brecha financiera enfrentaría tu familia?</h3>
@@ -121,7 +128,7 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
         <div class="calc__acts">
           <button class="btn btn--gold btn--sm" data-run="vida">Calcular</button>
           <button class="btn btn--ghost btn--sm" data-reset="vida">Limpiar</button>
-          <a class="btn btn--ghost btn--sm" href="#cotizar" data-prefill="Seguro de vida" data-cta-modo>Hablar con un agente</a>
+          <a class="btn btn--ghost btn--sm" href="#cotizar" data-prefill="Seguro de vida" data-cta-modo>Revisar mi estimado</a>
         </div>
       </div>
       <div class="calc__side">
@@ -129,8 +136,9 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
         <div class="calc-life-bridge solo-autorizado" role="group" aria-labelledby="calc-life-bridge-t">
           <span class="cta-life-eyebrow">Siguiente paso</span>
           <p><strong id="calc-life-bridge-t">¿Quieres pasar de la estimación a una cotización real?</strong>Continúa en mi página personal de agente en Ethos.</p>
-          <a class="btn btn--gold btn--block cta-life-primary" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos"><span>Cotiza tu seguro de vida</span><span class="cta-life-arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn--gold btn--block cta-life-primary" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta data-growth-event="ethos_quote" aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos"><span>Cotiza tu seguro de vida</span><span class="cta-life-arrow" aria-hidden="true">→</span></a>
           <small>Cotización en línea · Atención en español · Licensed in: FL.</small>
+          <a class="calc-life-alt" href="#cotizar" data-need-link="estimado" data-growth-event="review_protection">¿Prefieres revisar este resultado conmigo? <span aria-hidden="true">→</span></a>
         </div>
       </div>
     </div>
@@ -154,7 +162,7 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
         <div class="calc__acts">
           <button class="btn btn--gold btn--sm" data-run="retiro">Calcular</button>
           <button class="btn btn--ghost btn--sm" data-reset="retiro">Limpiar</button>
-          <a class="btn btn--ghost btn--sm" href="#cotizar" data-prefill="Retiro o anualidades" data-cta-modo>Hablar con un agente</a>
+          <a class="btn btn--ghost btn--sm" href="#cotizar" data-prefill="Retiro o anualidades" data-cta-modo>Revisar mi estimado</a>
         </div>
       </div>
       <div class="calc__out" id="out-retiro" aria-live="polite"></div>
@@ -179,7 +187,7 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
         <div class="calc__acts">
           <button class="btn btn--gold btn--sm" data-run="salud">Calcular</button>
           <button class="btn btn--ghost btn--sm" data-reset="salud">Limpiar</button>
-          <a class="btn btn--ghost btn--sm" href="#cotizar" data-prefill="Cobertura de salud" data-cta-modo>Hablar con un agente</a>
+          <a class="btn btn--ghost btn--sm" href="#cotizar" data-prefill="Cobertura de salud" data-cta-modo>Revisar mi estimado</a>
         </div>
       </div>
       <div class="calc__out" id="out-salud" aria-live="polite"></div>
@@ -202,7 +210,7 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
         <div class="calc__acts">
           <button class="btn btn--gold btn--sm" data-run="uni">Calcular</button>
           <button class="btn btn--ghost btn--sm" data-reset="uni">Limpiar</button>
-          <a class="btn btn--ghost btn--sm" href="#cotizar" data-prefill="Ahorro universitario" data-cta-modo>Hablar con un agente</a>
+          <a class="btn btn--ghost btn--sm" href="#cotizar" data-prefill="Ahorro universitario" data-cta-modo>Revisar mi estimado</a>
         </div>
       </div>
       <div class="calc__out" id="out-uni" aria-live="polite"></div>
@@ -211,137 +219,26 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
 </section>
 
 <!-- ══ REVISIÓN ══ -->
-<section class="section solo-autorizado" id="cotizar">
-  <div class="wrap quote">
-    <div>
-      <p class="eyebrow reveal">Sin obligación</p>
-      <h2 class="title reveal">Empieza por una conversación, no por una compra.</h2>
-      <p class="lead reveal">Cuéntanos qué deseas proteger. Prepararemos una revisión breve para que salgas con prioridades claras, incluso si todavía no estás listo para solicitar cobertura.</p>
-      <div class="reminders reveal">
-        <div class="reminder"><div class="reminder__ico">01</div><div><b>Revisión humana antes de cualquier recomendación</b><p>Ningún dato de este formulario determina elegibilidad ni aprueba cobertura.</p></div></div>
-        <div class="reminder"><div class="reminder__ico">02</div><div><b>Acordamos el contacto contigo</b><p>Tu consentimiento no es condición para comprar y puedes retirarlo cuando quieras.</p></div></div>
-        <div class="reminder"><div class="reminder__ico">03</div><div><b>No envíes datos sensibles aquí</b><p>Nunca pedimos Seguro Social, número de Medicare, diagnósticos, medicamentos ni datos bancarios.</p></div></div>
+<section class="section growth-contact" id="cotizar" aria-labelledby="calc-contact-title"><div class="wrap growth-contact-grid"><div class="growth-contact-copy"><p class="eyebrow">Primero conversamos</p><h2 id="calc-contact-title">Tu familia.<br>Tus preguntas.<br>Una conversación.</h2><p>Primero entiendo qué necesitas proteger. Después revisamos tus opciones.</p><div class="growth-agent"><img src="tarjeta/assets/avatar-96.webp" width="48" height="48" alt=""><p><b>William Pérez-Mederos</b><span>Agente de seguros licenciado en Florida</span></p></div><a class="growth-text-link" href="tel:+17863548796" data-growth-event="talk_william">¿Prefieres llamar? 786-354-8796</a></div><form class="growth-form" data-lead-form novalidate>
+      <p class="growth-form-intro">Cuéntame lo básico. La información detallada se revisa contigo personalmente cuando corresponda.</p>
+      <div class="growth-fields">
+        <div><label for="calc-nombre">Nombre</label><input id="calc-nombre" name="nombre" autocomplete="given-name" required maxlength="80"></div>
+        <div><label for="calc-preferencia">Prefiero conversar por</label><select id="calc-preferencia" name="preferencia"><option value="llamada">Llamada</option><option value="email">Email</option></select></div>
+        <div><label for="calc-telefono">Teléfono <span data-phone-hint>(requerido)</span></label><input id="calc-telefono" name="telefono" type="tel" autocomplete="tel" inputmode="tel" maxlength="25" required></div>
+        <div><label for="calc-email">Email <span data-email-hint>(opcional)</span></label><input id="calc-email" name="email" type="email" autocomplete="email" maxlength="150"></div>
+        <div class="growth-wide"><label for="calc-interes">¿Qué te gustaría proteger?</label><select id="calc-interes" name="interes"><option value="familia">Mi familia depende de mis ingresos</option><option value="deudas">Tengo hipoteca o deudas</option><option value="legado">Quiero dejar protección a mis seres queridos</option><option value="permanente">Me interesa protección permanente</option><option value="estimado">Quiero entender cuánto seguro podría necesitar</option><option value="orientacion">No sé por dónde empezar</option><option value="salud">Quiero orientación sobre Salud</option><option value="medicare">Quiero orientación sobre Medicare</option><option value="retiro">Quiero orientación sobre Retiro / Anualidades</option></select></div>
+        <div><label for="calc-horario">Mejor horario para conversar</label><select id="calc-horario" name="horario"><option value="por-acordar">Lo acordamos</option><option value="manana">Mañana</option><option value="tarde">Tarde</option><option value="noche">Noche</option></select></div>
+        <div><label for="calc-postal">Código postal <span>(opcional)</span></label><input id="calc-postal" name="postal" inputmode="numeric" autocomplete="postal-code" maxlength="5" pattern="[0-9]{5}"></div>
       </div>
-    </div>
-
-    <div class="form-shell reveal">
-      <div class="progress" id="progress">
-        <div class="progress__track"><div class="progress__fill" id="bar"></div></div>
-        <div class="progress__steps" aria-hidden="true">
-          <span class="is-active" data-s="1">01 Contacto</span>
-          <span data-s="2">02 Ubicación</span>
-          <span data-s="3">03 Interés</span>
-        </div>
-      </div>
-
-      <form id="quoteForm" novalidate>
-        <input type="text" class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-
-        <fieldset class="step is-active" data-step="1">
-          <legend class="sr-only">Paso 1: contacto</legend>
-          <div class="field"><label for="nombre">Nombre</label>
-            <input id="nombre" name="nombre" type="text" autocomplete="given-name" data-rule="nombre" placeholder="María">
-            <span class="err" data-err></span></div>
-          <div class="field"><label for="telefono">Teléfono</label>
-            <input id="telefono" name="telefono" type="tel" inputmode="tel" autocomplete="tel" data-rule="telefono" placeholder="(305) 555-0142">
-            <span class="err" data-err></span></div>
-          <div class="form-nav"><button type="button" class="btn btn--gold btn--block" data-next>Continuar</button></div>
-        </fieldset>
-
-        <fieldset class="step" data-step="2">
-          <legend class="sr-only">Paso 2: correo y estado</legend>
-          <div class="field"><label for="correo">Correo electrónico</label>
-            <input id="correo" name="correo" type="email" autocomplete="email" data-rule="correo" placeholder="maria@correo.com">
-            <span class="err" data-err></span></div>
-          <div class="field"><label for="estado">Estado donde resides</label>
-            <select id="estado" name="estado" data-rule="requerido">
-              <option value="">Selecciona tu estado</option>
-              <option>Florida</option><option>Otro estado</option>
-            </select>
-            <p class="hint">Un agente solo puede atenderte en los estados donde tenga licencia y nombramiento vigentes.</p>
-            <span class="err" data-err></span></div>
-          <div class="form-nav">
-            <button type="button" class="btn btn--ghost" data-back>Atrás</button>
-            <button type="button" class="btn btn--gold" data-next>Continuar</button>
-          </div>
-        </fieldset>
-
-        <fieldset class="step" data-step="3">
-          <legend class="sr-only">Paso 3: interés y presupuesto</legend>
-          <div class="field"><label for="interes">¿Qué deseas revisar?</label>
-            <select id="interes" name="interes" data-rule="requerido">
-              <option value="">Selecciona una opción</option>
-              <option>Seguro de vida</option>
-              <option>Cobertura de salud</option>
-              <option>Medicare</option>
-              <option>Retiro o anualidades</option>
-              <option>Ahorro universitario</option>
-              <option>No estoy seguro, necesito orientación</option>
-            </select><span class="err" data-err></span></div>
-
-          <div class="notice notice--salud" id="noticeSalud" hidden>
-            <b>Aviso de inscripción — Salud y Medicare</b>
-            <span id="noticeSaludTxt">La cobertura de salud solo puede solicitarse dentro de los períodos de inscripción aplicables.</span>
-            <ul>
-              <li>Existen períodos de inscripción anual y períodos especiales por eventos de vida. Las fechas y reglas vigentes se publican en las fuentes oficiales.</li>
-              <li>Medicare tiene sus propios períodos y reglas de elegibilidad. Cumplir 65 no significa que un plan específico sea adecuado.</li>
-              <li>Estos casos se derivan a un agente debidamente certificado, que utilizará únicamente materiales aprobados.</li>
-            </ul>
-            <p style="margin-top:.7rem;font-size:.79rem;color:#9DB0CC">Confirma fechas y elegibilidad en <a href="https://www.healthcare.gov/" target="_blank" rel="noopener">HealthCare.gov</a> y <a href="https://www.medicare.gov/" target="_blank" rel="noopener">Medicare.gov</a>. Esta agencia no es Medicare, CMS, HealthCare.gov ni una agencia gubernamental.</p>
-          </div>
-
-          <div class="notice notice--anual" id="noticeAnual" hidden>
-            <b>Aviso — Anualidades</b>
-            Una anualidad es un contrato a largo plazo. Antes de cualquier recomendación se revisan objetivos, plazo, liquidez, situación financiera, productos existentes, riesgos y alternativas.
-            <div class="check" id="checkWrap">
-              <input type="checkbox" id="anualOk" name="anualOk">
-              <label for="anualOk">Entiendo que las anualidades tienen períodos de rescate y pueden estar sujetas a penalizaciones por retiro anticipado.</label>
-            </div>
-          </div>
-
-          <div class="field"><label for="presupuesto">¿Cómo prefieres hablar del presupuesto mensual?</label>
-            <select id="presupuesto" name="presupuesto" data-rule="requerido">
-              <option value="">Selecciona una opción</option>
-              <option>Menos de $100</option><option>$100–$249</option><option>$250–$499</option>
-              <option>$500 o más</option><option>Necesito orientación</option><option>Prefiero no responder</option>
-            </select><span class="err" data-err></span></div>
-
-          <div class="check" id="consentWrap">
-            <input type="checkbox" id="consent" name="consent">
-            <label for="consent">Autorizo a William Pérez-Mederos a contactarme por el medio que elija para responder mi solicitud. Entiendo que mi consentimiento no es condición para comprar y que pueden aplicar tarifas de mensajes y datos.</label>
-          </div>
-
-          <div class="form-nav">
-            <button type="button" class="btn btn--ghost" data-back>Atrás</button>
-            <button type="submit" class="btn btn--gold" id="send">Enviar solicitud</button>
-          </div>
-        </fieldset>
-
-        <p class="form-status" id="status" role="status" aria-live="polite"></p>
-        <p class="form-note">Consulta la <a href="#" data-legal="privacidad">Política de Privacidad</a>. No envíes información médica, financiera ni identificadores gubernamentales por este formulario.</p>
-      </form>
-
-      <div class="done" id="done" hidden>
-        <h3>Solicitud recibida</h3>
-        <p>Gracias, <span id="doneName">amigo</span>. Un agente autorizado revisará tus prioridades y te contactará por el medio que indicaste. Esto no determina elegibilidad ni aprueba cobertura.</p>
-        <a class="btn btn--gold" href="#agenda" style="margin-top:1.4rem">Elegir un horario</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ AGENDA ══ -->
-<section class="section solo-autorizado" id="agenda" style="padding-top:0">
-  <div class="wrap">
-    <p class="eyebrow reveal">Agenda</p>
-    <h2 class="title reveal">Elige el horario que te resulte más cómodo.</h2>
-    <p class="lead reveal">Una conversación breve y sin obligación con un agente autorizado, en español o inglés.</p>
-    <div class="calendly-shell reveal" style="margin-top:2.4rem">
-      <iframe title="Calendario de citas" loading="lazy" width="100%" height="700" frameborder="0"
-        data-src="https://calendly.com/TU-USUARIO/revision-20min?hide_gdpr_banner=1&background_color=0F2440&text_color=F8F9FA&primary_color=D4AF37&utm_source=web&utm_medium=organic&utm_campaign=agenda_home"></iframe>
-    </div>
-  </div>
-</section>
+      <label class="growth-consent"><input type="checkbox" name="consentimiento" required><span>Autorizo a William a responder a esta solicitud por el medio que elegí. No es una condición de compra. Puedo retirar mi autorización.</span></label>
+      <p class="growth-privacy">No incluyas datos médicos, bancarios ni números de identificación. <a href="./privacidad.html?v=20260929">Cómo se usan tus datos</a>.</p>
+      <p class="growth-delivery" data-delivery>La solicitud se prepara en tu dispositivo. Después podrás enviarla desde tu correo.</p>
+      <button class="growth-primary" type="submit" disabled>Solicitar conversación <span aria-hidden="true">→</span></button>
+      <p class="growth-status" role="status" aria-live="polite" tabindex="-1" data-form-status></p>
+      <div class="growth-handoff" data-handoff hidden><p>Tu solicitud está preparada; todavía no se ha enviado. Abre tu correo y pulsa Enviar para que William la reciba.</p><a class="growth-primary" data-email-send>Abrir mi correo y enviar</a><p>También puedes llamar al <a href="tel:+17863548796">786-354-8796</a>.</p></div>
+      <noscript><p>Para conversar, llama al <a href="tel:+17863548796">786-354-8796</a> o escribe a <a href="mailto:wperezmedero@gmail.com">wperezmedero@gmail.com</a>.</p></noscript>
+    </form></div></section>
+<div id="agenda" class="wrap growth-agenda"><p>El horario lo acordamos contigo. <a href="#cotizar">Indica cuándo te viene bien conversar →</a></p></div>
 
 </main>
 
@@ -402,14 +299,12 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
   <div class="wrap">
     <div class="footer__grid">
       <div>
+        <img class="wp-brand-signature" src="assets/brand/wp-approved-768.webp" alt="William Pérez-Mederos, agente de seguros licenciado. Vida, salud y retiro. Protección para tu familia. Confianza para tu futuro." width="768" height="768" loading="lazy" decoding="async">
         <a class="brand" href="./" style="margin-bottom:1rem">
-          <svg class="brand__mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-            <path d="M20 3l14 6v11c0 9.4-5.9 15.4-14 17-8.1-1.6-14-7.6-14-17V9l14-6z" stroke="#D4AF37" stroke-width="1.6"/>
-            <path d="M13.5 20.5l4.5 4.5 9-9.5" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <span class="wp-brand-mark" aria-hidden="true"><img src="assets/brand/wp-approved-256.webp" alt="" width="256" height="256" decoding="async"></span>
           <span>William Pérez-Mederos<small>Vida · Salud · Anualidades</small></span>
         </a>
-        <p style="color:#65798F;font-size:.89rem;max-width:34ch">Orientación en español para familias de Florida en vida, salud y retiro.</p>
+        <p style="color:#A7B5C8;font-size:.89rem;max-width:34ch">Orientación en español para familias de Florida en vida, salud y retiro.</p>
       </div>
       <div><h4>Áreas</h4><ul>
         <li><a href="./#pilares">Seguro de vida</a></li>
@@ -424,7 +319,7 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
         <li><a href="#cotizar">Solicitar contacto</a></li>
       </ul></div>
       <div><h4>Legal</h4><ul>
-        <li><a href="#" data-legal="privacidad">Política de Privacidad</a></li>
+        <li><a href="privacidad.html?v=20260929">Política de Privacidad</a></li>
         <li><a href="#" data-legal="cookies">Política de Cookies</a></li>
         <li><a href="#" data-legal="terminos">Términos y Condiciones</a></li>
         <li><a href="#" data-legal="accesibilidad">Accesibilidad</a></li>
@@ -432,7 +327,7 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
     </div>
 
     <p class="footer__disclaimer">
-      William Pérez-Mederos es una agencia o práctica de seguros independiente. No es una compañía aseguradora, Medicare, CMS, HealthCare.gov ni una agencia gubernamental. La información de este sitio es educativa y no constituye asesoramiento legal, fiscal, médico o de inversión. La disponibilidad de productos, la elegibilidad, las primas, los beneficios y las garantías dependen de la aseguradora emisora, el contrato aplicable, la residencia y la evaluación correspondiente. No envíe información médica, financiera o identificadores gubernamentales por formularios no seguros. <span class="solo-autorizado">Licencia de Florida n.º G369134, clase 0215 (Life, Health &amp; Variable Contracts Insurance Agent), emitida el 17 de agosto de 2026.</span><span class="solo-educativo">Licencia de Florida n.º G369134, clase 0215, emitida el 17 de agosto de 2026. Conforme a la ley de Florida, un licenciado solo puede transar seguros con un nombramiento activo de una aseguradora elegible. Mientras no exista ese nombramiento, este sitio no solicita, negocia ni vende seguros, y no representa a ninguna aseguradora.</span> Atendemos en todo el estado de Florida.
+      William Pérez-Mederos es agente de seguros licenciado en Florida. No es una compañía aseguradora, Medicare, CMS, HealthCare.gov ni una agencia gubernamental. La información de este sitio es educativa y no constituye asesoramiento legal, fiscal, médico o de inversión. La disponibilidad de productos, la elegibilidad, las primas, los beneficios y las garantías dependen de la aseguradora emisora, el contrato aplicable, la residencia y la evaluación correspondiente. No envíe información médica, financiera o identificadores gubernamentales por formularios no seguros. <span class="solo-autorizado">Licencia de Florida n.º G369134, clase 0215 (Life, Health &amp; Variable Contracts Insurance Agent), emitida el 17 de agosto de 2026.</span> Atendemos en todo el estado de Florida.
     </p>
     <div class="footer__legal">
       <span>© <span id="year">2026</span> William Pérez-Mederos. Todos los derechos reservados.</span>
@@ -489,7 +384,7 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
   <div class="sheet__body" id="sheetBody"></div>
   <div class="sheet__foot">
     <small id="sheetNote"></small>
-    <a class="btn btn--gold btn--sm" href="#cotizar" id="sheetCta">Solicitar revisión</a>
+    <a class="btn btn--gold btn--sm" href="#cotizar" id="sheetCta">Revisar mi protección</a>
   </div>
 </dialog>
 
@@ -501,12 +396,14 @@ try{var T=sessionStorage.getItem('wps-transicion')||(sessionStorage.getItem('wps
 
 <!-- CTA de conversión VIDA · enlace personal de agente Ethos (móvil). Se muestra/oculta desde sitio.js -->
 <div class="life-sticky-cta solo-autorizado">
-  <a class="btn btn--gold" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos">
+  <a class="btn btn--gold" href="https://agents.ethoslife.com/invite/4a3e3" data-life-quote-cta data-growth-event="ethos_quote" aria-label="Cotiza tu seguro de vida en mi página personal de agente en Ethos">
     <span>Cotiza tu seguro de vida</span><span class="life-sticky-cta__arrow" aria-hidden="true">→</span>
   </a>
 </div>
 
-<script src="assets/js/navegacion.js"></script>
+<script src="assets/js/growth-config.js"></script>
+<script src="assets/js/growth.js"></script>
+<script src="assets/js/navegacion.js?v=nav-recovery-20260930"></script>
 <script src="assets/js/motor-calculadoras.js"></script>
 <script src="assets/js/asistente-arbol.js"></script>
 <script src="assets/js/sitio.js?v=20261001-vida"></script>

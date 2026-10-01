@@ -4,10 +4,10 @@
 @font-face{font-family:Inter;src:url(assets/inter-600.woff2) format("woff2");font-weight:600;font-display:swap}
 
 :root{
-  --navy:#0B1B2E;--navy-2:#12283F;--navy-3:#1B3554;
+  --navy:#0A192F;--navy-2:#12283F;--navy-3:#1B3554;
   --ivory:#F8F4EC;--paper:#FFFFFF;--sand:#EFE7D8;--cream:#FFF8E8;--line:#E3DACA;
   --ink:#10233A;--ink-2:#44566B;
-  --gold:#D2AE55;--gold-2:#E7CD8A;--gold-ink:#7C5A10;
+  --gold:#D4AF37;--gold-2:#E7CD8A;--gold-ink:#7C5A10;
   --on-navy:#F6F1E6;--on-navy-2:#C3CCD8;
   --wa:#0E7A43;--wa-hover:#0B6437;
   --serif:Fraunces,Georgia,"Times New Roman",serif;
@@ -359,3 +359,24 @@ p{margin:0}
 
 /* iOS Safari: ocultar la cara no visible a mitad del giro */
 .card3d:not(.flipped) .back,.card3d.flipped .front{visibility:hidden}
+
+/* Growth v1: same card, clearer life-first contact path. */
+.btn.gold{background:var(--gold);color:#0A192F;border:1px solid var(--gold)}
+.btn.gold:hover{background:#E3C66D;border-color:#E3C66D}
+.growth-card-motto .eyebrow{font:600 .75rem/1.5 Inter,sans-serif;color:#E2C474;letter-spacing:.12em;margin-bottom:.75rem}
+.growth-card-motto>p:not(.eyebrow){font-size:clamp(1.7rem,5.4vw,2.15rem);line-height:1.15}
+.growth-card-micro{font-size:.875rem;color:#CDD4DF;text-align:center;margin:.4rem 0}
+.growth-card-save{display:flex;justify-content:center;align-items:center;gap:.6rem;min-height:44px;color:#E2C474;font-size:.875rem;text-underline-offset:4px}
+#conversacion.growth-contact{padding:2.2rem 20px 3rem;background:var(--ivory);scroll-margin-top:20px}
+.growth-card-contact .growth-contact-copy{margin-bottom:1.5rem}.growth-card-contact .growth-contact-copy h2{font-size:2rem}
+.growth-card-contact .growth-contact-copy h2 br{display:none}.growth-card-contact .growth-form{padding:1.2rem}
+.growth-card-contact .growth-fields{grid-template-columns:1fr}.growth-card-contact .growth-wide{grid-column:auto}
+.growth-card-contact .growth-contact-copy>p:not(.eyebrow){max-width:none}
+.dock .dock-wa{padding:.75rem .85rem;font-size:.875rem}.dock .dock-txt{flex:1}
+.front-lines strong{color:#F3D995;font-weight:600}.front-kicker{letter-spacing:.08em}
+.tile[data-service=vida]{grid-column:1/-1;display:flex;align-items:center;gap:1rem;text-align:left}.tile[data-service=vida] .tile-ic{margin:0}.tile[data-service=vida] small{margin:0}.tile[data-service=vida] .tick{margin-left:auto}
+@media(max-width:360px){.dock-txt{display:none}.dock .dock-wa{flex:1}.growth-card-motto>p:not(.eyebrow){font-size:1.6rem}}
+
+/* Approved transparent WP in the upper corner. */
+.hero-top .wp-brand-mark{background:transparent;border:0;border-radius:0;overflow:visible}
+.hero-top .wp-brand-mark img{inset:0;display:block;width:100%;height:100%;object-fit:contain}

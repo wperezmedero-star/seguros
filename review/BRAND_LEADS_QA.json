@@ -1,0 +1,9 @@
+{
+  "checks": [
+    "/: no token / expired blocked; browser -> Worker -> simulated email accepted; reset",
+    "/calculadoras.html: no token / expired blocked; browser -> Worker -> simulated email accepted; reset",
+    "/tarjeta/: no token / expired blocked; browser -> Worker -> simulated email accepted; reset",
+    "Approved full logo visible in both mobile footers; lightweight header logo loads"
+  ],
+  "errors": []
+}
