@@ -210,7 +210,18 @@ function openSheet(k){
   openDialog(sheet);
 }
 $('#sheetClose').onclick = () => closeDialog(sheet);
-$('#sheetCta').onclick = () => { prefill($('#sheetCta').dataset.prefill); closeDialog(sheet); irASeccion('#cotizar'); };
+$('#sheetCta').onclick = e => {
+  const interes = $('#sheetCta').dataset.prefill;
+  if (AUTORIZADO && interes === 'Seguro de vida') {
+    e.preventDefault();
+    closeDialog(sheet);
+    location.href = 'https://agents.ethoslife.com/invite/4a3e3';
+    return;
+  }
+  prefill(interes);
+  closeDialog(sheet);
+  irASeccion('#cotizar');
+};
 
 /* ═══════════ CALCULADORAS ═══════════ */
 const IC = window.InsuranceCalculators;
