@@ -1,3 +1,5 @@
+> Actualización vigente: LOGO_TRANSPARENT_FADE_HANDOFF.md (1 octubre 2026). El splash usa el monograma transparente de la tarjeta y una salida de 350 ms. Las versiones descritas debajo son históricas.
+
 # Entrada del logo — 30 septiembre 2026
 
 Para Astra y futuros colaboradores: se conserva exclusivamente `assets/brand/wp-approved-768.webp`, el logo aprobado. William pidió una entrada natural y fluida por partes, con el cuadro azul visible.
