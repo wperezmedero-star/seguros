@@ -376,3 +376,7 @@ p{margin:0}
 .front-lines strong{color:#F3D995;font-weight:600}.front-kicker{letter-spacing:.08em}
 .tile[data-service=vida]{grid-column:1/-1;display:flex;align-items:center;gap:1rem;text-align:left}.tile[data-service=vida] .tile-ic{margin:0}.tile[data-service=vida] small{margin:0}.tile[data-service=vida] .tick{margin-left:auto}
 @media(max-width:360px){.dock-txt{display:none}.dock .dock-wa{flex:1}.growth-card-motto>p:not(.eyebrow){font-size:1.6rem}}
+
+/* Approved transparent WP in the upper corner. */
+.hero-top .wp-brand-mark{background:transparent;border:0;border-radius:0;overflow:visible}
+.hero-top .wp-brand-mark img{inset:0;display:block;width:100%;height:100%;object-fit:contain}
