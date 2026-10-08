@@ -1,7 +1,7 @@
 /* Shared contact and measurement. No contact data in storage, URLs or analytics. */
 (() => {
   'use strict';
-  const allowedEvents = new Set(['review_protection','talk_william','form_started','form_submitted','form_prepared','email_handoff','calculator_used','card_shared','contact_saved','call_started','ethos_quote']);
+  const allowedEvents = new Set(['review_protection','talk_william','whatsapp_lead','form_started','form_submitted','form_prepared','email_handoff','calculator_used','card_shared','contact_saved','call_started','ethos_quote']);
   function track(event, extra = {}) {
     if (!allowedEvents.has(event)) return;
     const detail = {event, surface: location.pathname.includes('/tarjeta') ? 'tarjeta' : 'website'};
