@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0A192F">
+  <title>Conversemos en español | William Pérez Seguros</title>
+  <meta name="description" content="Solicita una conversación con William Pérez sobre seguro de vida o registra tu interés en cobertura de salud en Florida.">
+  <meta name="robots" content="noindex,follow">
+  <link rel="icon" href="tarjeta/assets/favicon-48.png">
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#0A192F;color:#f9f6ed;font:17px/1.6 system-ui,sans-serif}a{color:#e8ca69}header,main,footer{max-width:1080px;margin:auto;padding:24px}header{display:flex;align-items:center;gap:16px}header img{width:64px;height:64px;object-fit:contain}header a{text-decoration:none;color:inherit}header small{display:block;color:#b9c4d3}main{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;padding-top:30px}h1{font:clamp(34px,5vw,56px)/1.1 Georgia,serif;margin:16px 0 24px}h2{font:28px/1.2 Georgia,serif}.eyebrow{color:#e8ca69;font-size:14px;letter-spacing:.08em}p{color:#cbd5e1}.panel{padding:28px;background:#14253d;border:1px solid #36445a;border-radius:24px}.button{display:inline-block;padding:14px 20px;border-radius:12px;border:1px solid #d4af37;text-align:center;font:inherit;font-weight:700;text-decoration:none;cursor:pointer}.primary{background:#d4af37;color:#0a192f}.secondary{color:#f9f6ed;background:transparent}.actions{display:flex;gap:12px;flex-wrap:wrap}.note{font-size:14px}.steps{padding-left:22px;color:#cbd5e1}label{display:block;margin:14px 0 6px}input[type=text],input[type=tel]{width:100%;padding:14px;border:1px solid #718096;background:#0a192f;color:#fff;border-radius:10px;font:inherit}input:focus,a:focus,button:focus{outline:3px solid #f5d77e;outline-offset:3px}.consent{display:flex;gap:10px;font-size:14px;align-items:flex-start}.consent input{margin-top:6px;flex-shrink:0}button{width:100%;margin-top:18px}button:disabled{opacity:.65;cursor:wait}[hidden]{display:none!important}footer{font-size:13px;color:#b9c4d3;margin-top:24px;border-top:1px solid #36445a}.status{min-height:28px}.skip{position:absolute;left:-9999px}.skip:focus{left:20px;top:10px;background:#0a192f;padding:10px;z-index:2}@media(max-width:760px){main{grid-template-columns:1fr;gap:24px;padding-top:10px}.panel{padding:22px}header,main,footer{padding-left:20px;padding-right:20px}}
+  </style>
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<header><a href="./"><img src="assets/brand/wp-card-transparent-768.webp" alt="WP"></a><div><a href="./"><b>William Pérez Seguros</b></a><small>Florida · Atención en español</small></div></header>
+<main id="contenido">
+  <section>
+    <span class="eyebrow" id="eyebrow">SEGURO DE VIDA</span>
+    <h1 id="heading">¿Quién depende de tus ingresos?</h1>
+    <p id="intro">Conversemos sobre lo que quieres proteger y el presupuesto que puedes mantener. Te ayudo a entender tus opciones en español.</p>
+    <div class="actions"><a class="button primary" id="whatsapp" href="https://wa.me/17863548796?text=Hola%20William%2C%20quiero%20orientaci%C3%B3n%20sobre%20seguro%20de%20vida.">Hablar por WhatsApp</a><a class="button secondary" href="tel:+17863548796">Llamar a William</a></div>
+    <ol class="steps"><li>Me cuentas qué necesitas.</li><li id="step2">Revisamos las opciones disponibles y sus condiciones.</li><li id="step3">Decides después de entender la propuesta.</li></ol>
+    <div id="online" hidden></div>
+    <p class="note" id="conditions">Las primas, la elegibilidad y los beneficios dependen de la aseguradora y de la póliza. Solicitar contacto no garantiza aprobación.</p>
+  </section>
+  <section class="panel" aria-labelledby="form-heading">
+    <h2 id="form-heading">¿Prefieres que te contacte?</h2>
+    <p id="form-intro">Déjame tu nombre y teléfono para responder a tu solicitud.</p>
+    <noscript><p>Para solicitar contacto, usa WhatsApp o llama al 786-354-8796.</p></noscript>
+    <form id="contact-form" action="https://formspree.io/f/xkjgywrr" method="post" hidden>
+      <label for="nombre">Nombre</label><input id="nombre" name="nombre" type="text" autocomplete="given-name" required minlength="2" maxlength="80">
+      <label for="telefono">Teléfono</label><input id="telefono" name="telefono" type="tel" autocomplete="tel" inputmode="tel" required maxlength="24">
+      <input type="hidden" name="interes" id="interes" value="familia">
+      <input type="hidden" name="campana" value="primera-vida-20261009">
+      <input type="hidden" name="canal" id="canal" value="directo">
+      <input type="hidden" name="origen" value="/consulta.html">
+      <input type="hidden" name="preferencia" value="telefono">
+      <input type="hidden" name="consentimientoVersion" value="consulta-20261009">
+      <label class="consent"><input type="checkbox" name="consentimiento" value="true" required><span>Autorizo a William Pérez a contactarme personalmente para responder a esta solicitud. No es una condición de compra. <a href="privacidad.html">Privacidad</a>.</span></label>
+      <p class="note">No incluyas datos médicos, bancarios, de pólizas ni números de Seguro Social. Tu solicitud se enviará para que William pueda responderte.</p>
+      <button type="submit" class="button primary" id="submit">Solicitar contacto</button>
+      <p class="status" id="status" role="status" aria-live="polite" tabindex="-1"></p>
+    </form>
+  </section>
+</main>
+<footer>William Pérez-Mederos · Agente de seguros licenciado en Florida · Licencia G369134. Atención a residentes de Florida. La disponibilidad de productos está sujeta a los nombramientos y autorizaciones aplicables. <a href="./">Inicio</a> · <a href="privacidad.html">Privacidad</a> · 786-354-8796.</footer>
+<script src="assets/js/captacion.js"></script>
+</body>
+</html>
