@@ -62,37 +62,56 @@ body{font-family:Inter,system-ui,sans-serif}
 
 .growth-challenge{min-width:0;max-width:100%;margin:.75rem 0}
 
-/* Entrada de marca v6 «Ensamblaje de precisión» (assets/js/entrada-marca.js).
-   Respaldo sin JS: logo completo y cortina que se retira sola. */
-.brand-entrance{display:none}
-.brand-entrance-active .brand-entrance{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;overflow:hidden;pointer-events:none;animation:brand-curtain 400ms 1.6s cubic-bezier(.4,0,.2,1) both}
-.brand-entrance__bg{position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 42%,#11284A 0%,#0A192F 55%,#060F1E 100%)}
-.brand-entrance__lockup{position:relative;width:min(88vw,540px);display:flex;flex-direction:column;align-items:center;transform:translateY(-3vh)}
-.brand-entrance__symbol{position:relative;width:min(64vw,340px);aspect-ratio:1;perspective:1100px;perspective-origin:50% 45%;transform-origin:50% 50%}
-.brand-entrance__final{position:absolute;inset:0;width:100%;height:100%;max-width:none;display:block;object-fit:contain;z-index:2}
-.brand-entrance.is-js .brand-entrance__final{opacity:0}
-.brand-entrance__name,.brand-entrance__tag{margin:0;text-align:center;opacity:0}
-.brand-entrance:not(.is-js) .brand-entrance__name,.brand-entrance:not(.is-js) .brand-entrance__tag{opacity:1}
-.brand-entrance__name{margin-top:clamp(.6rem,2.4vw,1.3rem);font:500 clamp(1.05rem,3.6vw,1.55rem)/1.2 Fraunces,Georgia,serif;letter-spacing:.16em;text-transform:uppercase;color:#F4EEE2;white-space:nowrap}
-.brand-entrance__name span{color:#E2C474}
-.brand-entrance__tag{margin-top:.55rem;font:400 clamp(.78rem,2.6vw,.95rem)/1.4 Inter,system-ui,sans-serif;letter-spacing:.06em;color:#B8C6D8}
-.be-stage{position:absolute;inset:0;transform-style:preserve-3d;z-index:1}
-.be-piece{position:absolute;transform-style:preserve-3d;will-change:transform}
-.be-layer{position:absolute;inset:0;background-repeat:no-repeat;opacity:0;backface-visibility:visible}
-.be-blueprint{position:absolute;inset:-16%;z-index:0}
-.be-blueprint svg{width:100%;height:100%;overflow:visible}
-.be-blueprint path{fill:none;stroke:#D4AF37;stroke-width:1;vector-effect:non-scaling-stroke;stroke-dasharray:1;stroke-dashoffset:1;opacity:0}
-.be-blueprint .be-guide{stroke:#D4AF3766;stroke-dasharray:1}
-.be-blueprint .be-mark{stroke:#D4AF3799}
-.be-blueprint .be-cross{stroke:#D4AF3755}
-.be-blueprint .be-num{font:500 15px Inter,system-ui,sans-serif;letter-spacing:.12em;fill:#D4AF37AA;text-anchor:middle;dominant-baseline:middle;opacity:0}
-.be-glow{position:absolute;inset:-28%;z-index:0;opacity:0;background:radial-gradient(closest-side,rgba(255,226,140,.55),rgba(212,175,55,.22) 45%,rgba(212,175,55,0) 72%)}
-.be-ring{position:absolute;left:50%;top:50%;width:100%;aspect-ratio:1;border-radius:50%;border:1px solid rgba(226,196,116,.85);box-shadow:0 0 18px rgba(212,175,55,.35),inset 0 0 18px rgba(212,175,55,.25);opacity:0;z-index:0}
-.be-sheen{position:absolute;inset:0;z-index:3;opacity:0;pointer-events:none;background:linear-gradient(105deg,rgba(255,255,255,0) 40%,rgba(255,240,200,.12) 46%,rgba(255,250,235,.62) 50%,rgba(255,240,200,.12) 54%,rgba(255,255,255,0) 60%) 140% 0/260% 100% no-repeat;mix-blend-mode:screen;-webkit-mask:url(../brand/wp-card-transparent-768.webp) center/contain no-repeat;mask:url(../brand/wp-card-transparent-768.webp) center/contain no-repeat}
-.be-spark{position:absolute;left:0;top:0;margin:-1px 0 0 -1px;border-radius:50%;background:radial-gradient(circle,#FFF8E1 0%,#F3D27A 45%,rgba(212,175,55,0) 75%);box-shadow:0 0 6px 1px rgba(243,210,122,.7);opacity:0;z-index:4}
-@keyframes brand-curtain{from{opacity:1;visibility:visible}to{opacity:0;visibility:hidden}}
-@media(max-width:600px){.brand-entrance__symbol{width:min(70vw,300px)}}
-@media(prefers-reduced-motion:reduce){.brand-entrance{display:none!important}.brand-entrance-active .brand-entrance{display:none!important}}
+/* Entrada: tres giros del monograma completo y una disolución en polvo. */
+.brand-entrance { display: none; }
+.brand-entrance-active { --hero-base: 1.7s; }
+.brand-entrance-active .brand-entrance {
+  position: fixed; inset: 0; z-index: 100; display: grid; place-items: center;
+  overflow: hidden; pointer-events: none;
+  animation: brand-curtain .3s 3.1s both;
+}
+.brand-entrance__bg { position: absolute; inset: 0; background: #0a192f; }
+.brand-entrance__lockup {
+  position: relative; display: grid; justify-items: center;
+  width: min(90vw, 540px); transform: translateY(-3vh);
+}
+.brand-entrance__symbol {
+  position: relative; width: min(70vw, 340px); aspect-ratio: 1;
+  perspective: 900px;
+}
+.brand-entrance__final, .brand-entrance__film, .brand-entrance__fallback {
+  position: absolute; display: block; max-width: none; object-fit: contain;
+}
+.brand-entrance__final { inset: 8.5%; width: 83%; height: 83%; }
+.brand-entrance__film, .brand-entrance__fallback {
+  inset: 0; width: 100%; height: 100%; opacity: 0;
+  -webkit-mask-image: radial-gradient(ellipse, #000 78%, transparent 96%);
+  mask-image: radial-gradient(ellipse, #000 78%, transparent 96%);
+}
+.brand-entrance.is-playing, .brand-entrance.is-fallback { animation: none; }
+.brand-entrance.is-playing .brand-entrance__film,
+.brand-entrance.is-fallback .brand-entrance__fallback { opacity: 1; }
+.brand-entrance.is-playing .brand-entrance__final,
+.brand-entrance.is-fallback .brand-entrance__final { opacity: 0; }
+.brand-entrance:is(.is-playing, .is-fallback) :is(.brand-entrance__name, .brand-entrance__tag) {
+  animation: brand-curtain .95s 4.5s both;
+}
+.brand-entrance.is-leaving { animation: brand-curtain .36s ease-out both; }
+.brand-entrance__name, .brand-entrance__tag { margin: 0; text-align: center; }
+.brand-entrance__name {
+  font: 500 clamp(1.05rem,3.6vw,1.55rem)/1.2 Fraunces,Georgia,serif;
+  letter-spacing: .16em; text-transform: uppercase; color: #f4eee2;
+}
+.brand-entrance__name span { color: #e2c474; }
+.brand-entrance__tag {
+  margin-top: .55rem; color: #b8c6d8;
+  font: 400 clamp(.78rem,2.6vw,.95rem)/1.4 Inter,system-ui,sans-serif; letter-spacing: .06em;
+}
+@keyframes brand-curtain { from { opacity: 1; } to { opacity: 0; visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) {
+  .brand-entrance-active .brand-entrance { display: none; }
+  .brand-entrance-active { --hero-base: 0s; }
+}
 
 /* Header uses the transparent approved monogram without the signature crop. */
 .header .wp-brand-mark{background:transparent;border:0;border-radius:0;overflow:visible}
