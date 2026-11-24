@@ -62,7 +62,7 @@ body{font-family:Inter,system-ui,sans-serif}
 
 .growth-challenge{min-width:0;max-width:100%;margin:.75rem 0}
 
-/* Entrada: tres giros del monograma completo y una disolución en polvo. */
+/* Entrada: una vuelta y media del monograma completo y una disolución en polvo. */
 .brand-entrance { display: none; }
 .brand-entrance-active { --hero-base: 1.7s; }
 .brand-entrance-active .brand-entrance {
@@ -94,7 +94,7 @@ body{font-family:Inter,system-ui,sans-serif}
 .brand-entrance.is-playing .brand-entrance__final,
 .brand-entrance.is-fallback .brand-entrance__final { opacity: 0; }
 .brand-entrance:is(.is-playing, .is-fallback) :is(.brand-entrance__name, .brand-entrance__tag) {
-  animation: brand-curtain .95s 4.5s both;
+  animation: brand-curtain .8s 2.6s both;
 }
 .brand-entrance.is-leaving { animation: brand-curtain .36s ease-out both; }
 .brand-entrance__name, .brand-entrance__tag { margin: 0; text-align: center; }

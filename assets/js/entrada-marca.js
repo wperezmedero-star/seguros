@@ -1,4 +1,4 @@
-/* Tres vueltas del WP en relieve y una disolución en polvo dorado. El vídeo solo se pide en la primera entrada. */
+/* Una vuelta y media del WP en relieve y una disolución en polvo dorado. El vídeo solo se pide en la primera entrada. */
 (function () {
   const page = document.documentElement;
   if (!page.classList.contains('brand-entrance-active')) return;
@@ -45,12 +45,12 @@
       if (phase !== 'fallback') return;
       clearTimeout(timer);
       intro.classList.add('is-fallback');
-      timer = setTimeout(revealPage, 6900);
+      timer = setTimeout(revealPage, 4580);
     };
     animation.onerror = revealPage;
     symbol.appendChild(animation);
     timer = setTimeout(revealPage, 1000);
-    animation.src = 'assets/brand/wp-giro-polvo.webp';
+    animation.src = 'assets/brand/wp-giro-polvo.webp?v=media-v3';
   }
 
   skipEvents.forEach(type => window.addEventListener(type, finish, { capture: true, passive: true }));
@@ -66,12 +66,12 @@
     phase = 'playing';
     clearTimeout(timer);
     intro.classList.add('is-playing');
-    timer = setTimeout(revealPage, 7400);
+    timer = setTimeout(revealPage, 5050);
   }, { once: true });
   film.addEventListener('ended', revealPage, { once: true });
   film.addEventListener('error', useFallback, { once: true });
   timer = setTimeout(revealPage, 1400);
   symbol.appendChild(film);
-  film.src = 'assets/brand/wp-giro-polvo.mp4';
+  film.src = 'assets/brand/wp-giro-polvo.mp4?v=media-v3';
   film.play().catch(useFallback);
 })();
