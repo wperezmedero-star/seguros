@@ -45,12 +45,12 @@
       if (phase !== 'fallback') return;
       clearTimeout(timer);
       intro.classList.add('is-fallback');
-      timer = setTimeout(revealPage, 4580);
+      timer = setTimeout(revealPage, 4180);
     };
     animation.onerror = revealPage;
     symbol.appendChild(animation);
     timer = setTimeout(revealPage, 1000);
-    animation.src = 'assets/brand/wp-giro-polvo.webp?v=media-v3';
+    animation.src = 'assets/brand/wp-giro-polvo.webp?v=rapido-v4';
   }
 
   skipEvents.forEach(type => window.addEventListener(type, finish, { capture: true, passive: true }));
@@ -66,12 +66,12 @@
     phase = 'playing';
     clearTimeout(timer);
     intro.classList.add('is-playing');
-    timer = setTimeout(revealPage, 5050);
+    timer = setTimeout(revealPage, 4650);
   }, { once: true });
   film.addEventListener('ended', revealPage, { once: true });
   film.addEventListener('error', useFallback, { once: true });
   timer = setTimeout(revealPage, 1400);
   symbol.appendChild(film);
-  film.src = 'assets/brand/wp-giro-polvo.mp4?v=media-v3';
+  film.src = 'assets/brand/wp-giro-polvo.mp4?v=rapido-v4';
   film.play().catch(useFallback);
 })();
