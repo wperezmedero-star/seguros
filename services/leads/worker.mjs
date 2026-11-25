@@ -54,7 +54,7 @@ export default {
       const check=await verification.json();
       if(check.success!==true || check.hostname!==new URL(origin).hostname || check.action!=='lead_contact')return reply(403,'verification');
       const text=[
-        'Nueva solicitud de conversación — William Pérez-Mederos','',
+        'Nueva solicitud de conversación — William Pérez Mederos','',
         `Nombre: ${p.nombre.trim()}`,`Teléfono: ${p.telefono||'No indicado'}`,`Email: ${p.email||'No indicado'}`,
         `Código postal: ${p.postal||'No indicado'}`,`Preferencia: ${p.preferencia==='email'?'Email':'Llamada'}`,
         `Interés: ${INTERESTS[p.interes]}`,`Horario: ${HOURS[p.horario]}`,`Origen: ${p.origen}`,
@@ -62,7 +62,7 @@ export default {
         'Consentimiento growth-v1: autoriza a William a responder por el medio elegido. No es condición de compra; puede retirar su autorización.',
         'Contacto inicial únicamente. No representa cotización, recomendación de póliza ni aprobación.'
       ].join('\n');
-      const result=await env.EMAIL.send({from:{email:env.LEAD_FROM,name:'William Pérez-Mederos · Web'},to:RECIPIENT,
+      const result=await env.EMAIL.send({from:{email:env.LEAD_FROM,name:'William Pérez Mederos · Web'},to:RECIPIENT,
         subject:'Nueva solicitud de conversación — seguros',text,...(p.email?{replyTo:p.email}:{})});
       // Provider acceptance is not an inbox/read receipt. Never report success on failure.
       if(!result?.messageId)return reply(502,'delivery');

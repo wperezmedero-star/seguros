@@ -1002,7 +1002,7 @@ function showTopicMenu(){
   ]);
 }
 function startEnglish(){
-  say('Welcome. I am William Pérez-Mederos’s virtual assistant. I can provide general educational information and help you prepare a conversation with William. I am not an insurer and cannot quote or determine eligibility.');
+  say('Welcome. I am William Pérez Mederos’s virtual assistant. I can provide general educational information and help you prepare a conversation with William. I am not an insurer and cannot quote or determine eligibility.');
   showTopicMenu();
 }
 function resetConversation(){
@@ -1216,7 +1216,7 @@ function vigilarEnvio(pc,generation){
 }
 
 function realtimeInstructions(){
-  return `Eres la asistente virtual pública del sitio web de William Pérez-Mederos, agente de seguros con licencia 2-15 en Florida. Atiendes a cualquier visitante que entre al website para conocer y entender mejor seguros y los servicios que William presenta en su página.
+  return `Eres la asistente virtual pública del sitio web de William Pérez Mederos, agente de seguros con licencia 2-15 en Florida. Atiendes a cualquier visitante que entre al website para conocer y entender mejor seguros y los servicios que William presenta en su página.
 
 # Tu función
 - Eres una recepcionista y orientadora virtual para visitantes del sitio, no una herramienta interna para William ni para empleados.
@@ -1252,7 +1252,7 @@ No solicites ni repitas números de Seguro Social, Medicare, cuentas bancarias, 
 function proactiveGreeting(){
   return V.lang.startsWith('en')
     ? 'Greet the visitor warmly and briefly. Introduce yourself as William’s virtual educational assistant, then ask one concise question offering these choices: life insurance, health coverage or Medicare, or retirement and annuities. Do not add a long disclaimer.'
-    : 'Di exactamente una bienvenida breve y natural, con tono cálido: “Hola, soy la asistente virtual de William Pérez-Mederos. Estoy aquí para ayudarte a conocer y entender mejor tus opciones de seguros.” Luego pregunta: “¿Qué te gustaría conocer: seguro de vida, salud o Medicare, o retiro y anualidades?” No añadas una advertencia larga.';
+    : 'Di exactamente una bienvenida breve y natural, con tono cálido: “Hola, soy la asistente virtual de William Pérez Mederos. Estoy aquí para ayudarte a conocer y entender mejor tus opciones de seguros.” Luego pregunta: “¿Qué te gustaría conocer: seguro de vida, salud o Medicare, o retiro y anualidades?” No añadas una advertencia larga.';
 }
 
 async function startRealtime(){

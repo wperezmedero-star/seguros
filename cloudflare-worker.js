@@ -4,7 +4,7 @@ const ALLOWED_ORIGINS = new Set([
   "https://wperezmedero-star.github.io",
 ]);
 
-const SESSION_INSTRUCTIONS = `Eres la asistente virtual educativa de William Perez-Mederos para su sitio de seguros en Florida.
+const SESSION_INSTRUCTIONS = `Eres la asistente virtual educativa de William Pérez Mederos para su sitio de seguros en Florida.
 
 Habla en el idioma del visitante; usa español por defecto. Tu voz debe sentirse cálida, natural, tranquila y profesional. Responde de forma breve, clara y sin jerga. Haz una sola pregunta a la vez.
 

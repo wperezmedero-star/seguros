@@ -1,4 +1,4 @@
-/* William Pérez-Mederos · Tarjeta digital v3
+/* William Pérez Mederos · Tarjeta digital v3
    Sin servidor de prospectos: todo mensaje sale desde el teléfono del visitante (WhatsApp, SMS, llamada o correo). */
 (() => {
 'use strict';
@@ -60,7 +60,7 @@ function toast(text, ms = 4200) {
 const S = {
   orientacion: { name: 'orientación', label: 'Orientación personal', title: 'Una conversación clara, sin compromiso.', text: 'Cuénteme su situación y le explico qué opciones tiene sentido revisar, en español y a su ritmo.', note: 'La primera conversación no cuesta nada.', cta: 'Escribirme por WhatsApp', msg: 'Hola William. Vi su tarjeta digital y quisiera que me explique mis opciones.' },
   vida: { name: 'Vida', label: 'Seguro de vida', title: 'Pensar en ellos también es cuidar de usted.', text: 'Hablemos de las personas que dependen de usted y de cómo protegerlas si usted llegara a faltar.', note: 'Un buen comienzo: la calculadora DIME, más abajo.', cta: 'Hablar sobre Vida', msg: 'Hola William. Vi su tarjeta digital y quisiera revisar opciones de seguro de vida.' },
-  salud: { name: 'Salud', label: 'Cobertura de salud', title: 'Su salud merece una conversación clara.', text: 'Revisemos sus preguntas sobre cobertura médica y qué conviene considerar antes de elegir.', note: 'Empecemos por lo que es importante para usted.', cta: 'Hablar sobre Salud', msg: 'Hola William. Vi su tarjeta digital y quisiera información sobre opciones de cobertura de salud.' },
+  salud: { name: 'Salud', label: 'Cobertura de salud', title: 'Su salud merece una conversación clara.', text: 'Si busca un plan del Mercado (Obamacare) o ya tiene uno, podemos conversar sobre cómo revisar la red de médicos, los medicamentos y los costos.', note: 'Empecemos por lo que es importante para usted.', cta: 'Hablar sobre Salud', msg: 'Hola William. Vi su tarjeta digital y quisiera información sobre opciones de cobertura de salud.' },
   medicare: { name: 'Medicare', label: 'Orientación sobre Medicare', title: 'Entender sus opciones. Decidir con calma.', text: 'Le explico las partes A, B, C y D en español, con espacio para todas sus preguntas.', note: 'Orientación educativa. No estoy afiliado a Medicare ni a los CMS.', cta: 'Hablar sobre Medicare', msg: 'Hola William. Vi su tarjeta digital y quisiera orientación sobre Medicare.' },
   retiro: { name: 'Retiro', label: 'Retiro y anualidades', title: 'Su próximo capítulo empieza con claridad.', text: 'Conversemos sobre sus objetivos para el retiro y sobre cómo funcionan las anualidades y sus condiciones.', note: 'Primero sus objetivos. Después, las opciones.', cta: 'Hablar sobre Retiro', msg: 'Hola William. Vi su tarjeta digital y quisiera conversar sobre opciones para mi retiro.' },
   accidentes: { name: 'Accidentes', label: 'Protección ante accidentes', title: 'Si algo pasa, que no le tome desprevenido.', text: 'Revisemos la protección ante accidentes según su trabajo, su día a día y su familia.', note: 'Primero entender su rutina. Después, las opciones.', cta: 'Hablar sobre Accidentes', msg: 'Hola William. Vi su tarjeta digital y quisiera información sobre protección ante accidentes.' }
@@ -210,7 +210,7 @@ $('#guardar').addEventListener('click', () => {
 /* ---------- Compartir ---------- */
 $('#compartir').addEventListener('click', async () => {
   const url = sharedURL('compartir');
-  const data = { title: 'William Pérez-Mederos · Agente de seguros', text: 'Vida, Salud, Medicare y Retiro. Atención en español en Hialeah y Miami-Dade.', url };
+  const data = { title: 'William Pérez Mederos · Agente de seguros', text: 'Vida, Salud, Medicare y Retiro. Atención en español en Hialeah y Miami-Dade.', url };
   if (navigator.share) {
     try { await navigator.share(data); track('share_card', { method: 'native' }); return; }
     catch (e) { if (e.name === 'AbortError') return; }
@@ -231,10 +231,10 @@ $('#downloadQr').addEventListener('click', async () => {
   x.fillStyle = '#FFFFFF'; x.beginPath(); x.roundRect ? x.roundRect(110, 100, 860, 860, 48) : x.rect(110, 100, 860, 860); x.fill();
   x.imageSmoothingEnabled = false; x.drawImage(src, 160, 150, 760, 760);
   x.fillStyle = '#D2AE55'; x.fillRect(W / 2 - 60, 1010, 120, 4);
-  x.textAlign = 'center'; x.fillStyle = '#0B1B2E'; x.font = '500 62px Fraunces, Georgia, serif'; x.fillText('William Pérez-Mederos', W / 2, 1100);
+  x.textAlign = 'center'; x.fillStyle = '#0B1B2E'; x.font = '500 62px Fraunces, Georgia, serif'; x.fillText('William Pérez Mederos', W / 2, 1100);
   x.fillStyle = '#44566B'; x.font = '400 34px Inter, sans-serif'; x.fillText('Agente de seguros · 786-354-8796', W / 2, 1160);
   x.fillText('williamperezseguros.com/tarjeta', W / 2, 1210);
-  c.toBlob(b => { if (!b) return; const u = URL.createObjectURL(b), a = document.createElement('a'); a.href = u; a.download = 'William-Perez-Mederos-QR.png'; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 30000); });
+  c.toBlob(b => { if (!b) return; const u = URL.createObjectURL(b), a = document.createElement('a'); a.href = u; a.download = 'William Pérez Mederos QR.png'; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 30000); });
   track('qr_download');
 });
 
