@@ -116,3 +116,96 @@ body{font-family:Inter,system-ui,sans-serif}
 /* Header uses the transparent approved monogram without the signature crop. */
 .header .wp-brand-mark{background:transparent;border:0;border-radius:0;overflow:visible}
 .header .wp-brand-mark img{inset:0;display:block;width:100%;height:100%;object-fit:contain}
+
+/* ══ Premium v2 · 25/11/2026 — refinamientos de diseño y movimiento ══
+   Todo es aditivo y respeta prefers-reduced-motion. */
+
+/* Salud: aire entre título, texto y botón */
+.growth-life-lead{margin:1.25rem 0 1.9rem;color:#D9D6CA;max-width:46ch;line-height:1.65}
+
+/* Héroe: en escritorio, salud pasa a enlace elegante bajo los dos botones */
+@media(min-width:761px){
+  .growth-hero-copy .hero__actions .hero__salud{
+    flex-basis:100%;justify-content:flex-start;width:auto;min-height:0;padding:.35rem 0;
+    border:0;background:none;box-shadow:none;color:#E2C474;font-weight:600;
+    text-decoration:underline;text-decoration-color:rgba(226,196,116,.45);text-underline-offset:6px;
+    transition:color .3s ease,text-decoration-color .3s ease}
+  .growth-hero-copy .hero__actions .hero__salud:hover{color:#F6E3A6;text-decoration-color:#F6E3A6;transform:none}
+  .growth-hero-copy .hero__actions .hero__salud span{display:inline-block;transition:transform .35s cubic-bezier(.22,1,.36,1)}
+  .growth-hero-copy .hero__actions .hero__salud:hover span{transform:translateX(4px)}
+}
+
+/* Tarjeta de cierre: cuatro accesos sin huérfanos */
+.ci-acciones{grid-template-columns:repeat(4,1fr);max-width:600px}
+.ci-asist{max-width:600px}
+@media(max-width:560px){.ci-acciones{grid-template-columns:repeat(2,1fr)}}
+
+/* Barra de progreso dorada al desplazarse (solo navegadores compatibles) */
+@supports (animation-timeline: scroll()){
+  html::before{content:"";position:fixed;inset:0 0 auto 0;height:2px;z-index:9999;pointer-events:none;
+    transform-origin:0 50%;transform:scaleX(0);
+    background:linear-gradient(90deg,#9C7A22,#F1D78A 55%,#D4AF37);
+    box-shadow:0 0 12px rgba(212,175,55,.55);
+    animation:wpProgreso linear both;animation-timeline:scroll(root)}
+  @keyframes wpProgreso{to{transform:scaleX(1)}}
+
+  /* La línea de cada encabezado se dibuja al entrar en pantalla */
+  .eyebrow::before{transform-origin:0 50%;animation:wpLinea linear both;
+    animation-timeline:view();animation-range:entry 0% cover 25%}
+  @keyframes wpLinea{from{transform:scaleX(0);opacity:0}to{transform:scaleX(1);opacity:1}}
+}
+
+/* Retrato: filo dorado que recorre el marco lentamente */
+@property --wp-ang{syntax:'<angle>';inherits:false;initial-value:0deg}
+@media(min-width:761px){
+  .pag-inicio .hero__photo .fig--portrait::after{content:"";position:absolute;inset:0;border-radius:inherit;
+    padding:1.5px;pointer-events:none;z-index:2;
+    background:conic-gradient(from var(--wp-ang),transparent 0 62%,rgba(212,175,55,.25) 70%,rgba(246,227,166,.95) 78%,rgba(212,175,55,.25) 86%,transparent 94%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+    mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
+    animation:wpAnillo 10s linear infinite}
+  @keyframes wpAnillo{to{--wp-ang:360deg}}
+}
+
+/* "en Florida." recibe un destello dorado al cargar */
+.growth-hero-copy .hero-h1 em{
+  background:linear-gradient(100deg,#E2C474 0%,#E2C474 38%,#FFF3C9 50%,#E2C474 62%,#E2C474 100%);
+  background-size:260% 100%;background-position:100% 0;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  animation:wpDestello 2.6s cubic-bezier(.22,1,.36,1) 1.6s both}
+@keyframes wpDestello{from{background-position:100% 0}to{background-position:0 0}}
+
+/* Luz que sigue al cursor en tarjetas (la inserta premium-v2.js) */
+.wp-luz{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:3;opacity:0;
+  transition:opacity .4s ease;
+  background:radial-gradient(380px circle at var(--mx,50%) var(--my,50%),rgba(212,175,55,.16),transparent 46%)}
+.wp-luz-host{position:relative;isolation:isolate}
+.wp-luz-host:hover>.wp-luz{opacity:1}
+.growth-choices .wp-luz{background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(212,175,55,.20),transparent 50%)}
+
+/* Opciones de "¿Qué quieres proteger?": elevación suave */
+@media (hover:hover) and (pointer:fine){
+  .growth-choices button{transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s cubic-bezier(.22,1,.36,1),border-color .3s ease}
+  .growth-choices button:hover{transform:translateY(-3px);border-color:rgba(212,175,55,.55);box-shadow:0 18px 40px -28px rgba(10,25,47,.45)}
+  .growth-choices button:hover span[aria-hidden]{transform:translate(2px,-2px)}
+  .growth-choices button span[aria-hidden]{display:inline-block;transition:transform .35s cubic-bezier(.22,1,.36,1)}
+}
+
+/* Aviso de privacidad: índice y metadatos */
+.growth-legal .legal-meta{color:#9DB0CC;font-size:.9rem;margin-top:.5rem}
+.growth-legal .legal-indice{margin:2rem 0 1rem;padding:1.2rem 1.4rem;border:1px solid rgba(212,175,55,.22);border-radius:18px;background:rgba(255,255,255,.02)}
+.growth-legal .legal-indice ol{margin:0;padding-left:1.2rem;columns:2;column-gap:2rem}
+.growth-legal .legal-indice li{margin:0 0 .45rem;break-inside:avoid}
+.growth-legal ul{margin:.5rem 0 1rem 1.2rem}
+.growth-legal ul li{margin:.4rem 0;line-height:1.6}
+.growth-legal p{line-height:1.7;margin:.5rem 0}
+.growth-legal h2{scroll-margin-top:24px}
+@media(max-width:560px){.growth-legal .legal-indice ol{columns:1}}
+
+@media(prefers-reduced-motion:reduce){
+  html::before,.eyebrow::before{animation:none !important;transform:none !important;opacity:1 !important}
+  html::before{display:none}
+  .pag-inicio .hero__photo .fig--portrait::after{animation:none !important;display:none}
+  .growth-hero-copy .hero-h1 em{animation:none !important;background-position:0 0}
+  .wp-luz{display:none}
+}

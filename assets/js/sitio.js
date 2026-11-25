@@ -1484,11 +1484,11 @@ window.addEventListener('pagehide',()=>stopRealtime(''));
 
 /* ═══════════ LEGALES ═══════════ */
 const LEGAL = {
-  privacidad:['Política de Privacidad',
+  privacidad:['Aviso de privacidad',
     'El formulario pide nombre, un medio de contacto, interés, horario y código postal opcional. Formspree recibe y conserva la solicitud en la cuenta del formulario y notifica a William por correo para responderte. El sitio no guarda tus datos de contacto en el navegador. Puedes leer más en williamperezseguros.com/privacidad.html.',
     'No solicitamos ni almacenamos números de Seguro Social, números de Medicare, datos bancarios, diagnósticos ni medicamentos a través de este sitio.',
     'Asistente virtual con IA: fuera de una sesión de voz, las respuestas escritas básicas se generan en tu navegador. La conversación por voz es opcional y solo empieza cuando la aceptas. Mientras esa sesión está activa, el audio y las preguntas que escribas se envían a la API de OpenAI para generar respuestas en tiempo real. Este sitio no guarda grabaciones. La voz audible de la asistente no usa SpeechSynthesis del navegador; proviene de OpenAI Realtime.',
-    'Puedes retirar tu consentimiento y pedir acceso, corrección o eliminación de tus datos escribiendo a wperezmedero@gmail.com. Eliminamos los mensajes y registros que ya no sean necesarios para atenderte.'],
+    'Puedes retirar tu consentimiento y pedir acceso, corrección o eliminación de tus datos escribiendo a wperezmedero@gmail.com. El aviso completo, con la autoridad legal, con quién se comparten los datos, cuánto se conservan y cómo presentar una queja, está en williamperezseguros.com/privacidad.html.'],
   cookies:['Política de Cookies',
     'Este sitio no instala cookies propias de publicidad ni de medición.',
     'Las tipografías se sirven desde este mismo sitio. La medición interna de interacciones no incluye los datos del formulario ni las cifras de las calculadoras. Si aceptas el aviso de voz, tu navegador recuerda esa decisión solo mientras dure la sesión, sin usar cookies.',
